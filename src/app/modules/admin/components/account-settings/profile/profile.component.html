@@ -1,0 +1,27 @@
+<div class="profile-container w-75">
+    <h2>Public profile</h2>
+    <p>Add information about yourself</p>
+    <div class="profile-form">
+      <label>First Name:</label>
+      <input [(ngModel)]="user.firstName" name="firstName" required placeholder="Add your first name">
+      
+      <label>Last Name:</label>
+      <input [(ngModel)]="user.lastName" name="lastName" required placeholder="Add your last name">
+      
+      <label>Headline:</label>
+      <input [(ngModel)]="user.headline" name="headline" placeholder="Add a professional headline">
+      
+      <label>Language:</label>
+      <select [(ngModel)]="user.language" name="language">
+        <option>English (US)</option>
+        <option>English (UK)</option>
+        <option>Spanish</option>
+      </select>
+
+      <div class="btn">
+        <button (click)="onSave()">Save</button>
+      </div>
+      
+    </div>
+  </div>
+ 

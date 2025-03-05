@@ -1,0 +1,37 @@
+<nav class="navbar navbar-expand-lg navbar-light custom-navbar">
+      <h4 class="navbar-title" routerLink="my-learning/">Navbar</h4>
+      <button
+        class="navbar-toggler"
+        type="button"
+        data-toggle="collapse"
+        data-target="#navbarNav"
+        aria-controls="navbarNav"
+        aria-expanded="false"
+        aria-label="Toggle navigation"
+      >
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <!-- Search bar -->
+        <form class="form-inline mx-auto search-bar">
+          <input
+            class="form-control"
+            type="search"
+            placeholder="Search for anything"
+            aria-label="Search"
+          />
+        </form>
+        <ul class="navbar-nav ml-auto gap-2 align-items-center">
+          <li class="nav-item">
+            <a class="nav-link" routerLink="/layout/my-learning">Tab</a>
+          </li>
+        
+          
+          <li class="nav-item" (click)="onCartIconClick()">
+            <div *ngIf="firstNameInitial && lastNameInitial;" class="d-flex gap-2">
+              <p class="Name_logo">{{ firstNameInitial }}{{ lastNameInitial }}</p>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </nav>

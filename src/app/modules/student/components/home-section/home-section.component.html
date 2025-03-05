@@ -1,0 +1,11 @@
+<div class="slider-container">
+    <div class="arrow-btn left" (click)="moveSlide(-1)">
+        <mat-icon>keyboard_arrow_left</mat-icon>
+    </div>
+    <div class="image-slider">
+        <img [src]="images[currentImageIndex]" alt="Slider Image">
+    </div>
+    <div class="arrow-btn right" (click)="moveSlide(1)">
+        <mat-icon>keyboard_arrow_right</mat-icon>
+    </div>
+</div>

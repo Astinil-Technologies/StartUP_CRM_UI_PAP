@@ -1,0 +1,107 @@
+<div class="register-container animated-bg">
+  <div class="register-header animate-fade-in">
+    <mat-icon class="back-icon" (click)="navigateBack()"><i class="fa-solid fa-reply"></i></mat-icon>
+    <mat-icon class="company-icon">school</mat-icon>
+    <h2>COMPANY</h2>
+  </div>
+
+  <div class="welcome-header">
+    <h1>Welcome!</h1>
+  </div>
+  <div class="page-container card-form animate-slide-up">
+    <form [formGroup]="registerForm" (ngSubmit)="onRegister()">
+      <!-- Username Field -->
+
+      <mat-form-field appearance="fill">
+        <mat-label>FirstName <span class="mandatory"></span></mat-label>
+        <mat-icon matPrefix>person</mat-icon>
+        <input matInput type="text" formControlName="firstName" placeholder="FirstName" required autocomplete="firstName" />
+        <mat-error *ngIf="registerForm.get('firstName')?.hasError('required')">FirstName is required.</mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="fill">
+        <mat-label>LastName <span class="mandatory"></span></mat-label>
+        <mat-icon matPrefix>person</mat-icon>
+        <input matInput type="text" formControlName="lastName" placeholder="LastName" required autocomplete="lastName" />
+        <mat-error *ngIf="registerForm.get('lastName')?.hasError('required')">LastName is required.</mat-error>
+      </mat-form-field>
+     
+
+      <mat-form-field appearance="fill">
+        <mat-label>Username <span class="mandatory"></span></mat-label>
+        <mat-icon matPrefix>person</mat-icon>
+        <input
+          matInput
+          type="text"
+          formControlName="username"
+          placeholder="Username"
+          required
+          autocomplete="username"
+        />
+        <mat-error *ngIf="registerForm.get('username')?.hasError('required')">Username is required.</mat-error>
+        <mat-error *ngIf="registerForm.get('username')?.hasError('minlength')">Username must be at least 3 characters long.</mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="fill">
+        <mat-label>Email <span class="mandatory"></span></mat-label>
+        <mat-icon matPrefix>email</mat-icon>
+        <input matInput type="email" formControlName="email" placeholder="Email" required />
+      </mat-form-field>
+
+      <mat-form-field appearance="fill">
+        <mat-label>Mobile No <span class="mandatory"></span></mat-label>
+        <mat-icon matPrefix>phone</mat-icon>
+        <input matInput type="number" formControlName="mobile_no" placeholder="Mobile Number" inputmode="numeric" required />
+      </mat-form-field>
+
+      <mat-form-field appearance="fill">
+        <mat-label>Password <span class="mandatory"></span></mat-label>
+        <mat-icon matPrefix>lock</mat-icon>
+        <input
+          matInput
+          type="password"
+          formControlName="password"
+          placeholder="Password (min 6 characters)"
+          required
+          autocomplete="new-password"
+        />
+        <mat-error *ngIf="passwordLengthError()">Password must be at least 6 characters long.</mat-error>
+        <mat-error *ngIf="passwordAlphanumericError()"
+          >Password must be alphanumeric (letters and numbers only).</mat-error
+        >
+      </mat-form-field>
+
+      <mat-form-field appearance="fill">
+        <mat-label>Confirm <span class="mandatory"></span></mat-label>
+        <mat-icon matPrefix>lock</mat-icon>
+        <input
+          matInput
+          [type]="hideConfirmPassword ? 'password' : 'text'"
+          formControlName="confirmPassword"
+          placeholder="Re-enter Password"
+          required
+          autocomplete="new-password"
+        />
+      </mat-form-field>
+
+      <mat-error *ngIf="mismatchError()" class="error-message">
+        Passwords do not match. Please re-enter.
+      </mat-error>
+
+      <button class="btn-register" type="submit" [disabled]="!registerForm.valid">
+        Register
+      </button>
+
+      <div class="privacy-terms">
+        <p>
+          You are agreeing to the <b>Terms of Services</b> and <b>Privacy Policy</b>
+        </p>
+      </div>
+    </form>
+
+    <div class="already-account">
+      Already have an account?
+      <a class="login-link" (click)="navigateToLogin()">Log in</a>
+    </div>
+  </div>
+</div>
