@@ -15,7 +15,7 @@
         flex-direction: column;
         gap: 10px;
         width: 260px;
-        height: 600px;
+        height: 100px;
         background-color: #fff;
         position: fixed;
         border-right: #ccc 1px solid;
@@ -51,8 +51,15 @@
         }
 
         .sidebar {
+            
             display: flex;
             flex-direction: column;
+            align-items: flex-start; /* Align items to the start */
+            padding: 10px;
+            width: 250px; /* Or as per your desired width */
+            min-height: auto; /* Remove fixed height */
+            background-color: #f9f9f9; /* Optional for better UI */
+            border: 1px solid #ccc;
 
             .nav-items {
                 display: flex;

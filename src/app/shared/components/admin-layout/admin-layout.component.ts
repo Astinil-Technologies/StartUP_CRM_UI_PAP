@@ -7,7 +7,7 @@ import { AdminSidebarComponent } from 'src/app/modules/admin/components/admin-si
 @Component({
   selector: 'app-admin-layout',
   standalone: true,
-  imports: [FooterSectionComponent,RouterModule, AdminNavbarComponent, AdminSidebarComponent],
+  imports: [FooterSectionComponent,RouterModule,AdminNavbarComponent, AdminSidebarComponent],
   templateUrl: './admin-layout.component.html',
   styleUrl: './admin-layout.component.scss'
 })

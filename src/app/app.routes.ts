@@ -28,11 +28,16 @@ import { RoleGuard } from './core/guards/role.guard';
 import { MessagesComponent } from './modules/student/components/sidebar-component/messages/messages.component';
 import { InstructorDashboardComponent } from './modules/instructor/instructor-dashboard/instructor-dashboard.component';
 import { CreateCourseComponent } from './modules/instructor/component/create-course/create-course.component';
-import { ProfileComponent } from './modules/admin/components/account-settings/profile/profile.component';
 import { PhotoComponent } from './modules/admin/components/account-settings/photo/photo.component';
 import { CreateCourseModulesComponent } from './modules/instructor/component/create-course-modules/create-course-modules.component';
 import { CreateLessonsComponent } from './modules/instructor/component/create-lessons/create-lessons.component';
 import { AccountSecurityComponent } from './modules/admin/components/account-settings/account-security/account-security.component';
+import { TimesheetNavbarComponent } from './modules/Ttimesheet/component/timesheet-navbar/timesheet-navbar.component';
+import { HomepageComponent } from './modules/Ttimesheet/component/homepage/homepage.component';
+import { RajeshComponent } from './modules/Ttimesheet/component/rajesh/rajesh.component';
+import { SideNavbarComponent } from './modules/Ticket/components/sideNavbar/sideNavbar.component';
+import { RaiseTicketComponent } from './modules/Ticket/components/raise-ticket/raise-ticket.component';
+import { MyticketComponent } from './modules/Ticket/components/myticket/myticket.component';
 
 export const routes: Routes = [
   { path: 'cyber', component: FooterSectionComponent },
@@ -51,6 +56,26 @@ export const routes: Routes = [
     children: [
       { path: 'dashboard', component: HomeSectionComponent },
       { path: 'navbar', component: NavbarComponent },
+
+      { path:'timesheet', 
+        component: TimesheetNavbarComponent,
+        canActivate: [authGuard],
+        children:[
+          {path:'', component:HomepageComponent},
+          {path:'rajesh', component:RajeshComponent},
+        ]
+
+
+      },
+      {path:'ticket',
+         component:SideNavbarComponent,
+         canActivate: [authGuard],
+         children:[
+          {path:'',component:RaiseTicketComponent},
+          {path:'myticket', component:MyticketComponent},
+         ]
+        },
+
       { path: 'courses', component: CourseEnrollmentComponent },
       { path: 'courses/:id', component: CourseContentComponent },
       {
@@ -68,6 +93,8 @@ export const routes: Routes = [
       { path: 'messagess', component: MessagesComponent }
      ],
   },
+
+
   {
     path: 'admin-layout',
     component: AdminLayoutComponent,
@@ -79,7 +106,7 @@ export const routes: Routes = [
     { path: 'manage-users', component: ManageUsersComponent },
     { path: 'account-settings', component: AccountSettingsComponent,
       children: [ 
-      {path: 'profile', component: ProfileComponent},
+     
       {path: 'photo', component: PhotoComponent},
       {path: 'account-security', component: AccountSecurityComponent},   
     ]

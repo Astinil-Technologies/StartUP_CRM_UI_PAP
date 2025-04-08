@@ -8,8 +8,33 @@
         <img src="https://thumbs.dreamstime.com/b/environment-earth-day-hands-trees-growing-seedlings-bokeh-green-background-female-hand-holding-tree-nature-field-gra-130247647.jpg" alt="Profile Image">
       </div>
     </div>
+    
     <div class="sidebar">
       <ul class="nav-items">
+       
+        <li>
+          <a routerLink="/home" routerLinkActive="active">Email: {{ userData?.email }}</a>
+        </li>
+        <li>
+          <a routerLink="/home" routerLinkActive="active">Mobile Number: {{ userData?.mobile_no }}</a>
+        </li>
+        <li>
+          <a routerLink="/home" routerLinkActive="active">Location: {{ userData?.location || 'N/A' }}</a>
+        </li>
+
+        <li>
+          <a routerLink="/home" routerLinkActive="active">Bio: {{ userData?.bio || 'No bio available' }}</a>
+        </li>
+
+        <li>
+          <a routerLink="/home" routerLinkActive="active">CreatedAt: {{ userData?.createdAt }}</a>
+        </li>
+      </ul>
+
+    </div>
+
+       <!-- <div>
+        <ul class="nav-items">
         <li>
           <mat-icon>notifications_active</mat-icon>
           <a routerLink="/home" routerLinkActive="active">Notification</a>
@@ -43,6 +68,6 @@
       </ul>
     </div>
     <button class="logout-btn" (click)="logout()">Log Out</button>
-  </div>
-</div>
+  </div>-->
+
  

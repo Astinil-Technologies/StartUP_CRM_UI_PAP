@@ -17,6 +17,7 @@ import { AuthService } from 'src/app/core/services/authservice/auth.service';
   styleUrl: './admin-sidebar.component.scss'
 })
 export class AdminSidebarComponent {
+
   userId: string | null = null
   firstName: string | null = null
   lastName: string | null = null
@@ -49,4 +50,5 @@ export class AdminSidebarComponent {
       }
     );
   }
+ 
 }
