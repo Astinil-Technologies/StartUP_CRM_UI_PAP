@@ -34,7 +34,7 @@ import { CreateLessonsComponent } from './modules/instructor/component/create-le
 import { AccountSecurityComponent } from './modules/admin/components/account-settings/account-security/account-security.component';
 import { TimesheetNavbarComponent } from './modules/Ttimesheet/component/timesheet-navbar/timesheet-navbar.component';
 import { HomepageComponent } from './modules/Ttimesheet/component/homepage/homepage.component';
-import { RajeshComponent } from './modules/Ttimesheet/component/rajesh/rajesh.component';
+
 import { SideNavbarComponent } from './modules/Ticket/components/sideNavbar/sideNavbar.component';
 import { RaiseTicketComponent } from './modules/Ticket/components/raise-ticket/raise-ticket.component';
 import { MyticketComponent } from './modules/Ticket/components/myticket/myticket.component';
@@ -62,7 +62,7 @@ export const routes: Routes = [
         canActivate: [authGuard],
         children:[
           {path:'', component:HomepageComponent},
-          {path:'rajesh', component:RajeshComponent},
+         
         ]
 
 
