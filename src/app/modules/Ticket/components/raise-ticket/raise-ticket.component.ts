@@ -4,6 +4,8 @@ import { CommonModule } from '@angular/common';  // ✅ Required for standalone 
 import { catchError, Observable, throwError } from 'rxjs';
 import { HttpClient,HttpClientModule, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
 import { AuthService } from 'src/app/core/services/authservice/auth.service';
+import { environment } from 'src/environments/environment';
+
 
 @Component({
   selector: 'app-raise-ticket',
@@ -14,9 +16,11 @@ import { AuthService } from 'src/app/core/services/authservice/auth.service';
 })
 export class RaiseTicketComponent {
 
+  private baseUrl = environment.baseUrl;
+
   ticketForm: FormGroup;
   priorities = ['HIGH', 'MEDIUM', 'LOW'];
-  private apiUrl = 'http://localhost:8080/tickets/createTicket'; // Backend URL
+  private apiUrl = `${this.baseUrl}/tickets/createTicket`; // Backend URL
 
   constructor(private fb: FormBuilder, private http: HttpClient, private authService: AuthService) {
     this.ticketForm = this.fb.group({

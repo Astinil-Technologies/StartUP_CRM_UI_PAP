@@ -1,8 +1,12 @@
+
+const BASE_URL = 'http://localhost:8080';
+
 export const environment = {
-    production: false,
-    apiUrl: 'http://localhost:8080/auth',
-    courseUrl:'http://localhost:8080/courses/create-course',
-    courseModuleUrl:'http://localhost:8080/api/course-modules',
-    lessonUrl:'http://localhost:8080/api/lessons'
+    production: true,
+    baseUrl:`${BASE_URL}`,
+    apiUrl: `${BASE_URL}/auth`,
+    courseUrl:`${BASE_URL}/courses/create-course`,
+    courseModuleUrl:`${BASE_URL}/api/course-modules`,
+    lessonUrl:`${BASE_URL}/api/lessons`
   };
   

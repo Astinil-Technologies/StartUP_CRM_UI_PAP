@@ -5,6 +5,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { catchError, throwError } from 'rxjs';
 import { AuthService } from 'src/app/core/services/authservice/auth.service';
+import { environment } from 'src/environments/environment';
 
 
 interface Ticket {
@@ -25,9 +26,9 @@ interface Ticket {
   styleUrls: ['./myticket.component.scss']
 })
 export class MyticketComponent implements OnInit {
-
+  private baseUrl = environment.baseUrl;
   tickets: Ticket[] = [];
-  apiUrl = 'http://localhost:8080/tickets/getAllTickets'; // Backend API URL
+  apiUrl = `${this.baseUrl}/tickets/getAllTickets`; // Backend API URL
 
   constructor(private http: HttpClient, private authService: AuthService) {}
 
@@ -94,7 +95,7 @@ export class MyticketComponent implements OnInit {
       'Content-Type': 'application/json'
     });
   
-    const deleteUrl = `http://localhost:8080/tickets/${ticketId}`;
+    const deleteUrl = `${this.baseUrl}/tickets/${ticketId}`;
   
     this.http.delete(deleteUrl, { headers })
       .pipe(catchError(this.handleError))
