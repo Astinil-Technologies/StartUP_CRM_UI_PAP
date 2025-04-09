@@ -16,6 +16,19 @@
     font-weight: bold;
 }
 
+
+.custom-navbar {
+    background-color: orange;
+  }
+  
+  .navbar-nav .nav-link {
+    color: #ffffff !important;               /* Bright white */
+    font-weight: 700;                        /* Bold */
+    font-size: 1.25rem;                      /* Bigger font (20px) */
+    text-shadow: 0 0 4px rgba(0, 0, 0, 0.3);  /* Optional glow effect */
+    margin-right: 15px;                      /* Space between items */
+  }
+
 .navbar-nav .nav-link {
     font-size: 1rem;
     color: #ffffff;
