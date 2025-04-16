@@ -3,7 +3,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Component, Input, OnInit } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
 import {  RouterModule } from '@angular/router';
-
+import { environment } from 'src/environments/environment';
 import { AuthService } from 'src/app/core/services/authservice/auth.service';
 
 
@@ -20,6 +20,8 @@ import { AuthService } from 'src/app/core/services/authservice/auth.service';
   styleUrl: './sidebar-component.component.scss',
 })
 export class SidebarComponentComponent implements OnInit{
+
+  private baseUrl = environment.baseUrl;
   userId: string | null = null;
   firstName: string | null = null;
   lastName: string | null = null;
@@ -49,7 +51,7 @@ export class SidebarComponentComponent implements OnInit{
 
   // Fetch User Details
   getUserDetails(userId: string): void {
-    const url = `http://localhost:8080/api/v1/users/${userId}`;
+    const url = `${this.baseUrl}/api/v1/users/${userId}`;
     this.http.get<any>(url).subscribe(
       (response) => {
         const userData = response.data;
@@ -64,7 +66,7 @@ export class SidebarComponentComponent implements OnInit{
 
   // Load Profile Data
   loadUserProfile() {
-    const url = 'http://localhost:8080/api/v1/users/profile';
+    const url = `${this.baseUrl}/api/v1/users/profile`;
     const token = this.authService.getAccessToken();
     console.log(token);
 

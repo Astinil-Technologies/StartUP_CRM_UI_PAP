@@ -2,6 +2,8 @@ import { CommonModule, NgClass, NgIf } from '@angular/common';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { AuthService } from 'src/app/core/services/authservice/auth.service';
+import { environment } from 'src/environments/environment';
+
 
 @Component({
   selector: 'app-homepage',
@@ -11,6 +13,8 @@ import { AuthService } from 'src/app/core/services/authservice/auth.service';
   styleUrl: './homepage.component.scss'
 })
 export class HomepageComponent implements OnInit {
+
+  private baseUrl = environment.baseUrl;
 
   userData: any = null;
   isLoading: boolean = true;
@@ -34,7 +38,7 @@ export class HomepageComponent implements OnInit {
 
   // Fetch User Details from API
  loadUserProfile() {
-    const url = 'http://localhost:8080/api/v1/users/profile';
+    const url = `${this.baseUrl}/api/v1/users/profile`;
     const token = this.authService.getAccessToken();
     console.log(token);
 
@@ -105,7 +109,7 @@ export class HomepageComponent implements OnInit {
 
    // Check-in function (backend integration)
    checkIn() {
-    const url = 'http://localhost:8080/api/checkin';
+    const url = `${this.baseUrl}/api/checkin`;
     const token = this.authService.getAccessToken();
 
     if (!token) {
@@ -130,7 +134,7 @@ export class HomepageComponent implements OnInit {
 
   // Check-out function (backend integration)
   checkOut() {
-    const url = 'http://localhost:8080/api/checkout';
+    const url = `${this.baseUrl}/api/checkout`;
     const token = this.authService.getAccessToken();
 
     if (!token) {
@@ -155,7 +159,7 @@ export class HomepageComponent implements OnInit {
 
   // Load current check-in status from backend (GET Status)
   loadStatus() {
-    const url = 'http://localhost:8080/api/checkout/status';
+    const url = `${this.baseUrl}/api/checkout/status`;
     const token = this.authService.getAccessToken();
 
     if (!token) {
