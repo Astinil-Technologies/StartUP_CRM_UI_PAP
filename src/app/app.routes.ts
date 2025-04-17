@@ -38,6 +38,7 @@ import { HomepageComponent } from './modules/Ttimesheet/component/homepage/homep
 import { SideNavbarComponent } from './modules/Ticket/components/sideNavbar/sideNavbar.component';
 import { RaiseTicketComponent } from './modules/Ticket/components/raise-ticket/raise-ticket.component';
 import { MyticketComponent } from './modules/Ticket/components/myticket/myticket.component';
+import { UpdateTicketComponent } from './modules/Ticket/components/update-ticket/update-ticket.component';
 
 export const routes: Routes = [
   { path: 'cyber', component: FooterSectionComponent },
@@ -73,6 +74,7 @@ export const routes: Routes = [
          children:[
           {path:'',component:RaiseTicketComponent},
           {path:'myticket', component:MyticketComponent},
+          {path:'update-ticket/:id', component:UpdateTicketComponent},
          ]
         },
 

@@ -1,6 +1,18 @@
 <div class="ticket-container">
   <h2>My Tickets</h2>
 
+  <!-- Search Input -->
+  <div style="margin-bottom: 20px;">
+    <input
+      type="text"
+      [(ngModel)]="searchText"
+      (input)="onSearchInputChange()"
+      placeholder="🔍 Search tickets..."
+      class="form-control"
+      style="width: 300px; padding: 8px; font-size: 14px; border-radius: 6px;"
+    />
+  </div>
+
   <!-- Loading Message -->
   <p *ngIf="tickets === undefined">Loading tickets...</p>
 
@@ -15,7 +27,7 @@
         <th>Priority</th>
         <th>Created Date</th>
         <th>Assigned User</th>
-        <th>Actions</th> <!-- New column -->
+        <th>Actions</th>
       </tr>
     </thead>
     <tbody>
@@ -39,6 +51,13 @@
   <ng-template #noTickets>
     <p>No tickets found.</p>
   </ng-template>
+
+  <!-- Pagination Controls -->
+  <div *ngIf="totalPages > 1" class="pagination-controls">
+    <button (click)="changePage(currentPage - 1)" [disabled]="currentPage === 0">Previous</button>
+    <span>Page {{ currentPage + 1 }} of {{ totalPages }}</span>
+    <button (click)="changePage(currentPage + 1)" [disabled]="currentPage + 1 >= totalPages">Next</button>
+  </div>
 </div>
 
 
