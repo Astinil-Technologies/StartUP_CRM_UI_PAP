@@ -39,6 +39,10 @@ import { SideNavbarComponent } from './modules/Ticket/components/sideNavbar/side
 import { RaiseTicketComponent } from './modules/Ticket/components/raise-ticket/raise-ticket.component';
 import { MyticketComponent } from './modules/Ticket/components/myticket/myticket.component';
 import { UpdateTicketComponent } from './modules/Ticket/components/update-ticket/update-ticket.component';
+import { MyTaskNavbarComponent } from './modules/myTask/components/my-task-navbar/my-task-navbar.component';
+import { OverViewComponent } from './modules/myTask/components/over-view/over-view.component';
+import { TodayOverdueComponent } from './modules/myTask/components/today-overdue/today-overdue.component';
+import { TaskAssignedComponent } from './modules/myTask/components/task-assigned/task-assigned.component';
 
 export const routes: Routes = [
   { path: 'cyber', component: FooterSectionComponent },
@@ -77,6 +81,16 @@ export const routes: Routes = [
           {path:'update-ticket/:id', component:UpdateTicketComponent},
          ]
         },
+
+        {path:'mytask',
+          component:MyTaskNavbarComponent,
+          canActivate: [authGuard],
+          children:[
+           {path:'',component:OverViewComponent},
+           {path:'task-today', component:TodayOverdueComponent},
+           {path:'task-assigned', component:TaskAssignedComponent},
+          ]
+         },
 
       { path: 'courses', component: CourseEnrollmentComponent },
       { path: 'courses/:id', component: CourseContentComponent },
