@@ -57,4 +57,11 @@ export class HomeComponent {
     }
     this.router.navigate([`/meet/${this.meetingId}`]);
   }
+
+  showMeeting = true;
+
+closeMeeting() {
+  this.showMeeting = false;
+}
+
 }

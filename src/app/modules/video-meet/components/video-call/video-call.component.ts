@@ -2,19 +2,26 @@ import {
   Component, OnInit, OnDestroy, ViewChild, ElementRef, inject
 } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { CommonModule } from '@angular/common';
+import { CommonModule, Location } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+
 import { ChatComponent } from '../chat/chat.component';
-import { MatDialog } from '@angular/material/dialog';
 import { ScheduleMeetingDialogComponent } from '../schedule-meeting-dialog/schedule-meeting-dialog.component';
+
 import { io, Socket } from 'socket.io-client';
 import Peer from 'peerjs';
-type IOSocket = typeof import("socket.io-client").Socket;
 
 @Component({
   selector: 'app-video-call',
   standalone: true,
-  imports: [CommonModule, FormsModule, ChatComponent],
+  imports: [
+    CommonModule,
+    FormsModule,
+    ChatComponent,
+    MatDialogModule,
+    ScheduleMeetingDialogComponent
+  ],
   templateUrl: './video-call.component.html',
   styleUrls: ['./video-call.component.scss']
 })
@@ -26,8 +33,8 @@ export default class VideoCallComponent implements OnInit, OnDestroy {
   private dialog = inject(MatDialog);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
-  private io = inject(io);
-  private location: Location = inject(Location);
+  private location = inject(Location);
+
   meetingId: string = '';
   meetingJoined: boolean = false;
 
@@ -36,7 +43,7 @@ export default class VideoCallComponent implements OnInit, OnDestroy {
   peerConnection!: RTCPeerConnection;
   peer!: Peer;
   socket!: Socket;
-  
+
   remotePeerId: string = '';
 
   isMuted = false;
@@ -50,12 +57,12 @@ export default class VideoCallComponent implements OnInit, OnDestroy {
   recordingTime = 0;
   recordingInterval: any;
 
-  
-
   async ngOnInit() {
     this.meetingId = this.route.snapshot.paramMap.get('id') || '';
     if (this.meetingId) await this.joinMeeting();
   }
+
+
   constructor() {
     this.socket = io('http://localhost:3000');
   }
@@ -101,7 +108,7 @@ export default class VideoCallComponent implements OnInit, OnDestroy {
   }
 
   initializeSocketAndPeer(): void {
-    this.socket = io('http://localhost:3000'); // Replace with your signaling server
+    this.socket = io('http://localhost:3000');
 
     this.peer = new Peer();
     this.peer.on('open', (id: string) => {
@@ -203,15 +210,15 @@ export default class VideoCallComponent implements OnInit, OnDestroy {
     this.isChatOpen = !this.isChatOpen;
   }
 
+
   leaveCall(): void {
     this.peer?.destroy();
     this.socket?.disconnect();
     this.myStream?.getTracks().forEach(track => track.stop());
-    this.router.navigate(['/']);
+    this.location.back(); // 👈 Navigate to previous page
   }
 
   ngOnDestroy(): void {
     this.leaveCall();
   }
 }
-
