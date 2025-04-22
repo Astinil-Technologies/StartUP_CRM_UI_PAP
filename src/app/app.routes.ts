@@ -59,7 +59,6 @@ import { ScheduleMeetingDialogComponent } from './modules/video-meet/components/
 import { HomeComponent as VideoMeetHomeComponent } from './modules/video-meet/components/home/home.component';
 
 export const routes: Routes = [
-  // Default Redirect
   { path: '', redirectTo: '/login-main', pathMatch: 'full' },
 
   // Auth Routes
@@ -69,7 +68,7 @@ export const routes: Routes = [
   { path: 'forgot-password', component: ForgotPasswordPopupComponent },
   { path: 'reset-password', component: ResetPasswordComponent },
 
-  // Static Component Test Route
+  // Static Component Testing
   { path: 'cyber', component: FooterSectionComponent },
 
   // Student Layout
@@ -82,28 +81,23 @@ export const routes: Routes = [
       { path: 'dashboard', component: HomeSectionComponent },
       { path: 'navbar', component: NavbarComponent },
 
-      // Timesheet Subroutes (Rajesh Removed)
       {
         path: 'timesheet',
         component: TimesheetNavbarComponent,
         canActivate: [authGuard],
-        children: [
-          { path: '', component: HomepageComponent }
-        ]
+        children: [{ path: '', component: HomepageComponent }]
       },
 
-      // Ticket System
       {
         path: 'ticket',
         component: SideNavbarComponent,
         canActivate: [authGuard],
         children: [
           { path: '', component: RaiseTicketComponent },
-          { path: 'myticket', component: MyticketComponent },
+          { path: 'myticket', component: MyticketComponent }
         ]
       },
 
-      // Video Meeting Section
       {
         path: 'meet',
         component: VideoMeetHomeComponent,
@@ -111,13 +105,13 @@ export const routes: Routes = [
         children: [
           { path: '', component: VideoCallComponent },
           { path: 'chat', component: ChatComponent },
-          { path: 'schedule', component: ScheduleMeetingDialogComponent },
+          { path: 'schedule', component: ScheduleMeetingDialogComponent }
         ]
       },
 
-      // Course & Learning
       { path: 'courses', component: CourseEnrollmentComponent },
       { path: 'courses/:id', component: CourseContentComponent },
+
       {
         path: 'my-learning',
         component: MyLearningComponent,
@@ -150,10 +144,10 @@ export const routes: Routes = [
         component: AccountSettingsComponent,
         children: [
           { path: 'photo', component: PhotoComponent },
-          { path: 'account-security', component: AccountSecurityComponent },
+          { path: 'account-security', component: AccountSecurityComponent }
         ]
       },
-      { path: 'account-side', component: AdminSidebarComponent },
+      { path: 'account-side', component: AdminSidebarComponent }
     ]
   },
 
@@ -167,16 +161,19 @@ export const routes: Routes = [
       { path: '', component: InstructorDashboardComponent },
       { path: 'create-courses', component: CreateCourseComponent },
       { path: 'create-module', component: CreateCourseModulesComponent },
-      { path: 'create-course-lesson', component: CreateLessonsComponent },
+      { path: 'create-course-lesson', component: CreateLessonsComponent }
     ]
   },
 
-  // Standalone Lazy-Loaded Meeting Route
+  // Standalone Lazy-Loaded Video Call
   {
     path: 'meet/:id',
-    loadComponent: () => import('./modules/video-meet/components/video-call/video-call.component')
-      .then(m => m.default)
+    loadComponent: () =>
+      import('./modules/video-meet/components/video-call/video-call.component').then(
+        (m) => m.default
+      )
   },
-  // Fallback Route
-  { path: '**', redirectTo: '/login' },
+
+  // Fallback
+  { path: '**', redirectTo: '/login' }
 ];

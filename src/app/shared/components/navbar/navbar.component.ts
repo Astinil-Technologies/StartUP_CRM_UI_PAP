@@ -5,6 +5,7 @@ import { RouterModule,Router } from '@angular/router';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { SourceTextModule } from 'vm';
+import { environment } from 'src/environments/environment';
 
 
 
@@ -22,6 +23,9 @@ import { SourceTextModule } from 'vm';
   styleUrls: ['./navbar.component.scss']
 })
 export class NavbarComponent implements OnInit{
+
+   private baseUrl = environment.baseUrl;
+
   firstNameInitial: string | null = null;
   lastNameInitial: string | null = null;
   userId: string | null = null;
@@ -53,7 +57,7 @@ export class NavbarComponent implements OnInit{
 
 
   getUserDetails(userId: string): void {
-    const url = `http://localhost:8080/api/v1/users/profile`;
+    const url = `${this.baseUrl}/api/v1/users/profile`;
 
     // ✅ Get token from AuthService
     const token = this.authService.getAccessToken();
