@@ -1,0 +1,50 @@
+<div class="video-call-container">
+  <!-- Header -->
+  <header class="header">
+    <h2>Video Meeting - ID: {{ meetingId }}</h2>
+    <span *ngIf="isRecording" class="recording-indicator">● Recording ({{ recordingTime }}s)</span>
+  </header>
+
+  <!-- Main Content -->
+  <div class="video-area">
+    <!-- Local Video -->
+    <video #myVideo autoplay muted playsinline class="video-box local-video"></video>
+
+    <!-- Remote Video -->
+    <video #remoteVideo autoplay playsinline class="video-box remote-video"></video>
+
+    <!-- Chat Panel -->
+    <div class="chat-panel" *ngIf="isChatOpen">
+      <app-chat *ngIf="meetingJoined"></app-chat>
+    </div>
+  </div>
+
+  <!-- Controls Toolbar -->
+  <div class="toolbar">
+    <button (click)="toggleMute()" [ngClass]="{ 'active': isMuted }">
+      {{ isMuted ? 'Unmute' : 'Mute' }}
+    </button>
+
+    <button (click)="toggleCamera()" [ngClass]="{ 'active': !isCameraOn }">
+      {{ isCameraOn ? 'Camera Off' : 'Camera On' }}
+    </button>
+
+    <button (click)="toggleScreenShare()" [ngClass]="{ 'active': isScreenSharing }">
+      {{ isScreenSharing ? 'Stop Sharing' : 'Share Screen' }}
+    </button>
+
+    <button *ngIf="!isRecording" (click)="startRecording()">
+      Start Recording
+    </button>
+
+    <button *ngIf="isRecording" (click)="stopRecording()">
+      Stop Recording
+    </button>
+
+    <button (click)="toggleChat()" [ngClass]="{ 'active': isChatOpen }">
+      {{ isChatOpen ? 'Hide Chat' : 'Message' }}
+    </button>
+
+    <button class="leave-btn" (click)="leaveCall()">Leave Call</button>
+  </div>
+</div>

@@ -1,0 +1,43 @@
+<div class="meeting-dialog">
+  <h2>📅 Schedule a Meeting</h2>
+
+  <p><strong>Current Date & Time:</strong> {{ currentDateTime }}</p>
+  <p>Select a date and time to schedule your meeting</p>
+
+  <mat-checkbox [(ngModel)]="startNow">Start Now</mat-checkbox>
+
+  <div *ngIf="!startNow">
+    <mat-form-field appearance="fill" class="full-width">
+      <mat-label>Meeting Date</mat-label>
+      <input
+        matInput
+        [matDatepicker]="picker"
+        [(ngModel)]="meetingDate"
+        (ngModelChange)="onDateChange($event)"
+        [min]="minDate"
+        placeholder="Choose a date"
+        readonly
+      />
+      <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+      <mat-datepicker #picker></mat-datepicker>
+    </mat-form-field>
+
+    <mat-form-field appearance="fill" class="full-width">
+      <mat-label>Meeting Time</mat-label>
+      <input matInput type="time" [(ngModel)]="meetingTime" />
+    </mat-form-field>
+
+    <mat-form-field appearance="fill" class="full-width">
+      <mat-label>Duration (in hours)</mat-label>
+      <mat-select [(ngModel)]="meetingDuration">
+        <mat-option *ngFor="let hour of [1, 2, 3, 4, 5]" [value]="hour">
+          {{ hour }} hour{{ hour > 1 ? 's' : '' }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+
+  <button mat-raised-button color="primary" (click)="scheduleMeeting()">
+    {{ startNow ? 'Start Meeting' : 'Confirm Schedule' }}
+  </button>
+</div>

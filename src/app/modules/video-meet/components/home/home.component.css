@@ -1,0 +1,63 @@
+.container {
+  text-align: center;
+  margin-top: 30px;
+  background-color: #484745; /* Updated dark brown background */
+  padding: 40px;
+  border-radius: 12px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.icon {
+  width: 150px;      /* Increase width */
+  height: max-content;      /* Maintain aspect ratio */
+  color: #ffffff;
+  height: 106px;    /* Light text for contrast (not relevant for image, but okay if used for emojis) */
+}
+
+
+.title {
+  color: #ffc107; /* Bright accent for visibility */
+  font-size: 2rem;
+  font-weight: bold;
+  margin-left: 10px;
+}
+
+.create-button {
+  background-color: #007bff;
+  color: white;
+  font-size: 1rem;
+  padding: 10px 20px;
+  margin-top: 20px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.join-section {
+  margin-top: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+}
+
+.meeting-input {
+  padding: 10px;
+  width: 250px;
+  font-size: 1rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  background-color: white;
+}
+
+.join-button {
+  background-color: #28a745;
+  color: white;
+  font-size: 1rem;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+
