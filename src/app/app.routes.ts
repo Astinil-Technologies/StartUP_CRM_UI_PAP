@@ -189,6 +189,7 @@ export const routes: Routes = [
       )
   },
 
+// Standalone Lazy-Loaded Chat  
   // Fallback
   { path: '**', redirectTo: '/login' }
 ];
