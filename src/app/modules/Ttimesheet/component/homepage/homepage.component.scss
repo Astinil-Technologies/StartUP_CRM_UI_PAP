@@ -30,9 +30,20 @@
     height: 120px;
     background-color: #ccc;
     border-radius: 50%;
+    overflow: hidden; /* Ensures the image stays inside the circle */
     margin: 0 auto 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
   
+  .profile-pic img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Ensures the image fills the circle without distortion */
+  }
+  
+
   h3 {
     font-size: 20px;
     margin: 10px 0;

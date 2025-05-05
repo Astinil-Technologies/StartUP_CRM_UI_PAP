@@ -2,7 +2,7 @@
 <div class="card-container" *ngIf="userData && !isLoading">
     <div class="user-card">
       <div class="profile-pic">
-        <img [src]="userData.profilePicUrl" alt="Profile Picture" />
+        <img [src]="'data:image/png;base64,' + userData.profileImage" alt="Profile Picture" />
       </div>
       <h3>{{ userData.id }} - <b>{{ userData.firstName }} {{ userData.lastName }}</b></h3>
       <p>{{ userData.bio }}</p>
