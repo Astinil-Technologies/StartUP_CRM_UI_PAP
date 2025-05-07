@@ -63,6 +63,10 @@ import { ChatComponent } from './modules/video-meet/components/chat/chat.compone
 import { ScheduleMeetingDialogComponent } from './modules/video-meet/components/schedule-meeting-dialog/schedule-meeting-dialog.component';
 import { HomeComponent as VideoMeetHomeComponent } from './modules/video-meet/components/home/home.component';
 
+// Reminder Management
+import { ReminderListComponent } from './reminders/reminder-list/reminder-list.component';
+import { ReminderFormComponent } from './reminders/reminder-form/reminder-form.component';
+
 export const routes: Routes = [
   { path: '', redirectTo: '/login-main', pathMatch: 'full' },
 
@@ -86,13 +90,15 @@ export const routes: Routes = [
       { path: 'dashboard', component: HomeSectionComponent },
       { path: 'navbar', component: NavbarComponent },
 
+      // Timesheet
       {
         path: 'timesheet',
         component: TimesheetNavbarComponent,
         canActivate: [authGuard],
         children: [{ path: '', component: HomepageComponent }]
       },
-      
+
+      // Video Meeting
       {
         path: 'meet',
         component: VideoMeetHomeComponent,
@@ -103,30 +109,34 @@ export const routes: Routes = [
           { path: 'schedule', component: ScheduleMeetingDialogComponent }
         ]
       },
+
+      // Ticketing
       {
         path:'ticket',
-         component:SideNavbarComponent,
-         canActivate: [authGuard],
-         children:[
+        component:SideNavbarComponent,
+        canActivate: [authGuard],
+        children:[
           {path:'',component:RaiseTicketComponent},
           {path:'myticket', component:MyticketComponent},
           {path:'update-ticket/:id', component:UpdateTicketComponent},
-         ]
-        },
-        {
-          path:'mytask',
-          component:MyTaskNavbarComponent,
-          canActivate: [authGuard],
-          children:[
-           {path:'',component:OverViewComponent},
-           {path:'task-today', component:TodayOverdueComponent},
-           {path:'task-assigned', component:TaskAssignedComponent},
-          ]
-         },
+        ]
+      },
 
+      // My Task
+      {
+        path:'mytask',
+        component:MyTaskNavbarComponent,
+        canActivate: [authGuard],
+        children:[
+          {path:'',component:OverViewComponent},
+          {path:'task-today', component:TodayOverdueComponent},
+          {path:'task-assigned', component:TaskAssignedComponent},
+        ]
+      },
+
+      // Courses & Learning
       { path: 'courses', component: CourseEnrollmentComponent },
       { path: 'courses/:id', component: CourseContentComponent },
-
       {
         path: 'my-learning',
         component: MyLearningComponent,
@@ -139,8 +149,17 @@ export const routes: Routes = [
           { path: 'learning-tools', component: StudentsLearningToolsComponent }
         ]
       },
+      { path: 'messages', component: MessagesComponent },
 
-      { path: 'messages', component: MessagesComponent }
+      // Reminder Management
+      {
+        path: 'reminders',
+        children: [
+          { path: '', loadComponent: () => import('./reminders/reminder-list/reminder-list.component').then(m => m.ReminderListComponent) },
+          { path: 'new', loadComponent: () => import('./reminders/reminder-form/reminder-form.component').then(m => m.ReminderFormComponent) },
+          { path: ':id/edit', loadComponent: () => import('./reminders/reminder-form/reminder-form.component').then(m => m.ReminderFormComponent) }
+        ]
+      }
     ]
   },
 
@@ -189,7 +208,6 @@ export const routes: Routes = [
       )
   },
 
-// Standalone Lazy-Loaded Chat  
   // Fallback
   { path: '**', redirectTo: '/login' }
 ];
