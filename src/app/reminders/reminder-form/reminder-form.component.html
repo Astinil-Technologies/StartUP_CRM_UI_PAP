@@ -1,0 +1,44 @@
+<div class="center-container" [align]="'center'">
+  <mat-card class="reminder-card">
+    <mat-card-title class="card-title">{{ isEdit ? 'Update Reminder' : 'New Reminder' }}</mat-card-title>
+    <mat-card-content>
+      <form (ngSubmit)="save()" #reminderForm="ngForm" class="reminder-form">
+
+        <!-- Title -->
+        <mat-form-field appearance="fill" class="full-width">
+          <mat-label>Title</mat-label>
+          <input matInput [(ngModel)]="reminder.title" name="title" required />
+        </mat-form-field>
+
+        <!-- Due Date -->
+        <mat-form-field appearance="fill" class="full-width">
+          <mat-label>Due Date</mat-label>
+          <input matInput [matDatepicker]="picker" [(ngModel)]="dueDate" name="dueDate" required [min]="minDate" />
+          <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+          <mat-datepicker #picker></mat-datepicker>
+        </mat-form-field>
+
+        <!-- Due Time -->
+        <mat-form-field appearance="fill" class="full-width">
+          <mat-label>Due Time</mat-label>
+          <input matInput type="time" [(ngModel)]="dueTime" name="dueTime" required />
+        </mat-form-field>
+
+        <!-- Notify Before -->
+        <mat-form-field appearance="fill" class="full-width">
+          <mat-label>Notify Before</mat-label>
+          <mat-select [(ngModel)]="reminder.notifyBeforeMinutes" name="notifyBeforeMinutes" required>
+            <mat-option [value]="5">5 minutes</mat-option>
+            <mat-option [value]="10">10 minutes</mat-option>
+            <mat-option [value]="30">30 minutes</mat-option>
+            <mat-option [value]="60">60 minutes</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <button mat-raised-button color="primary" type="submit" [disabled]="reminderForm.invalid">
+          {{ isEdit ? 'Update' : 'Create' }}
+        </button>
+      </form>
+    </mat-card-content>
+  </mat-card>
+</div>
