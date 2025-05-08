@@ -5,21 +5,27 @@ import { Reminder } from '../models/reminder.model';
 @Injectable({ providedIn: 'root' })
 export class ReminderNotifierService {
   private notifiedIds = new Set<number>();
-  private beep = new Audio('assets/success-roll-up-achieve-SBA-300419883.mp3');
+  private beep: HTMLAudioElement;
 
-  constructor(private reminderService: ReminderService) {}
+  constructor(private reminderService: ReminderService) {
+    this.beep = new Audio('assets/success-roll-up-achieve-SBA-300419883.mp3');
+    this.beep.preload = 'auto';  
+  }
 
   initReminderPolling(): void {
     if ('Notification' in window) {
-      Notification.requestPermission(); // Ask permission
+      document.body.addEventListener('click', () => {
+        Notification.requestPermission().then(permission => {
+          console.log('Notification permission:', permission);
+        });
+      }, { once: true });
     }
 
-    setInterval(() => this.checkReminders(), 5000); // Check every 30s
+    setInterval(() => this.checkReminders(), 5000);
   }
 
   private checkReminders(): void {
     const now = new Date();
-
     this.reminderService.getReminders().subscribe(reminders => {
       for (const r of reminders) {
         const due = new Date(r.dueDateTime);
@@ -41,10 +47,8 @@ export class ReminderNotifierService {
     if (Notification.permission === 'granted') {
       new Notification('Reminder', {
         body: reminder.title,
-        icon: 'assets/reminder-icon.png' // Optional icon
       });
     }
-
     this.beep.play().catch(err => console.warn('Beep error:', err));
   }
 }

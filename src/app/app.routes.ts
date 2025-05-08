@@ -62,8 +62,6 @@ import VideoCallComponent from './modules/video-meet/components/video-call/video
 import { ChatComponent } from './modules/video-meet/components/chat/chat.component';
 import { ScheduleMeetingDialogComponent } from './modules/video-meet/components/schedule-meeting-dialog/schedule-meeting-dialog.component';
 import { HomeComponent as VideoMeetHomeComponent } from './modules/video-meet/components/home/home.component';
-
-// Reminder Management
 import { ReminderListComponent } from './reminders/reminder-list/reminder-list.component';
 import { ReminderFormComponent } from './reminders/reminder-form/reminder-form.component';
 
@@ -90,7 +88,6 @@ export const routes: Routes = [
       { path: 'dashboard', component: HomeSectionComponent },
       { path: 'navbar', component: NavbarComponent },
 
-      // Timesheet
       {
         path: 'timesheet',
         component: TimesheetNavbarComponent,
@@ -98,7 +95,6 @@ export const routes: Routes = [
         children: [{ path: '', component: HomepageComponent }]
       },
 
-      // Video Meeting
       {
         path: 'meet',
         component: VideoMeetHomeComponent,
@@ -109,8 +105,6 @@ export const routes: Routes = [
           { path: 'schedule', component: ScheduleMeetingDialogComponent }
         ]
       },
-
-      // Ticketing
       {
         path:'ticket',
         component:SideNavbarComponent,
@@ -121,8 +115,6 @@ export const routes: Routes = [
           {path:'update-ticket/:id', component:UpdateTicketComponent},
         ]
       },
-
-      // My Task
       {
         path:'mytask',
         component:MyTaskNavbarComponent,
@@ -134,9 +126,9 @@ export const routes: Routes = [
         ]
       },
 
-      // Courses & Learning
       { path: 'courses', component: CourseEnrollmentComponent },
       { path: 'courses/:id', component: CourseContentComponent },
+
       {
         path: 'my-learning',
         component: MyLearningComponent,
@@ -149,9 +141,9 @@ export const routes: Routes = [
           { path: 'learning-tools', component: StudentsLearningToolsComponent }
         ]
       },
+
       { path: 'messages', component: MessagesComponent },
 
-      // Reminder Management
       {
         path: 'reminders',
         children: [
