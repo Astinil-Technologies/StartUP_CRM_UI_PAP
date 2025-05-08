@@ -57,7 +57,6 @@ export class ReminderFormComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    // Set minimum date to today and minimum time to now + 5 minutes
     const now = new Date();
     now.setMinutes(now.getMinutes() + 5);
 
@@ -103,7 +102,7 @@ export class ReminderFormComponent implements OnInit {
       0
     );
 
-    // Remove timezone offset to preserve exact local time
+  
     this.reminder.dueDateTime = new Date(combinedDateTime.getTime() - combinedDateTime.getTimezoneOffset() * 60000);
 
     const saveObservable = this.isEdit
