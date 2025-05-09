@@ -5,6 +5,7 @@ import { MatIconModule } from '@angular/material/icon';
 import {  RouterModule } from '@angular/router';
 import { environment } from 'src/environments/environment';
 import { AuthService } from 'src/app/core/services/authservice/auth.service';
+import { UserService } from 'src/app/core/services/userservice/user.service';
 
 
 
@@ -32,7 +33,7 @@ export class SidebarComponentComponent implements OnInit{
   isProfileBoxVisible: boolean = false;
   isLoading: boolean = true;
 
-  constructor(private authService: AuthService, private http: HttpClient) {}
+  constructor(private authService: AuthService, private http: HttpClient, private userService: UserService) {}
 
   ngOnInit() {
     this.userId = this.authService.getId();
@@ -65,24 +66,14 @@ export class SidebarComponentComponent implements OnInit{
   }
 
   // Load Profile Data
-  loadUserProfile() {
-    const url = `${this.baseUrl}/api/v1/users/profile`;
-    const token = this.authService.getAccessToken();
-    console.log(token);
 
-    if (!token) {
-      console.error('Token not available. User not authenticated.');
-      return;
-    }
-
-    const headers = new HttpHeaders({
-      Authorization: `Bearer ${token}`,
-    });
-
-    this.http.get<any>(url, { headers }).subscribe(
-      (response) => {
-        console.log(response);
-        this.userData = response;
+     loadUserProfile() {
+    this.userService.getUserProfile().subscribe(
+      (data) => {
+        if (data) {
+          console.log(data);
+          this.userData = data;
+        }
         this.isLoading = false;
       },
       (error) => {
@@ -91,6 +82,7 @@ export class SidebarComponentComponent implements OnInit{
       }
     );
   }
+
 
   // Toggle Profile Box Visibility
   toggleProfileBox() {

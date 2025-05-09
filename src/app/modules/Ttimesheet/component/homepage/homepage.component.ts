@@ -37,35 +37,7 @@ export class HomepageComponent implements OnInit {
   }
 
 
-  // Fetch User Details from API
-//  loadUserProfile() {
-//     const url = `${this.baseUrl}/api/v1/users/profile`;
-//     const token = this.authService.getAccessToken();
-//     console.log(token);
-
-//     if (!token) {
-//       console.error('Token not available. User not authenticated.');
-//       return;
-//     }
-
-//     const headers = new HttpHeaders({
-//       Authorization: `Bearer ${token}`,
-//     });
-
-//     this.http.get<any>(url, { headers }).subscribe(
-//       (response) => {
-//         console.log(response);
-//         this.userData = response;
-//         this.isLoading = false;
-//       },
-//       (error) => {
-//         console.error('Error loading profile data', error);
-//         this.isLoading = false;
-//       }
-//     );
-//   }
-
-
+  // Fetch Profile Details from API
    loadUserProfile() {
     this.userService.getUserProfile().subscribe(
       (data) => {
