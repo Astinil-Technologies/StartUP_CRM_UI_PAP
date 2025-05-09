@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { ReminderService } from './reminder.service';
-import { Reminder } from '../models/reminder.model';
+import { Reminder } from '../../models/reminder.model';
 
 @Injectable({ providedIn: 'root' })
 export class ReminderNotifierService {

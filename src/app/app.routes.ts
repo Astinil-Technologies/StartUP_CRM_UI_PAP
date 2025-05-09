@@ -62,8 +62,8 @@ import VideoCallComponent from './modules/video-meet/components/video-call/video
 import { ChatComponent } from './modules/video-meet/components/chat/chat.component';
 import { ScheduleMeetingDialogComponent } from './modules/video-meet/components/schedule-meeting-dialog/schedule-meeting-dialog.component';
 import { HomeComponent as VideoMeetHomeComponent } from './modules/video-meet/components/home/home.component';
-import { ReminderListComponent } from './reminders/reminder-list/reminder-list.component';
-import { ReminderFormComponent } from './reminders/reminder-form/reminder-form.component';
+import { ReminderListComponent } from './modules/reminders/reminder-list/reminder-list.component';
+import { ReminderFormComponent } from './modules/reminders/reminder-form/reminder-form.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: '/login-main', pathMatch: 'full' },
@@ -147,9 +147,9 @@ export const routes: Routes = [
       {
         path: 'reminders',
         children: [
-          { path: '', loadComponent: () => import('./reminders/reminder-list/reminder-list.component').then(m => m.ReminderListComponent) },
-          { path: 'new', loadComponent: () => import('./reminders/reminder-form/reminder-form.component').then(m => m.ReminderFormComponent) },
-          { path: ':id/edit', loadComponent: () => import('./reminders/reminder-form/reminder-form.component').then(m => m.ReminderFormComponent) }
+          { path: '', loadComponent: () => import('./modules/reminders/reminder-list/reminder-list.component').then(m => m.ReminderListComponent) },
+          { path: 'new', loadComponent: () => import('./modules/reminders/reminder-form/reminder-form.component').then(m => m.ReminderFormComponent) },
+          { path: ':id/edit', loadComponent: () => import('./modules/reminders/reminder-form/reminder-form.component').then(m => m.ReminderFormComponent) }
         ]
       }
     ]
