@@ -7,7 +7,7 @@ import { MatIconModule } from '@angular/material/icon'; // For icons in the tool
 import { FooterSectionComponent } from '../footer-section/footer-section.component';
 import { NavbarComponent } from '../navbar/navbar.component';
 import { SidebarComponentComponent } from 'src/app/modules/student/components/sidebar-component/sidebar-component.component';
-import { ReminderNotifierService } from 'src/app/reminders/reminder-notifier.service';
+import { ReminderNotifierService } from 'src/app/modules/reminders/reminder-notifier.service';
 @Component({
   selector: 'app-layout',
   standalone: true,
