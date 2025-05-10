@@ -1,7 +1,7 @@
 <div class="main-dashboard-container">
   <div class="dashboard-container" [class.open]="isSidebarOpen">
     <div class="header">
-      <div *ngIf="firstName && lastName;" class="user-name">
+      <div *ngIf="firstName && lastName" class="user-name">
         {{ firstName }} {{ lastName }}
       </div>
       <div class="toggole-icon-close">
@@ -25,6 +25,21 @@
         <li>
           <a routerLink="/home" routerLinkActive="active">Bio: {{ userData?.bio || 'No bio available' }}</a>
         </li>
+
+        <!-- //Rakesh -->
+ <!-- Status Dropdown -->
+  <li>
+    <a >
+<div class="status-dropdown" *ngIf="!isLoading">
+  <label for="status">Status:</label>
+  <select id="status" [(ngModel)]="userData.status" (change)="onStatusChange()" class="status-select">
+    <option *ngFor="let option of statusOptions" [value]="option">{{ option }}</option>
+  </select>
+</div>
+</a>
+</li>
+        
+        <!-- //Rakesh -->
 
         <li>
           <a routerLink="/home" routerLinkActive="active">CreatedAt: {{ userData?.createdAt }}</a>
