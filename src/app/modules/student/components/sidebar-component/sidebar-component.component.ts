@@ -32,7 +32,7 @@ export class SidebarComponentComponent implements OnInit{
   
 
     // ✅ Define status options rakesh
-  statusOptions: string[] = ['Online', 'Offline', 'In Meeting'];
+statusOptions: string[] = ['ONLINE', 'OFFLINE', 'IN_MEETING'];
 
   // Profile Variables
   userData: any = null;
@@ -106,10 +106,35 @@ export class SidebarComponentComponent implements OnInit{
     );
   }
   // rakesh
+  // onStatusChange() {
+  //   console.log('User changed status to:', this.userData.status);
+  //   this.authService.setUserStatus(this.userData.status); // Add this line
+  // }
+
   onStatusChange() {
-    console.log('User changed status to:', this.userData.status);
-    this.authService.setUserStatus(this.userData.status); // Add this line
-  }
+  console.log('User changed status to:', this.userData.status);
+  this.authService.setUserStatus(this.userData.status); // Optional local storage use
+
+  const url = `${this.baseUrl}/api/v1/users/status`;
+  const token = this.authService.getAccessToken();
+
+  const headers = new HttpHeaders({
+    Authorization: `Bearer ${token}`, // Notice the space after Bearer
+    'Content-Type': 'application/json',
+  });
+
+  const body = { status: this.userData.status };
+
+  this.http.put(url, body, { headers }).subscribe(
+    (response) => {
+      console.log('Status updated successfully:', response);
+    },
+    (error) => {
+      console.error('Error updating status:', error);
+    }
+  );
+}
+
 
   // Toggle Profile Box Visibility
   toggleProfileBox() {

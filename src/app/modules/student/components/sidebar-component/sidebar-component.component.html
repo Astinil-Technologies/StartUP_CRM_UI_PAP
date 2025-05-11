@@ -33,7 +33,7 @@
 <div class="status-dropdown" *ngIf="!isLoading">
   <label for="status">Status:</label>
   <select id="status" [(ngModel)]="userData.status" (change)="onStatusChange()" class="status-select">
-    <option *ngFor="let option of statusOptions" [value]="option">{{ option }}</option>
+    <option *ngFor="let option of statusOptions" [value]="option"> {{ option.replace('_', ' ') | titlecase }}</option>
   </select>
 </div>
 </a>
