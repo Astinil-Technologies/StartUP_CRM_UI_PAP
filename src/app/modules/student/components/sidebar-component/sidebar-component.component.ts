@@ -5,7 +5,7 @@ import { MatIconModule } from '@angular/material/icon';
 import {  RouterModule } from '@angular/router';
 import { environment } from 'src/environments/environment';
 import { AuthService } from 'src/app/core/services/authservice/auth.service';
-import { UserService } from 'src/app/core/services/userservice/user.service
+import { UserService } from 'src/app/core/services/userservice/user.service';
 import { FormsModule } from '@angular/forms';
 
 
