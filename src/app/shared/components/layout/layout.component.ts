@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component ,OnInit} from '@angular/core';
 import { RouterModule } from '@angular/router'; // To enable the router outlet
 import { MatSidenavModule } from '@angular/material/sidenav'; // For the layout structure
 import { MatToolbarModule } from '@angular/material/toolbar'; // For the header toolbar
@@ -7,7 +7,7 @@ import { MatIconModule } from '@angular/material/icon'; // For icons in the tool
 import { FooterSectionComponent } from '../footer-section/footer-section.component';
 import { NavbarComponent } from '../navbar/navbar.component';
 import { SidebarComponentComponent } from 'src/app/modules/student/components/sidebar-component/sidebar-component.component';
-
+import { ReminderNotifierService } from 'src/app/modules/reminders/reminder-notifier.service';
 @Component({
   selector: 'app-layout',
   standalone: true,
@@ -25,8 +25,12 @@ import { SidebarComponentComponent } from 'src/app/modules/student/components/si
   templateUrl: './layout.component.html',
   styleUrls: ['./layout.component.scss'] 
 })
-export class LayoutComponent {
+export class LayoutComponent implements OnInit {
   isSidebarOpen = false;
+  constructor(private reminderNotifier: ReminderNotifierService) {}
+  ngOnInit(): void {
+    this.reminderNotifier.initReminderPolling();
+  }
   toggleSidebar(){
     this.isSidebarOpen = !this.isSidebarOpen;
   }

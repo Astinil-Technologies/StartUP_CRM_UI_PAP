@@ -1,0 +1,23 @@
+<div class="reminder-list">
+  <div class="header">
+    <h2>Reminders</h2>
+    <button mat-raised-button color="primary" [routerLink]="['/layout/reminders/new']">+ Create New Reminder</button>
+  </div>
+
+  <div class="reminder-grid">
+    <mat-card class="reminder-card" *ngFor="let reminder of reminders">
+      <mat-card-title>{{ reminder.title }}</mat-card-title>
+      <mat-card-content>
+        <p><strong>Due:</strong> {{ reminder.dueDateTime | date: 'MMM d, y, h:mm a' }}</p>
+        <p><strong>Notify Before:</strong> {{ reminder.notifyBeforeMinutes }} minutes</p>
+        <p *ngIf="reminder.attachmentPath">
+          <a [href]="reminder.attachmentPath" target="_blank">📎 Download Attachment</a>
+        </p>
+      </mat-card-content>
+      <mat-card-actions>
+        <button mat-stroked-button color="accent" (click)="editReminder(reminder.id!)">Modify</button>
+        <button mat-stroked-button color="warn" (click)="deleteReminder(reminder.id!)">Delete</button>
+      </mat-card-actions>
+    </mat-card>
+  </div>
+</div>

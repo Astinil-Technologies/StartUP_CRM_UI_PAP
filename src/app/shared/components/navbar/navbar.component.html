@@ -33,6 +33,9 @@
       <li class="nav-item">
         <a class="nav-link font-weight-bold" routerLink="mytask/">My Task</a>
       </li>
+      <li class="nav-item">
+        <a class="nav-link" routerLink="/layout/reminders">Reminder</a>
+      </li>
 
       <!-- Dropdown properly aligned -->
       <li class="nav-item dropdown">
@@ -75,8 +78,20 @@
         <a class="nav-link" routerLink="/layout/my-learning">Tab</a>
       </li>
       <li class="nav-item" (click)="onCartIconClick()">
-        <div *ngIf="firstNameInitial && lastNameInitial" class="d-flex gap-2">
-          <p class="Name_logo mb-0">{{ firstNameInitial }}{{ lastNameInitial }}</p>
+        <div *ngIf="firstNameInitial && lastNameInitial" class="d-flex gap-2 align-items-center" >
+         
+           <div class="Name_logo position-relative">
+      {{ firstNameInitial }}{{ lastNameInitial }}
+      <span 
+        class="status-dot" 
+        [ngClass]="{
+          'online': status === 'ONLINE',
+          'offline': status === 'OFFLINE',
+          'inmeeting': status === 'IN MEETING'
+        }">
+      </span>
+    </div>
+          <!-- Rakesh -->
         </div>
       </li>
     </ul>
