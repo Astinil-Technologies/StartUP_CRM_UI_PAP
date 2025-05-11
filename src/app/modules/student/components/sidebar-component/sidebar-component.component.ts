@@ -5,6 +5,7 @@ import { MatIconModule } from '@angular/material/icon';
 import {  RouterModule } from '@angular/router';
 import { environment } from 'src/environments/environment';
 import { AuthService } from 'src/app/core/services/authservice/auth.service';
+import { FormsModule } from '@angular/forms';
 
 
 
@@ -15,7 +16,8 @@ import { AuthService } from 'src/app/core/services/authservice/auth.service';
   standalone: true,
   imports: [MatIconModule, 
     CommonModule,
-    RouterModule],
+    RouterModule,
+    FormsModule],
   templateUrl: './sidebar-component.component.html',
   styleUrl: './sidebar-component.component.scss',
 })
@@ -26,6 +28,11 @@ export class SidebarComponentComponent implements OnInit{
   firstName: string | null = null;
   lastName: string | null = null;
   @Input() isSidebarOpen = false;
+
+  
+
+    // ✅ Define status options rakesh
+statusOptions: string[] = ['ONLINE', 'OFFLINE', 'IN_MEETING'];
 
   // Profile Variables
   userData: any = null;
@@ -64,6 +71,7 @@ export class SidebarComponentComponent implements OnInit{
     );
   }
 
+  
   // Load Profile Data
   loadUserProfile() {
     const url = `${this.baseUrl}/api/v1/users/profile`;
@@ -76,12 +84,18 @@ export class SidebarComponentComponent implements OnInit{
     }
 
     const headers = new HttpHeaders({
-      Authorization: `Bearer ${token}`,
+      Authorization: `Bearer${token}`,
     });
 
     this.http.get<any>(url, { headers }).subscribe(
       (response) => {
         console.log(response);
+        // Ensure status is set (fallback to 'Online' if not present) rakesh
+        this.userData = {
+          ...response,
+          status: response.status || 'Online'
+        };
+
         this.userData = response;
         this.isLoading = false;
       },
@@ -91,6 +105,36 @@ export class SidebarComponentComponent implements OnInit{
       }
     );
   }
+  // rakesh
+  // onStatusChange() {
+  //   console.log('User changed status to:', this.userData.status);
+  //   this.authService.setUserStatus(this.userData.status); // Add this line
+  // }
+
+  onStatusChange() {
+  console.log('User changed status to:', this.userData.status);
+  this.authService.setUserStatus(this.userData.status); // Optional local storage use
+
+  const url = `${this.baseUrl}/api/v1/users/status`;
+  const token = this.authService.getAccessToken();
+
+  const headers = new HttpHeaders({
+    Authorization: `Bearer ${token}`, // Notice the space after Bearer
+    'Content-Type': 'application/json',
+  });
+
+  const body = { status: this.userData.status };
+
+  this.http.put(url, body, { headers }).subscribe(
+    (response) => {
+      console.log('Status updated successfully:', response);
+    },
+    (error) => {
+      console.error('Error updating status:', error);
+    }
+  );
+}
+
 
   // Toggle Profile Box Visibility
   toggleProfileBox() {
