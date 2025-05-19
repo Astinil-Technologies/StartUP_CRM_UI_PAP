@@ -8,9 +8,6 @@ import { Router } from '@angular/router';
 import { TokenService } from '../tokenservice/token.service';
 import { jwtDecode } from 'jwt-decode';
 
-import { BehaviorSubject } from 'rxjs';// Rakesh
-
-
 @Injectable({
   providedIn: 'root',
 })
@@ -198,14 +195,4 @@ export class AuthService {
       catchError(this.handleError)
     );
   }
-
-  // Add this to handle status updates
-private userStatusSubject = new BehaviorSubject<string>('ONLINE');
-userStatus$ = this.userStatusSubject.asObservable();
-
-setUserStatus(status: string): void {
-  this.userStatusSubject.next(status);
-}
-
-
 }
