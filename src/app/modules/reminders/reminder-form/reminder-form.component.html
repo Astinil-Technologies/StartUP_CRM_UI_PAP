@@ -34,7 +34,20 @@
             <mat-option [value]="60">60 minutes</mat-option>
           </mat-select>
         </mat-form-field>
-
+          <!-- Attachment Upload -->
+      <div class="attachment-section">
+         <label for="fileInput">Attachment (PDF, PNG, JPG, DOCX):</label>
+          <input
+          id="fileInput"
+          type="file"
+          (change)="onFileSelected($event)"
+          accept=".pdf,.png,.jpg,.jpeg,.docx"
+          />
+       <div *ngIf="selectedFileName">{{ selectedFileName }}</div>
+       <button *ngIf="reminder.attachmentPath" mat-button color="warn" (click)="removeAttachment()">
+         Remove File
+        </button>
+       </div>
         <button mat-raised-button color="primary" type="submit" [disabled]="reminderForm.invalid">
           {{ isEdit ? 'Update' : 'Create' }}
         </button>
