@@ -8,6 +8,7 @@ import { environment } from 'src/environments/environment';
 })
 export class ReminderService {
   private apiUrl = environment.baseUrl + '/api/reminders';
+  private attachmentUrl = environment.baseUrl + '/api/attachments';
 
   constructor(private http: HttpClient) {}
 
@@ -25,5 +26,10 @@ export class ReminderService {
 
   deleteReminder(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
+  }
+  uploadAttachment(file: File): Observable<string> {
+    const formData = new FormData();
+    formData.append('file', file);
+    return this.http.post(this.attachmentUrl, formData, { responseType: 'text' });
   }
 }

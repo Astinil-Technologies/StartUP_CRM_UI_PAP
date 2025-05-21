@@ -15,6 +15,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { ConfirmationDialogComponent } from 'src/app/shared/confirmation-dialog/confirmation-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
 import { MatCardModule } from '@angular/material/card';
+import {Observable } from 'rxjs';
 @Component({
   selector: 'app-reminder-form',
   standalone: true,
@@ -38,7 +39,9 @@ export class ReminderFormComponent implements OnInit {
     dueDateTime: new Date(),
     notifyBeforeMinutes: 10
   };
-
+  selectedFile: File | null = null;
+  selectedFileName: string | null = null;
+  attachmentPath: string | undefined = undefined;
   dueDate!: Date;
   dueTime!: string;
 
@@ -88,6 +91,19 @@ export class ReminderFormComponent implements OnInit {
       });
     }
   }
+   onFileSelected(event: any): void {
+    const input = event.target as HTMLInputElement;
+  const file = input?.files?.[0];
+
+  if (file) {
+    this.reminderService.uploadAttachment(file).subscribe((path: string) => {
+      this.reminder.attachmentPath = path;
+      this.selectedFileName = file.name; // Display the file name
+    }, (error) => {
+      console.error('Error uploading file', error);
+    });
+  }
+}
 
   save(): void {
     if (!this.dueDate || !this.dueTime) return;
@@ -117,6 +133,36 @@ export class ReminderFormComponent implements OnInit {
       dialogRef.afterClosed().subscribe(() => {
         this.router.navigate(['/layout/reminders']);
       });
+    });
+  }  
+  uploadAttachment(): void {
+    if (!this.selectedFile) return;
+
+    this.reminderService.uploadAttachment(this.selectedFile).subscribe(
+      (filePath: string) => {
+        this.reminder.attachmentPath = filePath;
+        this.showSuccessDialog();
+      },
+      error => {
+        this.snackbar.show('Error uploading attachment');
+        console.error(error);
+      }
+    );
+  }
+  removeAttachment(): void {
+  if (confirm('Are you sure you want to remove the attachment?')) {
+    this.reminder.attachmentPath = undefined; // Use undefined instead of null
+    this.selectedFile = null; // Clear the selected file
+    this.selectedFileName = null; // Clear the selected file name
+  }
+}
+  showSuccessDialog(): void {
+    const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
+      data: { message: `Reminder ${this.isEdit ? 'updated' : 'created'} successfully.` }
+    });
+
+    dialogRef.afterClosed().subscribe(() => {
+      this.router.navigate(['/layout/reminders']);
     });
   }
 }
