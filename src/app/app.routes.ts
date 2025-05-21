@@ -57,6 +57,7 @@ import { OverViewComponent } from './modules/myTask/components/over-view/over-vi
 import { TodayOverdueComponent } from './modules/myTask/components/today-overdue/today-overdue.component';
 import { TaskAssignedComponent } from './modules/myTask/components/task-assigned/task-assigned.component';
 
+
 // Video Meeting Module
 import VideoCallComponent from './modules/video-meet/components/video-call/video-call.component';
 import { ChatComponent } from './modules/video-meet/components/chat/chat.component';
@@ -64,6 +65,14 @@ import { ScheduleMeetingDialogComponent } from './modules/video-meet/components/
 import { HomeComponent as VideoMeetHomeComponent } from './modules/video-meet/components/home/home.component';
 import { ReminderListComponent } from './modules/reminders/reminder-list/reminder-list.component';
 import { ReminderFormComponent } from './modules/reminders/reminder-form/reminder-form.component';
+import { EditProfileComponent } from './modules/student/components/sidebar-component/edit-profile/edit-profile.component';
+
+
+// chatbox component
+
+// import { ChatboxComponent } from './modules/chatbox/chatbox/chatbox.component';
+
+
 
 export const routes: Routes = [
   { path: '', redirectTo: '/login-main', pathMatch: 'full' },
@@ -87,6 +96,7 @@ export const routes: Routes = [
     children: [
       { path: 'dashboard', component: HomeSectionComponent },
       { path: 'navbar', component: NavbarComponent },
+      { path: 'edit-profile', component: EditProfileComponent},
 
       {
         path: 'timesheet',
@@ -199,6 +209,10 @@ export const routes: Routes = [
         (m) => m.default
       )
   },
+ //chatbox
+  // { path: '', component: ChatboxComponent },
+  
+
 
   // Fallback
   { path: '**', redirectTo: '/login' }

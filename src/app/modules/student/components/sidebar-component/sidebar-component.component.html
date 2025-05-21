@@ -1,54 +1,47 @@
 <div class="main-dashboard-container">
   <div class="dashboard-container" [class.open]="isSidebarOpen">
-    <div class="header">
-      <div *ngIf="firstName && lastName" class="user-name">
-        {{ firstName }} {{ lastName }}
+    <div class="header d-flex flex-column">
+      <div class="d-flex justify-content-center gap-5 align-items-center">
+        <div *ngIf="firstName && lastName;" class="user-name">
+          {{ firstName }} {{ lastName }}
+        </div>
+        <div class="toggole-icon-close">
+          <div class="toggole-icon-close">
+            <a routerLink="edit-profile"><img
+                src="https://thumbs.dreamstime.com/b/environment-earth-day-hands-trees-growing-seedlings-bokeh-green-background-female-hand-holding-tree-nature-field-gra-130247647.jpg"
+                alt="Profile Image"></a>
+          </div>
+        </div>
       </div>
-      <div class="toggole-icon-close">
-        <img src="https://thumbs.dreamstime.com/b/environment-earth-day-hands-trees-growing-seedlings-bokeh-green-background-female-hand-holding-tree-nature-field-gra-130247647.jpg" alt="Profile Image">
+
+      <div class="sidebar">
+        <ul class="nav-items">
+
+          <li>
+            <a routerLink="/home" routerLinkActive="active">Email: {{ userData?.email }}</a>
+          </li>
+          <li>
+            <a routerLink="/home" routerLinkActive="active">Mobile Number: {{ userData?.mobile_no }}</a>
+          </li>
+          <li>
+            <a routerLink="/home" routerLinkActive="active">Location: {{ userData?.location || 'N/A' }}</a>
+          </li>
+
+          <li>
+            <a routerLink="/home" routerLinkActive="active">Bio: {{ userData?.bio || 'No bio available' }}</a>
+          </li>
+
+          <li>
+            <a routerLink="/home" routerLinkActive="active">CreatedAt: {{ userData?.createdAt }}</a>
+          </li>
+        </ul>
+
       </div>
     </div>
-    
-    <div class="sidebar">
-      <ul class="nav-items">
-       
-        <li>
-          <a routerLink="/home" routerLinkActive="active">Email: {{ userData?.email }}</a>
-        </li>
-        <li>
-          <a routerLink="/home" routerLinkActive="active">Mobile Number: {{ userData?.mobile_no }}</a>
-        </li>
-        <li>
-          <a routerLink="/home" routerLinkActive="active">Location: {{ userData?.location || 'N/A' }}</a>
-        </li>
-
-        <li>
-          <a routerLink="/home" routerLinkActive="active">Bio: {{ userData?.bio || 'No bio available' }}</a>
-        </li>
-
-        <!-- //Rakesh -->
- <!-- Status Dropdown -->
-  <li>
-    <a >
-<div class="status-dropdown" *ngIf="!isLoading">
-  <label for="status">Status:</label>
-  <select id="status" [(ngModel)]="userData.status" (change)="onStatusChange()" class="status-select">
-    <option *ngFor="let option of statusOptions" [value]="option"> {{ option.replace('_', ' ') | titlecase }}</option>
-  </select>
+  </div>
 </div>
-</a>
-</li>
-        
-        <!-- //Rakesh -->
 
-        <li>
-          <a routerLink="/home" routerLinkActive="active">CreatedAt: {{ userData?.createdAt }}</a>
-        </li>
-      </ul>
-
-    </div>
-
-       <!-- <div>
+<!-- <div>
         <ul class="nav-items">
         <li>
           <mat-icon>notifications_active</mat-icon>
@@ -84,5 +77,3 @@
     </div>
     <button class="logout-btn" (click)="logout()">Log Out</button>
   </div>-->
-
- 

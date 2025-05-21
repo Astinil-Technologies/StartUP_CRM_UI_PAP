@@ -8,13 +8,13 @@ import { AuthService } from 'src/app/core/services/authservice/auth.service';
 import { FormsModule } from '@angular/forms';
 
 
+
 @Component({
   selector: 'app-sidebar-component',
   standalone: true,
   imports: [MatIconModule, 
     CommonModule,
-    RouterModule,
-    FormsModule],
+    RouterModule],
   templateUrl: './sidebar-component.component.html',
   styleUrl: './sidebar-component.component.scss',
 })
@@ -25,11 +25,6 @@ export class SidebarComponentComponent implements OnInit{
   firstName: string | null = null;
   lastName: string | null = null;
   @Input() isSidebarOpen = false;
-
-  
-
-    // ✅ Define status options rakesh
-statusOptions: string[] = ['ONLINE', 'OFFLINE', 'IN_MEETING'];
 
   // Profile Variables
   userData: any = null;
@@ -68,8 +63,8 @@ statusOptions: string[] = ['ONLINE', 'OFFLINE', 'IN_MEETING'];
     );
   }
 
-  
   // Load Profile Data
+
 
        loadUserProfile() {
     this.userService.getUserProfile().subscribe(
@@ -78,6 +73,16 @@ statusOptions: string[] = ['ONLINE', 'OFFLINE', 'IN_MEETING'];
           console.log(data);
           this.userData = data;
         }
+
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    });
+
+    this.http.get<any>(url, { headers }).subscribe(
+      (response) => {
+        console.log(response);
+        this.userData = response;
+
         this.isLoading = false;
       },
       (error) => {
@@ -87,11 +92,6 @@ statusOptions: string[] = ['ONLINE', 'OFFLINE', 'IN_MEETING'];
     );
   }
 
-  // rakesh
-  // onStatusChange() {
-  //   console.log('User changed status to:', this.userData.status);
-  //   this.authService.setUserStatus(this.userData.status); // Add this line
-  // }
 
   onStatusChange() {
   console.log('User changed status to:', this.userData.status);
@@ -116,8 +116,6 @@ statusOptions: string[] = ['ONLINE', 'OFFLINE', 'IN_MEETING'];
     }
   );
 }
-
-
 
   // Toggle Profile Box Visibility
   toggleProfileBox() {
