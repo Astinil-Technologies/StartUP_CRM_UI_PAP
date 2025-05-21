@@ -6,7 +6,8 @@ import {  RouterModule } from '@angular/router';
 import { environment } from 'src/environments/environment';
 import { AuthService } from 'src/app/core/services/authservice/auth.service';
 
-
+import { UserService } from 'src/app/core/services/userservice/user.service
+import { FormsModule } from '@angular/forms';
 
 
 
@@ -32,7 +33,7 @@ export class SidebarComponentComponent implements OnInit{
   isProfileBoxVisible: boolean = false;
   isLoading: boolean = true;
 
-  constructor(private authService: AuthService, private http: HttpClient) {}
+  constructor(private authService: AuthService, private http: HttpClient, private userService: UserService) {}
 
   ngOnInit() {
     this.userId = this.authService.getId();
@@ -65,15 +66,15 @@ export class SidebarComponentComponent implements OnInit{
   }
 
   // Load Profile Data
-  loadUserProfile() {
-    const url = `${this.baseUrl}/api/v1/users/profile`;
-    const token = this.authService.getAccessToken();
-    console.log(token);
 
-    if (!token) {
-      console.error('Token not available. User not authenticated.');
-      return;
-    }
+
+       loadUserProfile() {
+    this.userService.getUserProfile().subscribe(
+      (data) => {
+        if (data) {
+          console.log(data);
+          this.userData = data;
+        }
 
     const headers = new HttpHeaders({
       Authorization: `Bearer ${token}`,
@@ -83,6 +84,7 @@ export class SidebarComponentComponent implements OnInit{
       (response) => {
         console.log(response);
         this.userData = response;
+
         this.isLoading = false;
       },
       (error) => {
@@ -91,6 +93,31 @@ export class SidebarComponentComponent implements OnInit{
       }
     );
   }
+
+
+  onStatusChange() {
+  console.log('User changed status to:', this.userData.status);
+  this.authService.setUserStatus(this.userData.status); // Optional local storage use
+
+  const url = `${this.baseUrl}/api/v1/users/status`;
+  const token = this.authService.getAccessToken();
+
+  const headers = new HttpHeaders({
+    Authorization: `Bearer ${token}`, // Notice the space after Bearer
+    'Content-Type': 'application/json',
+  });
+
+  const body = { status: this.userData.status };
+
+  this.http.put(url, body, { headers }).subscribe(
+    (response) => {
+      console.log('Status updated successfully:', response);
+    },
+    (error) => {
+      console.error('Error updating status:', error);
+    }
+  );
+}
 
   // Toggle Profile Box Visibility
   toggleProfileBox() {
