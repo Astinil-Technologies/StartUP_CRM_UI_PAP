@@ -6,7 +6,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { SourceTextModule } from 'vm';
 import { environment } from 'src/environments/environment';
-
+import { Subscription } from 'rxjs';
 
 
 
@@ -29,6 +29,8 @@ export class NavbarComponent implements OnInit{
   firstNameInitial: string | null = null;
   lastNameInitial: string | null = null;
   userId: string | null = null;
+  status: string = 'ONLINE';
+  private statusSubscription!: Subscription;
 
   @Output() profileClicked = new EventEmitter<void>();
 
@@ -43,6 +45,11 @@ export class NavbarComponent implements OnInit{
     if (this.userId) {
       this.getUserDetails(this.userId);
     }
+     this.statusSubscription = this.authService.userStatus$.subscribe(
+      (status: string) => {
+        this.status = status.toUpperCase();
+      }
+    );
   }
 
   isProfileBoxVisible: boolean = false;
@@ -53,6 +60,11 @@ export class NavbarComponent implements OnInit{
   }
 
   
+  ngOnDestroy() { 
+    if (this.statusSubscription) {
+      this.statusSubscription.unsubscribe();
+    }
+  }
 
 
 
@@ -82,7 +94,7 @@ export class NavbarComponent implements OnInit{
         this.lastNameInitial = userData.lastName
           ? userData.lastName.charAt(0).toUpperCase()
           : 'N';
-
+        this.status = userData.status ? userData.status.toUpperCase() : 'N';
       
       },
       (error) => {
