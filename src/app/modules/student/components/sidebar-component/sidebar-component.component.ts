@@ -14,7 +14,8 @@ import { FormsModule } from '@angular/forms';
   standalone: true,
   imports: [MatIconModule, 
     CommonModule,
-    RouterModule],
+    RouterModule,
+  FormsModule],
   templateUrl: './sidebar-component.component.html',
   styleUrl: './sidebar-component.component.scss',
 })
@@ -26,12 +27,14 @@ export class SidebarComponentComponent implements OnInit{
   lastName: string | null = null;
   @Input() isSidebarOpen = false;
 
+  statusOptions: string[] = ['ONLINE', 'OFFLINE', 'IN_MEETING'];
+
   // Profile Variables
   userData: any = null;
   isProfileBoxVisible: boolean = false;
   isLoading: boolean = true;
 
-  constructor(private authService: AuthService, private http: HttpClient, private userService: UserService) {}
+  constructor(private authService: AuthService, private http: HttpClient) {}
 
   ngOnInit() {
     this.userId = this.authService.getId();
@@ -67,22 +70,29 @@ export class SidebarComponentComponent implements OnInit{
 
 
        loadUserProfile() {
-    this.userService.getUserProfile().subscribe(
-      (data) => {
-        if (data) {
-          console.log(data);
-          this.userData = data;
-        }
+    const url = `${this.baseUrl}/api/v1/users/profile`;
+    const token = this.authService.getAccessToken();
+    console.log(token);
+
+    if (!token) {
+      console.error('Token not available. User not authenticated.');
+      return;
+    }
 
     const headers = new HttpHeaders({
-      Authorization: `Bearer ${token}`,
+      Authorization: `Bearer${token}`,
     });
 
     this.http.get<any>(url, { headers }).subscribe(
       (response) => {
         console.log(response);
-        this.userData = response;
 
+        this.userData = {
+          ...response,
+          status: response.status || 'Online'
+        };
+
+        this.userData = response;
         this.isLoading = false;
       },
       (error) => {

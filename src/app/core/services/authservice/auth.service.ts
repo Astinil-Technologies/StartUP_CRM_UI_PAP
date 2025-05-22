@@ -7,6 +7,7 @@ import { environment } from 'src/environments/environment';
 import { Router } from '@angular/router';
 import { TokenService } from '../tokenservice/token.service';
 import { jwtDecode } from 'jwt-decode';
+import { BehaviorSubject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -21,6 +22,12 @@ export class AuthService {
     private tokenService: TokenService
   ) {}
 
+  private userStatusSubject = new BehaviorSubject<string>('ONLINE');
+	userStatus$ = this.userStatusSubject.asObservable();
+
+	setUserStatus(status: string): void {
+		this.userStatusSubject.next(status);
+	}
 
 
   postData(data: { name: string; description: string; }): Observable<any>{
