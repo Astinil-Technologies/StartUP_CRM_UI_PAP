@@ -9,21 +9,21 @@ import { Observable, BehaviorSubject, throwError } from 'rxjs';
 import { catchError, switchMap, filter, take } from 'rxjs/operators';
 import { inject } from '@angular/core';
 import { AuthService } from '../services/authservice/auth.service';
+import { TokenService } from '../services/tokenservice/token.service'; // ✅ Added
 
 export const jwtInterceptor: HttpInterceptorFn = (
   req: HttpRequest<any>,
   next: HttpHandlerFn
 ): Observable<HttpEvent<any>> => {
   const authService = inject(AuthService);
+  const tokenService = inject(TokenService); // ✅ Added
 
-  // BehaviorSubject for managing token refresh states
   const refreshTokenSubject = new BehaviorSubject<string | null>(null);
   let isRefreshing = false;
 
-  // Get the access token from the AuthService
-  const accessToken = authService.getAccessToken();
+  // ✅ Get token from cookie-based TokenService
+  const accessToken = tokenService.getAccessToken();
 
-  // Attach the Authorization header with the access token if it exists
   if (accessToken) {
     req = req.clone({
       setHeaders: {
@@ -36,7 +36,6 @@ export const jwtInterceptor: HttpInterceptorFn = (
     catchError((error: HttpErrorResponse) => {
       if (error.status === 401 && authService.hasRefreshToken()) {
         if (!isRefreshing) {
-          // Start the token refresh process
           isRefreshing = true;
           refreshTokenSubject.next(null);
 
@@ -44,21 +43,24 @@ export const jwtInterceptor: HttpInterceptorFn = (
             switchMap((response: any) => {
               isRefreshing = false;
               const newToken = response?.accessToken;
-              if (newToken) {
-                localStorage.setItem('accessToken', newToken);
-              refreshTokenSubject.next(newToken);
 
-              // Retry the failed request with the new token
-              const clonedRequest = req.clone({
-                setHeaders: {
-                  Authorization: `Bearer ${newToken}`,
-                },
-              });
-              return next(clonedRequest);
-            } else {
-              authService.logout();
-              return throwError(() => new Error('Session expired. Please log in again.'));
-            }
+              if (newToken) {
+                // ✅ Store new token using TokenService (cookie)
+                tokenService.storeTokens(newToken, tokenService.getRefreshToken() || '');
+
+
+                refreshTokenSubject.next(newToken);
+
+                const clonedRequest = req.clone({
+                  setHeaders: {
+                    Authorization: `Bearer ${newToken}`,
+                  },
+                });
+                return next(clonedRequest);
+              } else {
+                authService.logout();
+                return throwError(() => new Error('Session expired. Please log in again.'));
+              }
             }),
             catchError((refreshError) => {
               isRefreshing = false;
@@ -68,10 +70,9 @@ export const jwtInterceptor: HttpInterceptorFn = (
             })
           );
         } else {
-          // Queue subsequent requests until the token is refreshed
           return refreshTokenSubject.pipe(
-            filter((token) => token != null), // Only continue when we have a token
-            take(1), // Take only the first value emitted
+            filter((token) => token != null),
+            take(1),
             switchMap((token) => {
               const clonedRequest = req.clone({
                 setHeaders: {
@@ -83,9 +84,8 @@ export const jwtInterceptor: HttpInterceptorFn = (
           );
         }
       } else {
-        // For all other errors, propagate the error
         return throwError(() => error);
       }
     })
   );
-}; 
+};
