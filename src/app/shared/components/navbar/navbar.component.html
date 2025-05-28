@@ -11,8 +11,7 @@
   >
     <span class="navbar-toggler-icon"></span>
   </button>
-
-  <!-- Collapsible Content -->
+  
   <div class="collapse navbar-collapse" id="navbarNav">
     <ul class="navbar-nav">
       <li class="nav-item">
@@ -33,11 +32,15 @@
       <li class="nav-item">
         <a class="nav-link font-weight-bold" routerLink="mytask/">My Task</a>
       </li>
+
+      <li class="nav-item">
+  <a class="nav-link font-weight-bold" routerLink="file/"> File</a>
+</li>
       <li class="nav-item">
         <a class="nav-link" routerLink="/layout/reminders">Reminder</a>
       </li>
 
-      <!-- Dropdown properly aligned -->
+  
       <li class="nav-item dropdown">
         <a
           class="nav-link dropdown-toggle font-weight-bold"
@@ -54,7 +57,6 @@
           <a class="dropdown-item" routerLink="/profile">Link1</a>
           <a class="dropdown-item" routerLink="/settings">Link2</a>
           <a class="dropdown-item" routerLink="/reports">Link3</a>
-         <!--<div class="dropdown-divider"></div>--> 
           <a class="dropdown-item" routerLink="/support">Link4</a>
           <a class="dropdown-item" routerLink="/support">Link4</a>
           <a class="dropdown-item" routerLink="/support">Link4</a>
@@ -62,7 +64,6 @@
       </li>
     </ul>
 
-    <!-- Centered Search Bar -->
     <form class="form-inline mx-auto search-bar">
       <input
         class="form-control"
@@ -72,24 +73,24 @@
       />
     </form>
 
-    <!-- Right-Aligned Actions -->
-  <ul class="navbar-nav ml-auto gap-2 align-items-center">
+    <ul class="navbar-nav ml-auto gap-2 align-items-center">
       <li class="nav-item">
         <a class="nav-link" routerLink="/layout/my-learning">Tab</a>
       </li>
       <li class="nav-item" (click)="onCartIconClick()">
-        <div *ngIf="firstNameInitial && lastNameInitial" class="d-flex gap-2 align-items-center">
-          <div class="Name_logo position-relative">
-            {{ firstNameInitial }}{{ lastNameInitial }}
-            <span 
-              class="status-dot" 
-              [ngClass]="{
-                'online': status === 'ONLINE',
-                'offline': status === 'OFFLINE',
-                'inmeeting': status === 'IN MEETING'
-              }">
-            </span>
-          </div>
+        <div *ngIf="firstNameInitial && lastNameInitial" class="d-flex gap-2 align-items-center" >
+         
+           <div class="Name_logo position-relative">
+      {{ firstNameInitial }}{{ lastNameInitial }}
+      <span 
+        class="status-dot" 
+        [ngClass]="{
+          'online': status === 'ONLINE',
+          'offline': status === 'OFFLINE',
+          'inmeeting': status === 'IN MEETING'
+        }">
+      </span>
+    </div>
         </div>
       </li>
     </ul>
