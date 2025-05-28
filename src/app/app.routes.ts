@@ -1,4 +1,6 @@
-import { Routes } from '@angular/router';
+		
+		
+		import { Routes } from '@angular/router';
 import { authGuard } from './core/guards/auth.guard';
 import { RoleGuard } from './core/guards/role.guard';
 
@@ -57,7 +59,6 @@ import { OverViewComponent } from './modules/myTask/components/over-view/over-vi
 import { TodayOverdueComponent } from './modules/myTask/components/today-overdue/today-overdue.component';
 import { TaskAssignedComponent } from './modules/myTask/components/task-assigned/task-assigned.component';
 
-
 // Video Meeting Module
 import VideoCallComponent from './modules/video-meet/components/video-call/video-call.component';
 import { ChatComponent } from './modules/video-meet/components/chat/chat.component';
@@ -65,12 +66,10 @@ import { ScheduleMeetingDialogComponent } from './modules/video-meet/components/
 import { HomeComponent as VideoMeetHomeComponent } from './modules/video-meet/components/home/home.component';
 import { ReminderListComponent } from './modules/reminders/reminder-list/reminder-list.component';
 import { ReminderFormComponent } from './modules/reminders/reminder-form/reminder-form.component';
-import { EditProfileComponent } from './modules/student/components/sidebar-component/edit-profile/edit-profile.component';
+import { FileSidebarComponent } from './modules/file/components/layout/file-sidebar/file-sidebar.component';
 
-
-// chatbox component
-
-// import { ChatboxComponent } from './modules/chatbox/chatbox/chatbox.component';
+import { UploadComponent } from './modules/file/components/upload/upload.component';
+import { ReceivedComponent } from './modules/file/components/received/received.component';
 
 
 
@@ -96,7 +95,6 @@ export const routes: Routes = [
     children: [
       { path: 'dashboard', component: HomeSectionComponent },
       { path: 'navbar', component: NavbarComponent },
-      { path: 'edit-profile', component: EditProfileComponent},
 
       {
         path: 'timesheet',
@@ -125,7 +123,22 @@ export const routes: Routes = [
           {path:'update-ticket/:id', component:UpdateTicketComponent},
         ]
       },
-      {
+
+     {
+  path: 'file',
+  component: FileSidebarComponent,
+  canActivate: [authGuard],
+  children: [
+   
+    { path: 'upload', component: UploadComponent },
+    { path: 'received', component: ReceivedComponent },
+   
+  ]
+}, 
+
+
+
+    {
         path:'mytask',
         component:MyTaskNavbarComponent,
         canActivate: [authGuard],
@@ -209,10 +222,6 @@ export const routes: Routes = [
         (m) => m.default
       )
   },
- //chatbox
-  // { path: '', component: ChatboxComponent },
-  
-
 
   // Fallback
   { path: '**', redirectTo: '/login' }
