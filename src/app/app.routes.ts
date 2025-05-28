@@ -46,6 +46,7 @@ import { CreateLessonsComponent } from './modules/instructor/component/create-le
 // Timesheet Module
 import { TimesheetNavbarComponent } from './modules/Ttimesheet/component/timesheet-navbar/timesheet-navbar.component';
 import { HomepageComponent } from './modules/Ttimesheet/component/homepage/homepage.component';
+import { AttendanceComponent } from './modules/Ttimesheet/component/attendance/attendance.component';
 
 // Ticketing Module
 import { SideNavbarComponent } from './modules/Ticket/components/sideNavbar/sideNavbar.component';
@@ -102,7 +103,11 @@ export const routes: Routes = [
         path: 'timesheet',
         component: TimesheetNavbarComponent,
         canActivate: [authGuard],
-        children: [{ path: '', component: HomepageComponent }]
+        children: [
+          { path: '', component: HomepageComponent },
+          { path: 'attendance', component: AttendanceComponent},
+          {path:'myticket', component:MyticketComponent},
+        ]
       },
 
       {
