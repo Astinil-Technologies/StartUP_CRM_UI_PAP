@@ -99,7 +99,7 @@ export class HomepageComponent implements OnInit {
 
    // Check-in function (backend integration)
    checkIn() {
-    const url = `${this.baseUrl}/api/checkin`;
+    const url = `${this.baseUrl}/api/checkout/checkin`;
     const token = this.authService.getAccessToken();
 
     if (!token) {
@@ -139,7 +139,6 @@ export class HomepageComponent implements OnInit {
     this.http.post(url, {}, { headers }).subscribe(
       (response) => {
         console.log('Checked out successfully');
-        //this.loadStatus();  // Update status after check-out
       },
       (error) => {
         console.error('Error checking out', error);
