@@ -73,25 +73,23 @@
     </form>
 
     <!-- Right-Aligned Actions -->
-    <ul class="navbar-nav ml-auto gap-2 align-items-center">
+  <ul class="navbar-nav ml-auto gap-2 align-items-center">
       <li class="nav-item">
         <a class="nav-link" routerLink="/layout/my-learning">Tab</a>
       </li>
       <li class="nav-item" (click)="onCartIconClick()">
-        <div *ngIf="firstNameInitial && lastNameInitial" class="d-flex gap-2 align-items-center" >
-         
-           <div class="Name_logo position-relative">
-      {{ firstNameInitial }}{{ lastNameInitial }}
-      <span 
-        class="status-dot" 
-        [ngClass]="{
-          'online': status === 'ONLINE',
-          'offline': status === 'OFFLINE',
-          'inmeeting': status === 'IN MEETING'
-        }">
-      </span>
-    </div>
-          <!-- Rakesh -->
+        <div *ngIf="firstNameInitial && lastNameInitial" class="d-flex gap-2 align-items-center">
+          <div class="Name_logo position-relative">
+            {{ firstNameInitial }}{{ lastNameInitial }}
+            <span 
+              class="status-dot" 
+              [ngClass]="{
+                'online': status === 'ONLINE',
+                'offline': status === 'OFFLINE',
+                'inmeeting': status === 'IN MEETING'
+              }">
+            </span>
+          </div>
         </div>
       </li>
     </ul>

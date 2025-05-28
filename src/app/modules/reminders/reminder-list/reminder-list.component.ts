@@ -8,7 +8,7 @@ import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-
+import { environment } from 'src/environments/environment';
 @Component({
   selector: 'app-reminder-list',
   standalone: true,
@@ -53,4 +53,11 @@ export class ReminderListComponent {
       });
     }
   }
+downloadAttachment(path: string): void {
+  // Extract filename from full path
+  const fileName = path.split('/').pop()!;
+  const baseUrl = environment.baseUrl; 
+  const url = `${baseUrl}/api/attachments/download/${encodeURIComponent(fileName)}`;
+  window.open(url, '_blank');
+}
 }

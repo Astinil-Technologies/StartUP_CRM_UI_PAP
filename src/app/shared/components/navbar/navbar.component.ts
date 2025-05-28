@@ -29,8 +29,8 @@ export class NavbarComponent implements OnInit{
   firstNameInitial: string | null = null;
   lastNameInitial: string | null = null;
   userId: string | null = null;
-  status: string = 'ONLINE';// rakesh
-  private statusSubscription!: Subscription;//rakesh
+  status: string = 'ONLINE';
+  private statusSubscription!: Subscription;
 
   @Output() profileClicked = new EventEmitter<void>();
 
@@ -45,15 +45,12 @@ export class NavbarComponent implements OnInit{
     if (this.userId) {
       this.getUserDetails(this.userId);
     }
-
-    this.statusSubscription = this.authService.userStatus$.subscribe(
-      status => {
+     this.statusSubscription = this.authService.userStatus$.subscribe(
+      (status: string) => {
         this.status = status.toUpperCase();
       }
     );
   }
-
-
 
   isProfileBoxVisible: boolean = false;
 
@@ -63,12 +60,12 @@ export class NavbarComponent implements OnInit{
   }
 
   
-  ngOnDestroy() { //Rakesh
+  ngOnDestroy() { 
     if (this.statusSubscription) {
       this.statusSubscription.unsubscribe();
     }
   }
-  
+
 
 
   getUserDetails(userId: string): void {
@@ -97,11 +94,9 @@ export class NavbarComponent implements OnInit{
         this.lastNameInitial = userData.lastName
           ? userData.lastName.charAt(0).toUpperCase()
           : 'N';
-          this.status = userData.status ? userData.status.toUpperCase() : 'N';//rakesh
-
+        this.status = userData.status ? userData.status.toUpperCase() : 'N';
       
       },
-      
       (error) => {
         console.error('Error fetching user details:', error);
       }

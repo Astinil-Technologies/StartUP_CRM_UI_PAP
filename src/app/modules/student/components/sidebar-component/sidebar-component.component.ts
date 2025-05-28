@@ -5,8 +5,8 @@ import { MatIconModule } from '@angular/material/icon';
 import {  RouterModule } from '@angular/router';
 import { environment } from 'src/environments/environment';
 import { AuthService } from 'src/app/core/services/authservice/auth.service';
-import { UserService } from 'src/app/core/services/userservice/user.service';
 import { FormsModule } from '@angular/forms';
+
 
 
 @Component({
@@ -15,7 +15,7 @@ import { FormsModule } from '@angular/forms';
   imports: [MatIconModule, 
     CommonModule,
     RouterModule,
-    FormsModule],
+  FormsModule],
   templateUrl: './sidebar-component.component.html',
   styleUrl: './sidebar-component.component.scss',
 })
@@ -27,17 +27,14 @@ export class SidebarComponentComponent implements OnInit{
   lastName: string | null = null;
   @Input() isSidebarOpen = false;
 
-  
-
-    // ✅ Define status options rakesh
-statusOptions: string[] = ['ONLINE', 'OFFLINE', 'IN_MEETING'];
+  statusOptions: string[] = ['ONLINE', 'OFFLINE', 'IN_MEETING'];
 
   // Profile Variables
   userData: any = null;
   isProfileBoxVisible: boolean = false;
   isLoading: boolean = true;
 
-  constructor(private authService: AuthService, private http: HttpClient, private userService: UserService) {}
+  constructor(private authService: AuthService, private http: HttpClient) {}
 
   ngOnInit() {
     this.userId = this.authService.getId();
@@ -69,16 +66,33 @@ statusOptions: string[] = ['ONLINE', 'OFFLINE', 'IN_MEETING'];
     );
   }
 
-  
   // Load Profile Data
 
+
        loadUserProfile() {
-    this.userService.getUserProfile().subscribe(
-      (data) => {
-        if (data) {
-          console.log(data);
-          this.userData = data;
-        }
+    const url = `${this.baseUrl}/api/v1/users/profile`;
+    const token = this.authService.getAccessToken();
+    console.log(token);
+
+    if (!token) {
+      console.error('Token not available. User not authenticated.');
+      return;
+    }
+
+    const headers = new HttpHeaders({
+      Authorization: `Bearer${token}`,
+    });
+
+    this.http.get<any>(url, { headers }).subscribe(
+      (response) => {
+        console.log(response);
+
+        this.userData = {
+          ...response,
+          status: response.status || 'Online'
+        };
+
+        this.userData = response;
         this.isLoading = false;
       },
       (error) => {
@@ -88,11 +102,6 @@ statusOptions: string[] = ['ONLINE', 'OFFLINE', 'IN_MEETING'];
     );
   }
 
-  // rakesh
-  // onStatusChange() {
-  //   console.log('User changed status to:', this.userData.status);
-  //   this.authService.setUserStatus(this.userData.status); // Add this line
-  // }
 
   onStatusChange() {
   console.log('User changed status to:', this.userData.status);
@@ -117,8 +126,6 @@ statusOptions: string[] = ['ONLINE', 'OFFLINE', 'IN_MEETING'];
     }
   );
 }
-
-
 
   // Toggle Profile Box Visibility
   toggleProfileBox() {
