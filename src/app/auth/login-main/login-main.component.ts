@@ -69,9 +69,11 @@ export class LoginMainComponent implements OnInit {
     this.dialog.open(LoginToDiffAccPopupComponent);
   }
 
-  navigateToRegister(): void {
-    this.router.navigate(['/register']);
-  }
+ navigateToRegister(event: Event): void {
+  event.preventDefault();
+  this.router.navigate(['/register']);
+}
+
 
   navigateToLogin(): void {
     this.router.navigate(['/login']);
