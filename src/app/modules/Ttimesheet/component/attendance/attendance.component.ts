@@ -3,6 +3,7 @@ import { Component,OnInit } from '@angular/core';
 import { HttpClientModule, HttpClient, HttpHeaders } from '@angular/common/http';
 import { AuthService } from 'src/app/core/services/authservice/auth.service';
 import { RouterModule,Router } from '@angular/router';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-attendance',
@@ -12,12 +13,13 @@ import { RouterModule,Router } from '@angular/router';
   styleUrl: './attendance.component.scss'
 })
 
-
   
 export class AttendanceComponent implements OnInit{
  weeklyData: any[] = [];
   // shiftTime = '10:30 - 7:30';
   showPopup = false;
+  private baseUrl = environment.baseUrl;
+
 
   constructor(
     private authService: AuthService,
@@ -33,7 +35,8 @@ export class AttendanceComponent implements OnInit{
 
   
 
-  this.http.get<any[]>('/api/checkout/weekly', { headers }).subscribe({
+  const url = `${this.baseUrl}/api/checkout/weekly`;
+  this.http.get<any[]>(url, { headers }).subscribe({
     next: (data) => {
       console.log('Weekly Data:', data);
       this.weeklyData = data.map(item => ({
