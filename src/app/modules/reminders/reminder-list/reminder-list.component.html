@@ -1,12 +1,21 @@
 <div class="reminder-list">
   <div class="header">
     <h2>Reminders</h2>
-    <button mat-raised-button color="primary" [routerLink]="['/layout/reminders/new']">+ Create New Reminder</button>
+    <button
+      mat-raised-button
+      color="primary"
+      [routerLink]="['/layout/reminders/new']"
+    >
+      + Create New Reminder
+    </button>
   </div>
-   <!-- Filters Section -->
-  <div class="filters" style="display: flex; flex-wrap: wrap; gap: 1rem; margin-bottom: 1rem;">
+  <!-- Filters Section -->
+  <div
+    class="filters"
+    style="display: flex; flex-wrap: wrap; gap: 1rem; margin-bottom: 1rem"
+  >
     <!-- Search by Keyword -->
-    <mat-form-field appearance="fill" style="flex: 1 1 200px;">
+    <mat-form-field appearance="fill" style="flex: 1 1 200px">
       <mat-label>Search by Title</mat-label>
       <input
         matInput
@@ -16,42 +25,74 @@
       />
     </mat-form-field>
     <!-- Filter by Status -->
-   <mat-form-field appearance="fill" style="flex: 1 1 200px;">
-  <mat-label>Status</mat-label>
-    <mat-select [(ngModel)]="statusFilter" (selectionChange)="applyFilters()">
-      <mat-option value="all">All</mat-option>
-      <mat-option value="upcoming">Upcoming</mat-option>
-      <mat-option value="past">Past</mat-option>
-    </mat-select>
-  </mat-form-field>
-      <!-- Filter by Date Range -->
-      <mat-form-field appearance="fill" style="flex: 1 1 300px;">
-        <mat-label>Date Range</mat-label>
-        <mat-date-range-input [rangePicker]="picker" [(ngModel)]="dateRange" (dateChange)="applyFilters()">
-          <input matStartDate placeholder="Start date" />
-          <input matEndDate placeholder="End date" />
-        </mat-date-range-input>
-        <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-        <mat-date-range-picker #picker></mat-date-range-picker>
-      </mat-form-field>
-    </div>
+    <mat-form-field appearance="fill" style="flex: 1 1 200px">
+      <mat-label>Status</mat-label>
+      <mat-select [(ngModel)]="statusFilter" (selectionChange)="applyFilters()">
+        <mat-option value="all">All</mat-option>
+        <mat-option value="upcoming">Upcoming</mat-option>
+        <mat-option value="past">Past</mat-option>
+      </mat-select>
+    </mat-form-field>
+    <!-- Filter by Date Range -->
+    <mat-form-field appearance="fill" style="flex: 1 1 300px">
+      <mat-label>Date Range</mat-label>
+      <mat-date-range-input
+        [rangePicker]="picker"
+        [(ngModel)]="dateRange"
+        (dateChange)="applyFilters()"
+      >
+        <input matStartDate placeholder="Start date" />
+        <input matEndDate placeholder="End date" />
+      </mat-date-range-input>
+      <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+      <mat-date-range-picker #picker></mat-date-range-picker>
+    </mat-form-field>
+  </div>
   <div class="reminder-grid">
-    <mat-card class="reminder-card" *ngFor="let reminder of filteredReminders">
+    <mat-card
+      class="reminder-card"
+      [ngClass]="{ notified: reminder.notified }"
+      *ngFor="let reminder of filteredReminders"
+    >
       <mat-card-title>{{ reminder.title }}</mat-card-title>
       <mat-card-content>
-        <p><strong>Due:</strong> {{ reminder.dueDateTime | date: 'MMM d, y, h:mm a' }}</p>
-        <p><strong>Notify Before:</strong> {{ reminder.notifyBeforeMinutes }} minutes</p>
+        <p>
+          <strong>Due:</strong>
+          {{ reminder.dueDateTime | date : "MMM d, y, h:mm a" }}
+        </p>
+        <p>
+          <strong>Notify Before:</strong>
+          {{ reminder.notifyBeforeMinutes }} minutes
+        </p>
+        <p *ngIf="reminder.notified" class="expired-label">⏰ Expired</p>
         <p *ngIf="reminder.attachmentPath">
-         <button mat-button (click)="downloadAttachment(reminder.attachmentPath)">
-            Download Attachment</button></p>
+          <button
+            mat-button
+            (click)="downloadAttachment(reminder.attachmentPath)"
+          >
+            Download Attachment
+          </button>
+        </p>
       </mat-card-content>
       <mat-card-actions>
-        <button mat-stroked-button color="accent" (click)="editReminder(reminder.id!)">Modify</button>
-        <button mat-stroked-button color="warn" (click)="deleteReminder(reminder.id!)">Delete</button>
+        <button
+          mat-stroked-button
+          color="accent"
+          (click)="editReminder(reminder.id!)"
+        >
+          Modify
+        </button>
+        <button
+          mat-stroked-button
+          color="warn"
+          (click)="deleteReminder(reminder.id!)"
+        >
+          Delete
+        </button>
       </mat-card-actions>
     </mat-card>
- <p *ngIf="filteredReminders.length === 0" class="no-results">
-    No matching reminders found.
-  </p>
+    <p *ngIf="filteredReminders.length === 0" class="no-results">
+      No matching reminders found.
+    </p>
   </div>
 </div>
