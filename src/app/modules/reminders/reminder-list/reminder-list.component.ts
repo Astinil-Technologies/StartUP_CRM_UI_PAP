@@ -1,9 +1,9 @@
-import { Component,OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ReminderService } from '../reminder.service';
 import { Reminder } from 'src/app/models/reminder.model';
 import { SnackbarService } from 'src/app/shared/snackbar.service';
 import { Observable } from 'rxjs';
-import { Router,RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
@@ -20,25 +20,25 @@ import { MatSelectModule } from '@angular/material/select';
   selector: 'app-reminder-list',
   standalone: true,
   imports: [
-  CommonModule,
-  RouterModule,
-  MatCardModule,
-  MatButtonModule,
-  MatIconModule,
-  FormsModule, 
-  MatFormFieldModule,
-  MatInputModule,
-  MatButtonToggleModule,
-  MatDatepickerModule,
-  MatNativeDateModule,
-  MatSelectModule
+    CommonModule,
+    RouterModule,
+    MatCardModule,
+    MatButtonModule,
+    MatIconModule,
+    FormsModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatButtonToggleModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
+    MatSelectModule
   ],
   templateUrl: './reminder-list.component.html',
   styleUrl: './reminder-list.component.scss'
 })
 export class ReminderListComponent {
   reminders: Reminder[] = [];
-   filteredReminders: Reminder[] = [];
+  filteredReminders: Reminder[] = [];
   searchKeyword: string = '';
   statusFilter: string = 'all';
   dateRange: { start: Date | null; end: Date | null } = { start: null, end: null };
@@ -46,15 +46,22 @@ export class ReminderListComponent {
     private reminderService: ReminderService,
     private router: Router,
     private snackbar: SnackbarService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.loadReminders();
   }
 
   loadReminders(): void {
+    const now = new Date();
     this.reminderService.getReminders().subscribe(data => {
-      this.reminders = data;   
+      this.reminders = data.map(reminder => {
+        const dueDate = new Date(reminder.dueDateTime);
+        return {
+          ...reminder,
+          notified: dueDate < now
+        };
+      });
       this.applyFilters();
     });
   }
@@ -71,42 +78,42 @@ export class ReminderListComponent {
       });
     }
   }
-downloadAttachment(path: string): void {
-  // Extract filename from full path
-  const fileName = path.split('/').pop()!;
-  const baseUrl = environment.baseUrl; 
-  const url = `${baseUrl}/api/attachments/download/${encodeURIComponent(fileName)}`;
-  window.open(url, '_blank');
-}
-applyFilters(): void {
-  const now = new Date();
-
-  const hasSearch = this.searchKeyword.trim() !== '';
-  const hasStatus = this.statusFilter !== 'all';
-  const hasDateRange = this.dateRange.start !== null && this.dateRange.end !== null;
-
-  // If no filters applied, show all
-  if (!hasSearch && !hasStatus && !hasDateRange) {
-    this.filteredReminders = [...this.reminders]; // clone original
-    return;
+  downloadAttachment(path: string): void {
+    // Extract filename from full path
+    const fileName = path.split('/').pop()!;
+    const baseUrl = environment.baseUrl;
+    const url = `${baseUrl}/api/attachments/download/${encodeURIComponent(fileName)}`;
+    window.open(url, '_blank');
   }
+  applyFilters(): void {
+    const now = new Date();
 
-  // Apply filters
-  this.filteredReminders = this.reminders.filter(reminder => {
-    const dueDate = new Date(reminder.dueDateTime);
+    const hasSearch = this.searchKeyword.trim() !== '';
+    const hasStatus = this.statusFilter !== 'all';
+    const hasDateRange = this.dateRange.start !== null && this.dateRange.end !== null;
 
-    const titleMatch = !hasSearch || reminder.title.toLowerCase().includes(this.searchKeyword.toLowerCase());
-
-    let statusMatch = true;
-    if (hasStatus) {
-      statusMatch =
-        this.statusFilter === 'upcoming' ? dueDate > now :
-        this.statusFilter === 'past' ? dueDate < now : true;
+    // If no filters applied, show all
+    if (!hasSearch && !hasStatus && !hasDateRange) {
+      this.filteredReminders = [...this.reminders]; // clone original
+      return;
     }
 
-    const dateMatch = !hasDateRange || (dueDate >= this.dateRange.start! && dueDate <= this.dateRange.end!);
+    // Apply filters
+    this.filteredReminders = this.reminders.filter(reminder => {
+      const dueDate = new Date(reminder.dueDateTime);
 
-    return titleMatch && statusMatch && dateMatch;
-  });
-}
+      const titleMatch = !hasSearch || reminder.title.toLowerCase().includes(this.searchKeyword.toLowerCase());
+
+      let statusMatch = true;
+      if (hasStatus) {
+        statusMatch =
+          this.statusFilter === 'upcoming' ? dueDate > now :
+            this.statusFilter === 'past' ? dueDate < now : true;
+      }
+
+      const dateMatch = !hasDateRange || (dueDate >= this.dateRange.start! && dueDate <= this.dateRange.end!);
+
+      return titleMatch && statusMatch && dateMatch;
+    });
+  }
 }

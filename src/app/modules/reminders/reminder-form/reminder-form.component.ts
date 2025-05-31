@@ -15,7 +15,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { ConfirmationDialogComponent } from 'src/app/shared/confirmation-dialog/confirmation-dialog.component';
 import { MatDialog } from '@angular/material/dialog';
 import { MatCardModule } from '@angular/material/card';
-import {Observable } from 'rxjs';
+import { Observable } from 'rxjs';
 @Component({
   selector: 'app-reminder-form',
   standalone: true,
@@ -28,7 +28,7 @@ import {Observable } from 'rxjs';
     MatDatepickerModule,
     MatNativeDateModule,
     MatButtonModule,
-    MatIconModule,MatCardModule
+    MatIconModule, MatCardModule
   ],
   templateUrl: './reminder-form.component.html',
   styleUrl: './reminder-form.component.scss'
@@ -57,7 +57,7 @@ export class ReminderFormComponent implements OnInit {
     private reminderService: ReminderService,
     private snackbar: SnackbarService,
     private dialog: MatDialog
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     const now = new Date();
@@ -91,19 +91,19 @@ export class ReminderFormComponent implements OnInit {
       });
     }
   }
-   onFileSelected(event: any): void {
+  onFileSelected(event: any): void {
     const input = event.target as HTMLInputElement;
-  const file = input?.files?.[0];
+    const file = input?.files?.[0];
 
-  if (file) {
-    this.reminderService.uploadAttachment(file).subscribe((path: string) => {
-      this.reminder.attachmentPath = path;
-      this.selectedFileName = file.name; // Display the file name
-    }, (error) => {
-      console.error('Error uploading file', error);
-    });
+    if (file) {
+      this.reminderService.uploadAttachment(file).subscribe((path: string) => {
+        this.reminder.attachmentPath = path;
+        this.selectedFileName = file.name; // Display the file name
+      }, (error) => {
+        console.error('Error uploading file', error);
+      });
+    }
   }
-}
 
   save(): void {
     if (!this.dueDate || !this.dueTime) return;
@@ -118,9 +118,9 @@ export class ReminderFormComponent implements OnInit {
       0
     );
 
-  
-    this.reminder.dueDateTime = new Date(combinedDateTime.getTime() - combinedDateTime.getTimezoneOffset() * 60000);
 
+    this.reminder.dueDateTime = new Date(combinedDateTime.getTime() - combinedDateTime.getTimezoneOffset() * 60000);
+    this.reminder.recurring = !!this.reminder.recurringType;
     const saveObservable = this.isEdit
       ? this.reminderService.updateReminder(this.reminderId!, this.reminder)
       : this.reminderService.createReminder(this.reminder);
@@ -134,7 +134,7 @@ export class ReminderFormComponent implements OnInit {
         this.router.navigate(['/layout/reminders']);
       });
     });
-  }  
+  }
   uploadAttachment(): void {
     if (!this.selectedFile) return;
 
@@ -150,12 +150,12 @@ export class ReminderFormComponent implements OnInit {
     );
   }
   removeAttachment(): void {
-  if (confirm('Are you sure you want to remove the attachment?')) {
-    this.reminder.attachmentPath = undefined; // Use undefined instead of null
-    this.selectedFile = null; // Clear the selected file
-    this.selectedFileName = null; // Clear the selected file name
+    if (confirm('Are you sure you want to remove the attachment?')) {
+      this.reminder.attachmentPath = undefined; // Use undefined instead of null
+      this.selectedFile = null; // Clear the selected file
+      this.selectedFileName = null; // Clear the selected file name
+    }
   }
-}
   showSuccessDialog(): void {
     const dialogRef = this.dialog.open(ConfirmationDialogComponent, {
       data: { message: `Reminder ${this.isEdit ? 'updated' : 'created'} successfully.` }

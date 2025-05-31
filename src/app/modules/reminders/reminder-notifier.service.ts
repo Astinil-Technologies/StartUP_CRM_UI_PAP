@@ -9,7 +9,7 @@ export class ReminderNotifierService {
 
   constructor(private reminderService: ReminderService) {
     this.beep = new Audio('assets/success-roll-up-achieve-SBA-300419883.mp3');
-    this.beep.preload = 'auto';  
+    this.beep.preload = 'auto';
   }
 
   initReminderPolling(): void {

@@ -10,7 +10,7 @@ export class ReminderService {
   private apiUrl = environment.baseUrl + '/api/reminders';
   private attachmentUrl = environment.baseUrl + '/api/attachments';
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   getReminders(): Observable<Reminder[]> {
     return this.http.get<Reminder[]>(this.apiUrl);
