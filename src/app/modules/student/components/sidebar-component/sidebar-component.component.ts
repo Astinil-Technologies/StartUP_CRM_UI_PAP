@@ -2,25 +2,21 @@ import { CommonModule } from '@angular/common';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Component, Input, OnInit } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
-import {  RouterModule } from '@angular/router';
+import { RouterModule } from '@angular/router';
 import { environment } from 'src/environments/environment';
 import { AuthService } from 'src/app/core/services/authservice/auth.service';
 import { FormsModule } from '@angular/forms';
-
-
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-sidebar-component',
   standalone: true,
-  imports: [MatIconModule, 
-    CommonModule,
-    RouterModule,
-  FormsModule],
+  imports: [MatIconModule, CommonModule, RouterModule, FormsModule],
   templateUrl: './sidebar-component.component.html',
   styleUrl: './sidebar-component.component.scss',
 })
-export class SidebarComponentComponent implements OnInit{
-
+export class SidebarComponentComponent implements OnInit {
   private baseUrl = environment.baseUrl;
   userId: string | null = null;
   firstName: string | null = null;
@@ -34,7 +30,12 @@ export class SidebarComponentComponent implements OnInit{
   isProfileBoxVisible: boolean = false;
   isLoading: boolean = true;
 
-  constructor(private authService: AuthService, private http: HttpClient) {}
+  constructor(
+    private authService: AuthService,
+    private http: HttpClient,
+    private router: Router,
+    private snackBar: MatSnackBar
+  ) {}
 
   ngOnInit() {
     this.userId = this.authService.getId();
@@ -43,15 +44,13 @@ export class SidebarComponentComponent implements OnInit{
       this.getUserDetails(this.userId);
     }
 
-    // Load Profile Data
     this.loadUserProfile();
   }
 
-  logout() {
-    this.authService.logout();
-  }
+  // logout() {
+  //   this.authService.logout();
+  // }
 
-  // Fetch User Details
   getUserDetails(userId: string): void {
     const url = `${this.baseUrl}/api/v1/users/${userId}`;
     this.http.get<any>(url).subscribe(
@@ -66,10 +65,7 @@ export class SidebarComponentComponent implements OnInit{
     );
   }
 
-  // Load Profile Data
-
-
-       loadUserProfile() {
+  loadUserProfile() {
     const url = `${this.baseUrl}/api/v1/users/profile`;
     const token = this.authService.getAccessToken();
     console.log(token);
@@ -89,7 +85,7 @@ export class SidebarComponentComponent implements OnInit{
 
         this.userData = {
           ...response,
-          status: response.status || 'Online'
+          status: response.status || 'Online',
         };
 
         this.userData = response;
@@ -102,34 +98,69 @@ export class SidebarComponentComponent implements OnInit{
     );
   }
 
-
   onStatusChange() {
-  console.log('User changed status to:', this.userData.status);
-  this.authService.setUserStatus(this.userData.status); // Optional local storage use
+    console.log('User changed status to:', this.userData.status);
+    this.authService.setUserStatus(this.userData.status);
 
-  const url = `${this.baseUrl}/api/v1/users/status`;
-  const token = this.authService.getAccessToken();
+    const url = `${this.baseUrl}/api/v1/users/status`;
+    const token = this.authService.getAccessToken();
 
-  const headers = new HttpHeaders({
-    Authorization: `Bearer ${token}`, // Notice the space after Bearer
-    'Content-Type': 'application/json',
-  });
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    });
 
-  const body = { status: this.userData.status };
+    const body = { status: this.userData.status };
 
-  this.http.put(url, body, { headers }).subscribe(
-    (response) => {
-      console.log('Status updated successfully:', response);
-    },
-    (error) => {
-      console.error('Error updating status:', error);
-    }
-  );
-}
+    this.http.put(url, body, { headers }).subscribe(
+      (response) => {
+        console.log('Status updated successfully:', response);
+      },
+      (error) => {
+        console.error('Error updating status:', error);
+      }
+    );
+  }
 
-  // Toggle Profile Box Visibility
   toggleProfileBox() {
     this.isProfileBoxVisible = !this.isProfileBoxVisible;
   }
-  
+
+  logout(): void {
+    const token = this.authService.getAccessToken();
+
+    if (token) {
+      const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
+      const logoutRequest = { token };
+      this.http
+        .post(`${this.baseUrl}/auth/logout`, logoutRequest, {
+          responseType: 'text',
+        })
+        .subscribe({
+          next: () => this.handleLogoutSuccess(),
+          error: (err) => {
+            console.error('Logout failed:', err);
+            this.handleLogoutSuccess();
+          },
+        });
+    } else {
+      this.handleLogoutSuccess();
+    }
+  }
+
+  handleLogoutSuccess(): void {
+    localStorage.removeItem('token');
+    localStorage.removeItem('refreshToken');
+    localStorage.removeItem('role');
+
+    this.snackBar.open('Logout successful', 'Close', {
+      duration: 3000,
+      verticalPosition: 'top',
+      panelClass: ['success-snackbar'],
+    });
+
+    setTimeout(() => {
+      this.router.navigate(['/login']);
+    }, 1000);
+  }
 }
