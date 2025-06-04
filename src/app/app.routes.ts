@@ -71,6 +71,7 @@ import { FileSidebarComponent } from './modules/file/components/layout/file-side
 
 import { UploadComponent } from './modules/file/components/upload/upload.component';
 import { ReceivedComponent } from './modules/file/components/received/received.component';
+import { EditProfileComponent } from './modules/student/components/sidebar-component/edit-profile/edit-profile.component';
 
 
 
@@ -96,6 +97,8 @@ export const routes: Routes = [
     children: [
       { path: 'dashboard', component: HomeSectionComponent },
       { path: 'navbar', component: NavbarComponent },
+
+       { path: 'app-edit-profile', component: EditProfileComponent },
 
       {
         path: 'timesheet',
