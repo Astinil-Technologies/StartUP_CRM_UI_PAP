@@ -1,44 +1,78 @@
 .reminder-list {
-    padding: 24px;
-  }
-  
-  .header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 24px;
-  }
-  
-  .reminder-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 24px;
-  }
-  
-  .reminder-card {
-    padding: 16px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    transition: box-shadow 0.3s ease;
-  }
-  
-  .reminder-card:hover {
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
-  }
-  
-  mat-card-title {
-    font-size: 18px;
-    font-weight: bold;
-    color: #3f51b5;
-  }
-  
-  mat-card-content p {
-    margin: 4px 0;
-    font-size: 14px;
-  }
-  
-  mat-card-actions {
-    display: flex;
-    justify-content: flex-end;
-    gap: 8px;
-  }
-  
+  padding: 24px;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.reminder-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 24px;
+}
+
+.reminder-card {
+  padding: 16px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: box-shadow 0.3s ease;
+}
+
+.reminder-card:hover {
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+mat-card-title {
+  font-size: 18px;
+  font-weight: bold;
+  color: #3f51b5;
+}
+
+mat-card-content p {
+  margin: 4px 0;
+  font-size: 14px;
+}
+
+mat-card-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+.no-results {
+  text-align: center;
+  margin-top: 2rem;
+  font-style: italic;
+  color: gray;
+}
+.reminder-card.notified {
+  background-color: #f9f9f9;
+  opacity: 0.6;
+  filter: grayscale(100%);
+  transition: all 0.3s ease-in-out;
+}
+
+.reminder-card.notified::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: repeating-linear-gradient(
+    45deg,
+    rgba(200, 200, 200, 0.2),
+    rgba(200, 200, 200, 0.2) 10px,
+    transparent 10px,
+    transparent 20px
+  );
+  pointer-events: none;
+}
+.expired-label {
+  color: #d32f2f;
+  font-weight: bold;
+  font-size: 13px;
+  margin-top: 5px;
+}

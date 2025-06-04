@@ -2,8 +2,11 @@ export interface Reminder {
  
     id?: number;
     title: string;
-    dueDateTime: Date; // or Date if you prefer working with Date objects
+    dueDateTime: Date; 
     notifyBeforeMinutes: number;
     attachmentPath?: string;
+    recurring?: boolean;
+    recurringType?: 'DAILY' | 'WEEKLY' | 'MONTHLY' | 'YEARLY' | null;
+     notified?: boolean; 
   }
   
