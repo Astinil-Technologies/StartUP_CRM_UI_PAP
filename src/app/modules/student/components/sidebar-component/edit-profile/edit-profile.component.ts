@@ -1,3 +1,4 @@
+
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
@@ -19,6 +20,10 @@ export class EditProfileComponent implements OnInit {
   profileForm!: FormGroup;
   previewUrl: string | ArrayBuffer | null = null;
 
+  // Track original image for comparison
+  originalProfileImage: string | ArrayBuffer | null = null;
+  imageChanged: boolean = false;
+
   constructor(private editProfileService: EditProfileService) { }
 
   ngOnInit() {
@@ -34,9 +39,14 @@ export class EditProfileComponent implements OnInit {
       createdAt: new FormControl(''),
     });
 
-    // fetching image form the db, 
+    // Fetch profile data and set form + preview image
     this.editProfileService.getUserProfile().subscribe((data: any) => {
-      this.previewUrl = data.profileImage?.startsWith('data:image') ? data.profileImage : 'data:image/png;base64,' + data.profileImage;
+      this.previewUrl = data.profileImage?.startsWith('data:image')
+        ? data.profileImage
+        : 'data:image/png;base64,' + data.profileImage;
+
+      // Save original image for change tracking
+      this.originalProfileImage = this.previewUrl;
 
       this.profileForm.patchValue({
         firstName: data.firstName,
@@ -46,7 +56,7 @@ export class EditProfileComponent implements OnInit {
         mobileNo: data.mobileNo,
         bio: data.bio,
         location: data.location,
-        profileImage: data.profileImage,
+        profileImage: this.previewUrl,
         createdAt: data.createdAt
       });
     });
@@ -59,9 +69,17 @@ export class EditProfileComponent implements OnInit {
       reader.onload = () => {
         this.previewUrl = reader.result;
         this.profileForm.patchValue({ profileImage: reader.result });
+
+        // Detect if image changed from original
+        this.imageChanged = this.previewUrl !== this.originalProfileImage;
       };
       reader.readAsDataURL(file);
     }
+  }
+
+  // Getter to check if any form value or image changed
+  get hasChanges(): boolean {
+    return this.profileForm.dirty || this.imageChanged;
   }
 
   onSubmit() {
@@ -79,6 +97,11 @@ export class EditProfileComponent implements OnInit {
         this.successMessage = 'Profile updated successfully!';
         this.showSuccessToast = true;
         this.autoHideToast('success');
+
+        // Reset tracking states after successful update
+        this.profileForm.markAsPristine();
+        this.originalProfileImage = this.previewUrl;
+        this.imageChanged = false;
       },
       error: (error) => {
         this.errorMessage = 'Failed to update profile. Please try again.';

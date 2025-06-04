@@ -1,3 +1,4 @@
+
 <div class="container mt-5">
 
   <h1 class="text-center mb-4">Edit Your Profile</h1>
@@ -73,6 +74,18 @@
     <p class="text-secondary">Profile created at: {{ profileForm.get('createdAt')?.value | date:'medium' }} </p>
 
     <!-- submit button -->
-    <button type="submit" class="btn btn-primary">Submit</button>
+  <button
+  type="submit"
+  class="btn"
+  [ngClass]="{
+    'btn-primary': (profileForm.dirty || imageChanged) && !profileForm.invalid,
+    'btn-secondary': !(profileForm.dirty || imageChanged) || profileForm.invalid
+  }"
+  [disabled]="!(profileForm.dirty || imageChanged) || profileForm.invalid"
+>
+  Save
+</button>
+
+
   </form>
 </div>
