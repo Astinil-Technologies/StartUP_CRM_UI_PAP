@@ -1,89 +1,87 @@
 <div class="main-dashboard-container">
   <div class="dashboard-container" [class.open]="isSidebarOpen">
+
+    <!-- Top-right Close Button for Sidebar -->
+    <button class="close-sidebar-btn" (click)="closeSidebar()">×</button>
+
     <div class="header d-flex flex-column">
-      <div class="d-flex justify-content-center gap-5 align-items-center">
-        <div *ngIf="firstName && lastName;" class="user-name">
+      <!-- User Info and Upload Section -->
+      <div class="d-flex justify-content-center gap-3 align-items-center flex-column">
+        <div *ngIf="firstName && lastName" class="user-name">
           {{ firstName }} {{ lastName }}
         </div>
-        <div class="toggole-icon-close">
-          <div class="toggole-icon-close">
-            <a routerLink="edit-profile"><img
-                src="https://thumbs.dreamstime.com/b/environment-earth-day-hands-trees-growing-seedlings-bokeh-green-background-female-hand-holding-tree-nature-field-gra-130247647.jpg"
-                alt="Profile Image"></a>
+
+        <!-- Profile Avatar Below Name -->
+        <div class="profile-avatar-box">
+          <ng-container *ngIf="previewUrl; else initials">
+            <img [src]="previewUrl" alt="Profile" class="profile-avatar-img square-avatar" />
+          </ng-container>
+          <ng-template #initials>
+            <div class="profile-avatar-initials square-avatar">
+              {{ firstName?.charAt(0) }}{{ lastName?.charAt(0) }}
+            </div>
+          </ng-template>
+        </div>
+
+        <!-- Upload Profile Section -->
+        <div class="upload-profile-section">
+          <div *ngIf="!isEditingProfileImage">
+            <button class="edit-btn" (click)="enableImageEdit()">Edit</button>
+          </div>
+
+          <div *ngIf="isEditingProfileImage" class="edit-section">
+            <input type="file" id="profileImage" (change)="onProfileImageSelected($event)" accept="image/png, image/jpeg, image/jpg, image/webp" />
+            <button class="save-btn" (click)="uploadProfileImage()">Save</button>
           </div>
         </div>
       </div>
 
+      <!-- Sidebar Menu -->
       <div class="sidebar">
         <ul class="nav-items">
+          <li><a routerLink="/home" routerLinkActive="active">Email: {{ userData?.email }}</a></li>
+          <li><a routerLink="/home" routerLinkActive="active">Mobile Number: {{ userData?.mobile_no }}</a></li>
+          <li><a routerLink="/home" routerLinkActive="active">Location: {{ userData?.location || 'N/A' }}</a></li>
+          <li><a routerLink="/home" routerLinkActive="active">Bio: {{ userData?.bio || 'No bio available' }}</a></li>
 
+          <!-- Status Dropdown -->
           <li>
-            <a routerLink="/home" routerLinkActive="active">Email: {{ userData?.email }}</a>
-          </li>
-          <li>
-            <a routerLink="/home" routerLinkActive="active">Mobile Number: {{ userData?.mobile_no }}</a>
-          </li>
-          <li>
-            <a routerLink="/home" routerLinkActive="active">Location: {{ userData?.location || 'N/A' }}</a>
+            <div class="status-dropdown" *ngIf="!isLoading">
+              <label for="status">Status:</label>
+              <select id="status" [(ngModel)]="userData.status" (change)="onStatusChange()" class="status-select">
+                <option *ngFor="let option of statusOptions" [value]="option">
+                  {{ option.replace('_', ' ') | titlecase }}
+                </option>
+              </select>
+            </div>
           </li>
 
-          <li>
-            <a routerLink="/home" routerLinkActive="active">Bio: {{ userData?.bio || 'No bio available' }}</a>
-          </li>
-           <!-- Status Dropdown -->
-  <li>
-    <a >
-<div class="status-dropdown" *ngIf="!isLoading">
-  <label for="status">Status:</label>
-  <select id="status" [(ngModel)]="userData.status" (change)="onStatusChange()" class="status-select">
-    <option *ngFor="let option of statusOptions" [value]="option"> {{ option.replace('_', ' ') | titlecase }}</option>
-  </select>
-</div>
-</a>
-</li>
-          <li>
-            <a routerLink="/home" routerLinkActive="active">CreatedAt: {{ userData?.createdAt }}</a>
-          </li>
+          <li><a routerLink="/home" routerLinkActive="active">CreatedAt: {{ userData?.createdAt }}</a></li>
+
+          <!-- Add Account & Switch Account -->
+          <li><button (click)="openAddAccount()" class="account-btn">➕ Add Account</button></li>
+          <li><button (click)="openSwitchAccount()" class="account-btn">🔁 Switch Account</button></li>
         </ul>
 
+        <!-- ✅ Log Out Button at bottom -->
+        <div class="logout-wrapper">
+          <div class="logout-center">
+            <button class="logout-btn" (click)="logout()">🚪 Log Out</button>
+          </div>
+        </div>
+
+        <!-- Add Account Popup -->
+        <div *ngIf="showAddAccountBox" class="popup-box">
+          <button class="close-btn" (click)="closePopup()">×</button>
+          <app-register></app-register>
+        </div>
+
+        <!-- Switch Account Popup -->
+        <div *ngIf="showSwitchAccountBox" class="popup-box">
+          <button class="close-btn" (click)="closePopup()">×</button>
+          <app-login [isSwitchAccountMode]="true" (loginSuccess)="closePopup()"></app-login>
+        </div>
       </div>
     </div>
   </div>
 </div>
-
-<!-- <div>
-        <ul class="nav-items">
-        <li>
-          <mat-icon>notifications_active</mat-icon>
-          <a routerLink="/home" routerLinkActive="active">Notification</a>
-        </li>
-        <li>
-          <mat-icon> message</mat-icon>
-          <a routerLink="/layout/messagess">Messages</a>
-        </li>
-      </ul>
-      <ul class="nav-items">
-        <li>
-          <mat-icon>settings</mat-icon>
-          <a routerLink="/home" routerLinkActive="active">Account Settings</a>
-        </li>
-        <li>
-          <mat-icon>payment</mat-icon>
-          <a routerLink="/home" routerLinkActive="active">Payment Methods</a>
-        </li>
-      </ul>
-      <ul class="nav-items">
-        <li>
-          <mat-icon>language</mat-icon>
-          <a routerLink="/layout/language" routerLinkActive="active">Language</a>
-        </li>
-      </ul>
-      <ul class="nav-items">
-        <li>
-          <mat-icon>help_outline</mat-icon>
-          <a routerLink="/home" routerLinkActive="active">Help and Support</a>
-        </li>
-      </ul>
-    </div>
-    <button class="logout-btn" (click)="logout()">Log Out</button>
-  </div>-->
