@@ -1,6 +1,4 @@
-		
-		
-		import { Routes } from '@angular/router';
+import { Routes } from '@angular/router';
 import { authGuard } from './core/guards/auth.guard';
 import { RoleGuard } from './core/guards/role.guard';
 
@@ -72,8 +70,6 @@ import { FileSidebarComponent } from './modules/file/components/layout/file-side
 import { UploadComponent } from './modules/file/components/upload/upload.component';
 import { ReceivedComponent } from './modules/file/components/received/received.component';
 
-
-
 export const routes: Routes = [
   { path: '', redirectTo: '/login-main', pathMatch: 'full' },
 
@@ -102,10 +98,10 @@ export const routes: Routes = [
         component: TimesheetNavbarComponent,
         canActivate: [authGuard],
         children: [
-          { path: '', component: HomepageComponent },
-          { path: 'attendance', component: AttendanceComponent},
-          {path:'myticket', component:MyticketComponent},
-        ]
+          { path: 'attendance', component: AttendanceComponent },
+          { path: 'myticket', component: MyticketComponent },
+          { path: 'homepage', component: HomepageComponent },
+        ],
       },
 
       {
@@ -115,43 +111,39 @@ export const routes: Routes = [
         children: [
           { path: '', component: VideoCallComponent },
           { path: 'chat', component: ChatComponent },
-          { path: 'schedule', component: ScheduleMeetingDialogComponent }
-        ]
+          { path: 'schedule', component: ScheduleMeetingDialogComponent },
+        ],
       },
       {
-        path:'ticket',
-        component:SideNavbarComponent,
+        path: 'ticket',
+        component: SideNavbarComponent,
         canActivate: [authGuard],
-        children:[
-          {path:'',component:RaiseTicketComponent},
-          {path:'myticket', component:MyticketComponent},
-          {path:'update-ticket/:id', component:UpdateTicketComponent},
-        ]
+        children: [
+          { path: '', component: RaiseTicketComponent },
+          { path: 'myticket', component: MyticketComponent },
+          { path: 'update-ticket/:id', component: UpdateTicketComponent },
+        ],
       },
 
-     {
-  path: 'file',
-  component: FileSidebarComponent,
-  canActivate: [authGuard],
-  children: [
-   
-    { path: 'upload', component: UploadComponent },
-    { path: 'received', component: ReceivedComponent },
-   
-  ]
-}, 
-
-
-
-    {
-        path:'mytask',
-        component:MyTaskNavbarComponent,
+      {
+        path: 'file',
+        component: FileSidebarComponent,
         canActivate: [authGuard],
-        children:[
-          {path:'',component:OverViewComponent},
-          {path:'task-today', component:TodayOverdueComponent},
-          {path:'task-assigned', component:TaskAssignedComponent},
-        ]
+        children: [
+          { path: 'upload', component: UploadComponent },
+          { path: 'received', component: ReceivedComponent },
+        ],
+      },
+
+      {
+        path: 'mytask',
+        component: MyTaskNavbarComponent,
+        canActivate: [authGuard],
+        children: [
+          { path: '', component: OverViewComponent },
+          { path: 'task-today', component: TodayOverdueComponent },
+          { path: 'task-assigned', component: TaskAssignedComponent },
+        ],
       },
 
       { path: 'courses', component: CourseEnrollmentComponent },
@@ -166,8 +158,8 @@ export const routes: Routes = [
           { path: 'my-lists', component: StudentsMyListsComponent },
           { path: 'wishlist', component: StudentsWishlistComponent },
           { path: 'archived', component: StudentsArchivedComponent },
-          { path: 'learning-tools', component: StudentsLearningToolsComponent }
-        ]
+          { path: 'learning-tools', component: StudentsLearningToolsComponent },
+        ],
       },
 
       { path: 'messages', component: MessagesComponent },
@@ -175,12 +167,30 @@ export const routes: Routes = [
       {
         path: 'reminders',
         children: [
-          { path: '', loadComponent: () => import('./modules/reminders/reminder-list/reminder-list.component').then(m => m.ReminderListComponent) },
-          { path: 'new', loadComponent: () => import('./modules/reminders/reminder-form/reminder-form.component').then(m => m.ReminderFormComponent) },
-          { path: ':id/edit', loadComponent: () => import('./modules/reminders/reminder-form/reminder-form.component').then(m => m.ReminderFormComponent) }
-        ]
-      }
-    ]
+          {
+            path: '',
+            loadComponent: () =>
+              import(
+                './modules/reminders/reminder-list/reminder-list.component'
+              ).then((m) => m.ReminderListComponent),
+          },
+          {
+            path: 'new',
+            loadComponent: () =>
+              import(
+                './modules/reminders/reminder-form/reminder-form.component'
+              ).then((m) => m.ReminderFormComponent),
+          },
+          {
+            path: ':id/edit',
+            loadComponent: () =>
+              import(
+                './modules/reminders/reminder-form/reminder-form.component'
+              ).then((m) => m.ReminderFormComponent),
+          },
+        ],
+      },
+    ],
   },
 
   // Admin Layout
@@ -198,11 +208,11 @@ export const routes: Routes = [
         component: AccountSettingsComponent,
         children: [
           { path: 'photo', component: PhotoComponent },
-          { path: 'account-security', component: AccountSecurityComponent }
-        ]
+          { path: 'account-security', component: AccountSecurityComponent },
+        ],
       },
-      { path: 'account-side', component: AdminSidebarComponent }
-    ]
+      { path: 'account-side', component: AdminSidebarComponent },
+    ],
   },
 
   // Instructor Layout
@@ -215,19 +225,19 @@ export const routes: Routes = [
       { path: '', component: InstructorDashboardComponent },
       { path: 'create-courses', component: CreateCourseComponent },
       { path: 'create-module', component: CreateCourseModulesComponent },
-      { path: 'create-course-lesson', component: CreateLessonsComponent }
-    ]
+      { path: 'create-course-lesson', component: CreateLessonsComponent },
+    ],
   },
 
   // Standalone Lazy-Loaded Video Call
   {
     path: 'meet/:id',
     loadComponent: () =>
-      import('./modules/video-meet/components/video-call/video-call.component').then(
-        (m) => m.default
-      )
+      import(
+        './modules/video-meet/components/video-call/video-call.component'
+      ).then((m) => m.default),
   },
 
   // Fallback
-  { path: '**', redirectTo: '/login' }
+  { path: '**', redirectTo: '/login' },
 ];

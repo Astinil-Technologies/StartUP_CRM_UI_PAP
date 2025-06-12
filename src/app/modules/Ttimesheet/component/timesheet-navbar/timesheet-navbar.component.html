@@ -1,16 +1,39 @@
 <div class="container">
-    <div class="content-wrapper">
-      <div class="sidebar">
+  <div class="content-wrapper">
+    <div class="sidebar">
+      <nav>
         <ul class="nav-links">
-          <li><a routerLink="/layout/timesheet/" routerLinkActive="active">Home Page</a></li>
-          <li><a routerLink="" routerLinkActive="active">LogTime</a></li>
-          <li><a routerLink="/layout/timesheet/attendance" routerLinkActive="active">Attendance</a></li>
-          <li><a routerLink="/settings" routerLinkActive="active">Search</a></li>
+          <li>
+            <a
+              routerLink="/layout/timesheet/homepage"
+              routerLinkActive="active"
+            >
+              Home Page
+            </a>
+          </li>
+          <li>
+            <a routerLink="/layout/timesheet/logtime" routerLinkActive="active">
+              LogTime
+            </a>
+          </li>
+          <li>
+            <a
+              routerLink="/layout/timesheet/attendance"
+              routerLinkActive="active"
+            >
+              Attendance
+            </a>
+          </li>
+          <li>
+            <a routerLink="/settings" routerLinkActive="active"> Search </a>
+          </li>
         </ul>
-      </div>
-      
-      <div class="main-content">
-        <router-outlet></router-outlet>
-      </div>
+      </nav>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+      <router-outlet></router-outlet>
     </div>
   </div>
+</div>

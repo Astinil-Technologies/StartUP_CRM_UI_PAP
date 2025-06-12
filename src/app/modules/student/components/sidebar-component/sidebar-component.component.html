@@ -1,17 +1,17 @@
 <div class="main-dashboard-container">
   <div class="dashboard-container" [class.open]="isSidebarOpen">
 
-    <!-- Top-right Close Button for Sidebar -->
+    
     <button class="close-sidebar-btn" (click)="closeSidebar()">×</button>
 
     <div class="header d-flex flex-column">
-      <!-- User Info and Upload Section -->
+      
       <div class="d-flex justify-content-center gap-3 align-items-center flex-column">
         <div *ngIf="firstName && lastName" class="user-name">
           {{ firstName }} {{ lastName }}
         </div>
 
-        <!-- Profile Avatar Below Name -->
+        
         <div class="profile-avatar-box">
           <ng-container *ngIf="previewUrl; else initials">
             <img [src]="previewUrl" alt="Profile" class="profile-avatar-img square-avatar" />
@@ -23,7 +23,7 @@
           </ng-template>
         </div>
 
-        <!-- Upload Profile Section -->
+        
         <div class="upload-profile-section">
           <div *ngIf="!isEditingProfileImage">
             <button class="edit-btn" (click)="enableImageEdit()">Edit</button>
@@ -36,7 +36,7 @@
         </div>
       </div>
 
-      <!-- Sidebar Menu -->
+    
       <div class="sidebar">
         <ul class="nav-items">
           <li><a routerLink="/home" routerLinkActive="active">Email: {{ userData?.email }}</a></li>
@@ -44,7 +44,7 @@
           <li><a routerLink="/home" routerLinkActive="active">Location: {{ userData?.location || 'N/A' }}</a></li>
           <li><a routerLink="/home" routerLinkActive="active">Bio: {{ userData?.bio || 'No bio available' }}</a></li>
 
-          <!-- Status Dropdown -->
+        
           <li>
             <div class="status-dropdown" *ngIf="!isLoading">
               <label for="status">Status:</label>
@@ -58,25 +58,25 @@
 
           <li><a routerLink="/home" routerLinkActive="active">CreatedAt: {{ userData?.createdAt }}</a></li>
 
-          <!-- Add Account & Switch Account -->
+          
           <li><button (click)="openAddAccount()" class="account-btn">➕ Add Account</button></li>
           <li><button (click)="openSwitchAccount()" class="account-btn">🔁 Switch Account</button></li>
         </ul>
 
-        <!-- ✅ Log Out Button at bottom -->
+        
         <div class="logout-wrapper">
           <div class="logout-center">
             <button class="logout-btn" (click)="logout()">🚪 Log Out</button>
           </div>
         </div>
 
-        <!-- Add Account Popup -->
+        
         <div *ngIf="showAddAccountBox" class="popup-box">
           <button class="close-btn" (click)="closePopup()">×</button>
           <app-register></app-register>
         </div>
 
-        <!-- Switch Account Popup -->
+        
         <div *ngIf="showSwitchAccountBox" class="popup-box">
           <button class="close-btn" (click)="closePopup()">×</button>
           <app-login [isSwitchAccountMode]="true" (loginSuccess)="closePopup()"></app-login>

@@ -21,23 +21,31 @@
     background-color: orange;
   }
   
-  .navbar-nav .nav-link {
-    color: #ffffff !important;               /* Bright white */
-    font-weight: 700;                        /* Bold */
-    font-size: 1.25rem;                      /* Bigger font (20px) */
-    text-shadow: 0 0 4px rgba(0, 0, 0, 0.3);  /* Optional glow effect */
-    margin-right: 15px;                      /* Space between items */
-  }
 
 .navbar-nav .nav-link {
-    font-size: 1rem;
-    color: #ffffff;
-    cursor: pointer;
-    transition: color 0.3s ease;
+  font-size: 0.9rem;
+  color: #ffffff !important;
+  font-weight: 600;
+  margin-right: 15px;
+  transition: all 0.3s ease;
+  padding: 8px 12px;
+  border-radius: 5px;
 }
 
+
 .navbar-nav .nav-link:hover {
-    color: #ffebcd;
+  color: #fffacd !important;         /* Lighter yellow */
+  font-weight: 700;
+  background-color: rgba(255, 255, 255, 0.1); /* Subtle bg */
+  transform: scale(1.05);            /* Slight zoom */
+}
+
+
+.navbar-nav .nav-link.active {
+  background-color: #cc7424;         /* Highlight active tab */
+  color: #ffffff !important;
+  font-weight: 700;
+  text-decoration: underline;        /* Optional underline */
 }
 
 .search-bar {

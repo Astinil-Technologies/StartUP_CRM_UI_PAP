@@ -104,7 +104,7 @@ export class SidebarComponentComponent implements OnInit {
       (response) => {
         this.userData = {
           ...response,
-          status: response.status || 'Online'
+          status: response.status || 'Online',
         };
 
         if (this.userData.profileImageUrl) {

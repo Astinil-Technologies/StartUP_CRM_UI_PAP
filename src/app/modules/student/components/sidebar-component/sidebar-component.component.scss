@@ -46,24 +46,24 @@
         margin-bottom: 10px;
 
         .profile-avatar-img {
-          width: 70px;
-          height: 70px;
+          width: 60px;
+          height: 60px;
           object-fit: cover;
-          border-radius: 8px;
+          border-radius: 6px;
           border: 2px solid #cccccc;
         }
 
         .profile-avatar-initials {
-          width: 70px;
-          height: 70px;
+          width: 60px;
+          height: 60px;
           display: flex;
           align-items: center;
           justify-content: center;
           font-weight: 600;
           font-size: 18px;
           color: white;
-          background-color: #1de7a7b3;
-          border-radius: 8px;
+          background-color: #3ac297b3;
+          border-radius: 6px;
         }
       }
     }
