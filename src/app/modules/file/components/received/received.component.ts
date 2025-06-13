@@ -1,3 +1,4 @@
+
 import { Component } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
@@ -25,14 +26,16 @@ interface FileItem {
 export class ReceivedComponent {
   files: FileItem[] = [];
   previewFileType: string = '';
-
   loading = false;
   error = '';
   currentPage = 0;
   totalPages = 0;
   pageSize = 10;
+  previewFileId: number = 0;
 
-  previewUrl: SafeResourceUrl | null = null;
+
+  previewUrl: string | null = null;               // Raw object URL for Office viewer
+  safePreviewUrl: SafeResourceUrl | null = null;  // Sanitized for Angular bindings
   isPdf = false;
 
   private baseUrl = environment.baseUrl;
@@ -112,41 +115,45 @@ export class ReceivedComponent {
       }
     );
   }
+previewFile(fileId: number): void {
+  const token = this.tokenService.getAccessToken();
+  const userId = this.extractUserIdFromToken();
+  const headers = new HttpHeaders({ Authorization: `Bearer ${token}` });
+  const url = `${this.baseUrl}/api/files/preview/${fileId}?userId=${userId}`;
 
-  previewFile(fileId: number): void {
-    const token = this.tokenService.getAccessToken();
-    const userId = this.extractUserIdFromToken();
-    const headers = new HttpHeaders({ Authorization: `Bearer ${token}` });
-    const url = `${this.baseUrl}/api/files/preview/${fileId}?userId=${userId}`;
+  this.previewFileId = fileId; // Used for Office Viewer iframe
 
-    this.http.get(url, { headers, responseType: 'blob' }).subscribe({
-      next: (blob) => {
-        const fileType = blob.type;
-        const objectUrl = URL.createObjectURL(blob);
+  this.http.get(url, { headers, responseType: 'blob' }).subscribe({
+    next: (blob) => {
+      const fileType = blob.type;
+      const objectUrl = URL.createObjectURL(blob);
 
-        if (fileType === 'application/json') {
-          const reader = new FileReader();
-          reader.onload = () => {
-            const errorJson = JSON.parse(reader.result as string);
-            alert(errorJson.message || 'Preview failed');
-          };
-          reader.readAsText(blob);
-          return;
-        }
-
-        this.previewFileType = fileType;
-        this.isPdf = fileType === 'application/pdf';
-        this.previewUrl = this.sanitizer.bypassSecurityTrustResourceUrl(objectUrl);
-      },
-      error: (err) => {
-        console.error('Preview failed:', err);
-        alert('Preview failed: Unsupported or corrupted file.');
+      if (fileType === 'application/json') {
+        const reader = new FileReader();
+        reader.onload = () => {
+          const errorJson = JSON.parse(reader.result as string);
+          alert(errorJson.message || 'Preview failed');
+        };
+        reader.readAsText(blob);
+        return;
       }
-    });
-  }
+
+      this.previewFileType = fileType;
+      this.previewUrl = objectUrl;
+      this.safePreviewUrl = this.sanitizer.bypassSecurityTrustResourceUrl(objectUrl);
+      this.isPdf = fileType === 'application/pdf';
+    },
+    error: (err) => {
+      console.error('Preview failed:', err);
+      alert('Preview failed: Unsupported or corrupted file.');
+    }
+  });
+}
+
 
   closePreview(): void {
     this.previewUrl = null;
+    this.safePreviewUrl = null;
     this.isPdf = false;
   }
 
@@ -214,4 +221,45 @@ export class ReceivedComponent {
       }
     );
   }
+  
+getOfficeViewerUrl(fileId: number): string {
+  const streamUrl = `${this.baseUrl}/api/files/stream/${fileId}`;
+  return `https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(streamUrl)}`;
+}
+
+
+  
+isAudio(fileType: string): boolean {
+  return fileType.startsWith('audio/');
+}
+
+isVideo(fileType: string): boolean {
+  return fileType.startsWith('video/') &&
+         ['video/mp4', 'video/webm', 'video/ogg'].includes(fileType);
+}
+
+isOffice(fileType: string): boolean {
+  return [
+    'application/vnd.openxmlformats-officedocument.wordprocessingml.document', // DOCX
+    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', // XLSX
+    'application/vnd.openxmlformats-officedocument.presentationml.presentation', // PPTX
+    'application/msword',
+    'application/vnd.ms-excel',
+    'application/vnd.ms-powerpoint'
+  ].includes(fileType);
+}
+
+isImage(fileType: string): boolean {
+  return fileType.startsWith('image/');
+}
+
+
+
+isText(fileType: string): boolean {
+  return ['text/plain', 'text/csv', 'application/json'].includes(fileType);
+}
+
+
+
+
 }
