@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
@@ -33,6 +33,9 @@ import { NavigationService } from 'src/app/core/services/navigationservice/navig
   ],
 })
 export class LoginComponent {
+  @Input() isSwitchAccountMode = false;               // ✅ Input for switch account mode
+  @Output() loginSuccess = new EventEmitter<void>();  // ✅ Output event to close popup
+
   hidePassword: boolean = true;
   loginForm: FormGroup;
   errorMessage: string = '';
@@ -53,8 +56,8 @@ export class LoginComponent {
         '',
         [
           Validators.required,
-          Validators.minLength(6), // Update length to 6 as per requirements
-          Validators.pattern('^[a-zA-Z0-9]*$'), // Alphanumeric only
+          Validators.minLength(6),
+          Validators.pattern('^[a-zA-Z0-9]*$'),
         ],
       ],
       rememberMe: [false],
@@ -67,18 +70,22 @@ export class LoginComponent {
       const password = this.loginForm.get('password')?.value ?? '';
       const rememberMe = this.loginForm.get('rememberMe')?.value ?? false;
 
-      this.authService
-        .login({ username: email, password })
-        .subscribe({
-          next: (response) => {
-            this.tokenService.storeTokens(
-              response.data.accessToken,
-              response.data.refreshToken
-            );
-            this.navigationService.navigateBasedOnRole();
-          },
-          error: (error: HttpErrorResponse) => this.handleLoginError(error),
-        });
+      this.authService.login({ username: email, password }).subscribe({
+        next: (response) => {
+          this.tokenService.storeTokens(
+            response.data.accessToken,
+            response.data.refreshToken
+          );
+
+          // ✅ Emit event only in switch account mode
+          if (this.isSwitchAccountMode) {
+            this.loginSuccess.emit();
+          }
+
+          this.navigationService.navigateBasedOnRole();
+        },
+        error: (error: HttpErrorResponse) => this.handleLoginError(error),
+      });
     } else {
       this.snackBar.open(
         'Please fill in all required fields correctly.',

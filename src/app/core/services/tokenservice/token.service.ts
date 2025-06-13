@@ -37,6 +37,15 @@ export class TokenService {
     this.cookieService.set(this.accessTokenKey, accessToken);
     this.cookieService.set(this.refreshTokenKey, refreshToken);
   }
+   /** ✅ Setter for access token (for external use) */
+  setAccessToken(token: string): void {
+    this.cookieService.set(this.accessTokenKey, token);
+  }
+
+  /** ✅ Setter for refresh token (for external use) */
+  setRefreshToken(refreshToken: string): void {
+    this.cookieService.set(this.refreshTokenKey, refreshToken);
+  }
 
   /**
    * Retrieves the stored access token.

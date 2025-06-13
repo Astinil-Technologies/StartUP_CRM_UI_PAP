@@ -1,18 +1,28 @@
 import { CommonModule } from '@angular/common';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, ChangeDetectorRef } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { environment } from 'src/environments/environment';
 import { AuthService } from 'src/app/core/services/authservice/auth.service';
 import { FormsModule } from '@angular/forms';
-import { MatSnackBar } from '@angular/material/snack-bar';
-import { Router } from '@angular/router';
+import { RegisterComponent } from 'src/app/auth/register/register.component';
+import { LoginComponent } from 'src/app/auth/login/login.component';
+import { LoginMainComponent } from 'src/app/auth/login-main/login-main.component';
+import { UserDataService } from 'src/app/core/services/user-data.service';
 
 @Component({
   selector: 'app-sidebar-component',
   standalone: true,
-  imports: [MatIconModule, CommonModule, RouterModule, FormsModule],
+  imports: [
+    MatIconModule,
+    CommonModule,
+    RouterModule,
+    RegisterComponent,
+    LoginComponent,
+    LoginMainComponent,
+    FormsModule
+  ],
   templateUrl: './sidebar-component.component.html',
   styleUrl: './sidebar-component.component.scss',
 })
@@ -25,31 +35,43 @@ export class SidebarComponentComponent implements OnInit {
 
   statusOptions: string[] = ['ONLINE', 'OFFLINE', 'IN_MEETING'];
 
-  // Profile Variables
   userData: any = null;
   isProfileBoxVisible: boolean = false;
   isLoading: boolean = true;
+
+  showAddAccountBox = false;
+  showSwitchAccountBox = false;
+
+  selectedProfileImage: File | null = null;
+  previewUrl: string | null = null;
+  isEditingProfileImage = false;
+  showSaveButton = false;
+
+  switchEmail: string = '';
+  switchPassword: string = '';
 
   constructor(
     private authService: AuthService,
     private http: HttpClient,
     private router: Router,
-    private snackBar: MatSnackBar
+    private cdr: ChangeDetectorRef,
+    private userDataService: UserDataService
   ) {}
 
   ngOnInit() {
     this.userId = this.authService.getId();
-
     if (this.userId) {
       this.getUserDetails(this.userId);
     }
-
     this.loadUserProfile();
   }
 
-  // logout() {
-  //   this.authService.logout();
-  // }
+  logout() {
+    this.authService.logout();
+    localStorage.clear();
+    sessionStorage.clear();
+    this.router.navigate(['/login-main']);
+  }
 
   getUserDetails(userId: string): void {
     const url = `${this.baseUrl}/api/v1/users/${userId}`;
@@ -68,7 +90,6 @@ export class SidebarComponentComponent implements OnInit {
   loadUserProfile() {
     const url = `${this.baseUrl}/api/v1/users/profile`;
     const token = this.authService.getAccessToken();
-    console.log(token);
 
     if (!token) {
       console.error('Token not available. User not authenticated.');
@@ -76,20 +97,27 @@ export class SidebarComponentComponent implements OnInit {
     }
 
     const headers = new HttpHeaders({
-      Authorization: `Bearer${token}`,
+      Authorization: `Bearer ${token}`,
     });
 
     this.http.get<any>(url, { headers }).subscribe(
       (response) => {
-        console.log(response);
-
         this.userData = {
           ...response,
           status: response.status || 'Online',
         };
 
-        this.userData = response;
+        if (this.userData.profileImageUrl) {
+          this.previewUrl = `${this.baseUrl}/${this.userData.profileImageUrl}`;
+          this.isEditingProfileImage = false;
+        } else {
+          this.previewUrl = null;
+          this.isEditingProfileImage = true;
+        }
+
         this.isLoading = false;
+        this.userDataService.setUserData(this.userData);
+        this.cdr.detectChanges();
       },
       (error) => {
         console.error('Error loading profile data', error);
@@ -99,9 +127,6 @@ export class SidebarComponentComponent implements OnInit {
   }
 
   onStatusChange() {
-    console.log('User changed status to:', this.userData.status);
-    this.authService.setUserStatus(this.userData.status);
-
     const url = `${this.baseUrl}/api/v1/users/status`;
     const token = this.authService.getAccessToken();
 
@@ -126,41 +151,110 @@ export class SidebarComponentComponent implements OnInit {
     this.isProfileBoxVisible = !this.isProfileBoxVisible;
   }
 
-  logout(): void {
-    const token = this.authService.getAccessToken();
+  openAddAccount() {
+    this.showAddAccountBox = true;
+    this.showSwitchAccountBox = false;
+  }
 
-    if (token) {
-      const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
-      const logoutRequest = { token };
-      this.http
-        .post(`${this.baseUrl}/auth/logout`, logoutRequest, {
-          responseType: 'text',
-        })
-        .subscribe({
-          next: () => this.handleLogoutSuccess(),
-          error: (err) => {
-            console.error('Logout failed:', err);
-            this.handleLogoutSuccess();
-          },
-        });
-    } else {
-      this.handleLogoutSuccess();
+  openSwitchAccount() {
+    this.showSwitchAccountBox = true;
+    this.showAddAccountBox = false;
+  }
+
+  closePopup() {
+    this.showAddAccountBox = false;
+    this.showSwitchAccountBox = false;
+    this.userId = this.authService.getId();
+    if (this.userId) {
+      this.getUserDetails(this.userId);
+      this.loadUserProfile();
+    }
+    this.cdr.detectChanges();
+  }
+
+  closeSidebar(): void {
+    this.isSidebarOpen = false;
+  }
+
+  enableImageEdit() {
+    this.isEditingProfileImage = true;
+  }
+
+  onProfileImageSelected(event: Event): void {
+    const file = (event.target as HTMLInputElement).files?.[0];
+
+    if (file) {
+      const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
+
+      if (!allowedTypes.includes(file.type)) {
+        alert('Invalid file type. Please upload a JPG, JPEG, PNG, or WEBP image.');
+        return;
+      }
+
+      if (file.size > 2 * 1024 * 1024) {
+        alert('Image is too large. Maximum size allowed is 2MB.');
+        return;
+      }
+
+      this.selectedProfileImage = file;
+      this.showSaveButton = true;
+
+      const reader = new FileReader();
+      reader.onload = () => {
+        this.previewUrl = reader.result as string;
+      };
+      reader.readAsDataURL(file);
     }
   }
 
-  handleLogoutSuccess(): void {
-    localStorage.removeItem('token');
-    localStorage.removeItem('refreshToken');
-    localStorage.removeItem('role');
+  uploadProfileImage(): void {
+    if (!this.selectedProfileImage || !this.userId) return;
 
-    this.snackBar.open('Logout successful', 'Close', {
-      duration: 3000,
-      verticalPosition: 'top',
-      panelClass: ['success-snackbar'],
+    const formData = new FormData();
+    formData.append('image', this.selectedProfileImage);
+
+    const url = `${this.baseUrl}/api/v1/users/${this.userId}/upload-profile-image`;
+    const token = this.authService.getAccessToken();
+
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`
     });
 
-    setTimeout(() => {
-      this.router.navigate(['/login']);
-    }, 1000);
+    this.http.post(url, formData, { headers }).subscribe(
+      (response) => {
+        console.log('Profile image uploaded successfully', response);
+        this.isEditingProfileImage = false;
+        this.showSaveButton = false;
+        this.loadUserProfile();
+      },
+      (error) => {
+        console.error('Error uploading profile image:', error);
+      }
+    );
+  }
+
+  switchAccount(): void {
+    const url = `${this.baseUrl}/auth/switch-account`;
+
+    const body = {
+      email: this.switchEmail,
+      password: this.switchPassword
+    };
+
+    this.http.post<any>(url, body).subscribe(
+      (response) => {
+        if (response.data?.token) {
+          this.authService.setToken(response.data.token);
+          this.authService.setRefreshToken(response.data.refreshToken);
+
+          this.closePopup();
+        } else {
+          alert('Unexpected response format.');
+        }
+      },
+      (error) => {
+        alert(error?.error?.message || 'User not found or invalid credentials.');
+      }
+    );
   }
 }

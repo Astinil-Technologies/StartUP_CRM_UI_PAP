@@ -65,7 +65,7 @@
     margin-bottom: -12px;
     padding: 5px;
     background-color: #fff;
-    color: #ffa500;
+    color:white (196, 28%, 92%, 0.482);
     font-weight: 600;
     margin-bottom: 1px;
     border: 1px solid gray;
@@ -98,15 +98,16 @@
 .Name_logo {
   width: 40px;
   height: 40px;
-  border-radius: 50%;
+  border-radius: 8px; // Slight rounding for a square look (optional)
   display: flex;
   align-items: center;
   justify-content: center;
   font-weight: 500;
   font-size: 16px;
-//   color: white;
   position: relative;
+  background-color: #0c0ff2; // optional fallback background
 }
+
 
 .status-dot {
   position: absolute;
