@@ -65,17 +65,49 @@
   </div>
 </div>
 
-<!-- Single Preview Modal (image or PDF) -->
-<div class="preview-modal" *ngIf="previewUrl" (click)="closePreview()">
+<!--  Universal Preview Modal with SafeResourceUrl -->
+<div class="preview-modal" *ngIf="safePreviewUrl" (click)="closePreview()">
   <div class="preview-content" (click)="$event.stopPropagation()">
     <button class="close-btn" (click)="closePreview()">✖</button>
 
-    <ng-container *ngIf="isPdf; else imageTpl">
-      <iframe [src]="previewUrl" width="100%" height="600" style="border: none;"></iframe>
-    </ng-container>
+    <!-- PDF -->
+    <iframe *ngIf="isPdf"
+            [src]="safePreviewUrl"
+            width="100%" height="100%" style="border: none;"></iframe>
 
-    <ng-template #imageTpl>
-      <img [src]="previewUrl" alt="Preview Image" style="max-width: 100%; height: auto;" />
-    </ng-template>
+    <!-- Image -->
+    <img *ngIf="!isPdf && previewFileType.startsWith('image/')"
+         [src]="safePreviewUrl"
+         alt="Preview Image"
+         style="max-width: 100%; height: auto;" />
+
+    <!-- Audio -->
+    <audio *ngIf="isAudio(previewFileType)" controls style="width: 100%;">
+      <source [src]="safePreviewUrl" [type]="previewFileType" />
+      Your browser does not support the audio element.
+    </audio>
+
+    <!-- Video -->
+    <video *ngIf="isVideo(previewFileType)" controls width="100%" height="auto">
+      <source [src]="safePreviewUrl" [type]="previewFileType" />
+      Your browser does not support the video element.
+    </video>
+
+    <!-- Office Docs via Microsoft Viewer -->
+
+<iframe *ngIf="isOffice(previewFileType)"
+        [src]="getOfficeViewerUrl(previewFileId)"
+        width="100%" height="100%" style="border: none;">
+</iframe>
+
+
+
+    <!-- Text/CSV/JSON -->
+    <iframe *ngIf="isText(previewFileType)"
+            [src]="safePreviewUrl"
+            width="100%" height="100%" style="border: none;">
+    </iframe>
   </div>
 </div>
+
+
