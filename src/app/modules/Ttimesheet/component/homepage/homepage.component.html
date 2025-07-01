@@ -6,19 +6,19 @@
       </div>
       <h3>{{ userData.id }} - <b>{{ userData.firstName }} {{ userData.lastName }}</b></h3>
       <p>{{ userData.bio }}</p>
-     <!-- Status Display (OUT/IN) -->
+  
      <span class="status" [ngClass]="status.toLowerCase()">{{ status }}</span>
 
      <div class="timer">
        <span>{{ checkInTime }}</span>
      </div>
  
-     <!-- Check-in/Check-out Button -->
+
      <button class="checkin-btn" (click)="toggleStatus()">
        {{ status === 'OUT' ? 'Check-in' : 'Check-out' }}
      </button>
   
-  <!-- Loading state -->
+
   <div *ngIf="isLoading">
     <p>Loading profile data...</p>
   </div>
