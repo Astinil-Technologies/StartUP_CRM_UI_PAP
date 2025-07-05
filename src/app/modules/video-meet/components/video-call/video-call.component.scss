@@ -1,0 +1,160 @@
+// Variables for theme colors
+$primary-color: #007bff;
+$secondary-color: #f8f8f8;
+$button-bg: #007bff;
+$button-hover: #0056b3;
+$border-radius: 10px;
+
+.container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 20px;
+  height: 90vh;
+  padding: 20px;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+  }
+}
+
+// 🎥 Video Call Section
+.video-container {
+  flex: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: black;
+  border-radius: $border-radius;
+  padding: 10px;
+  position: relative;
+
+  video {
+    width: 100%;
+    height: auto;
+    border-radius: $border-radius;
+    border: 2px solid white;
+  }
+
+  #localVideo {
+    width: 200px; // Small rectangle size
+    height: 120px;
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    border: 2px solid white;
+    border-radius: 5px;
+    background: black;
+  }
+
+  #remoteVideos {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-top: 10px;
+    
+    video {
+      width: 150px;
+      height: 100px;
+      margin: 5px;
+      border-radius: 5px;
+      border: 1px solid white;
+    }
+  }
+}
+
+// 💬 Chat Section
+.chat-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background: $secondary-color;
+  border-radius: $border-radius;
+  padding: 10px;
+  max-width: 300px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+
+  h3 {
+    background: $primary-color;
+    color: white;
+    padding: 10px;
+    border-radius: $border-radius $border-radius 0 0;
+    text-align: center;
+  }
+
+  .chat-box {
+    height: 300px;
+    overflow-y: auto;
+    border: 1px solid #ccc;
+    padding: 10px;
+    background: white;
+    border-radius: 5px;
+  }
+
+  input {
+    width: 100%;
+    padding: 8px;
+    margin-top: 5px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
+
+  button {
+    width: 100%;
+    padding: 8px;
+    margin-top: 5px;
+    background: $button-bg;
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+
+    &:hover {
+      background: $button-hover;
+    }
+  }
+}
+
+// 🎛 Controls Section
+.controls {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  margin-top: 20px;
+
+  button {
+    padding: 8px 15px;
+    background: $button-bg;
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: background 0.3s;
+
+    &:hover {
+      background: $button-hover;
+    }
+  }
+
+  .recording-popup {
+    position: fixed;
+    top: 10px;
+    right: 20px;
+    background-color: rgb(64, 255, 0);
+    color: white;
+    padding: 10px 15px;
+    font-size: 16px;
+    font-weight: bold;
+    border-radius: 8px;
+    z-index: 1000;
+    box-shadow: 0 0 10px rgba(0,0,0,0.3);
+  }
+  
+  .record-controls {
+    margin: 20px;
+  }
+  
+  
+}

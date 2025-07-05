@@ -1,0 +1,175 @@
+.login-container {
+  max-width: 400px;
+  margin: auto;
+  padding: 20px;
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 5px 4px rgba(205, 141, 2, 0.963);
+
+  h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 500;
+  }
+
+  mat-form-field {
+    width: 100%;
+    margin-bottom: 16px;
+  }
+
+  button {
+    display: block;
+    margin: 10px auto;
+    width: 100%;
+    transition: background-color 0.3s ease, transform 0.3s ease; /* Hover effect transition */
+    
+    &:hover {
+      background-color: #0056b3; /* Change button background on hover */
+      color: #fff; /* Ensure text color is white on hover */
+      transform: scale(1.05); /* Slightly enlarge the button on hover */
+    }
+  }
+
+  button[mat-button] {
+    text-align: center;
+  }
+
+  .back-button {
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    overflow: hidden; /* Ensure content stays within button bounds */
+  }
+
+  .animated-back-button {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem; /* Spacing between icon and text */
+    color: #3f51b5; /* Primary color */
+    transition: color 0.3s ease;
+  
+    &:hover {
+      color: #283593; /* Darker shade on hover */
+    }
+  
+    mat-icon {
+      font-size: 20px;
+      transition: transform 0.3s ease;
+    }
+  
+    span {
+      display: inline-block;
+      transition: transform 0.3s ease;
+    }
+  
+    &:hover span {
+      transform: translateX(-5px); /* Slide back the text on hover */
+    }
+  }
+
+  .error-message {
+    color: #f44336; // Material Red for error
+    font-size: 14px;
+    margin-top: -10px;
+  } 
+
+  .mandatory {
+    color: red;
+    font-size: 1.2em; /* Adjust the size as needed */
+  }
+
+  .register-header, .login-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px; /* Adjust spacing as needed */
+  }
+
+  .token-display {
+    margin-top: 20px; /* Adjust spacing as needed */
+    font-size: 1em;
+    color: #333;
+  }
+
+  /* Background Animation */
+  .animated-bg {
+    background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    animation: backgroundAnimation 15s infinite alternate;
+  }
+
+  @keyframes backgroundAnimation {
+    0% { background: linear-gradient(135deg, #f5f7fa, #c3cfe2); }
+    100% { background: linear-gradient(135deg, #c3cfe2, #f5f7fa); }
+  }
+
+  /* Fade-in Animation */
+  .animate-fade-in {
+    animation: fadeIn 2s ease-in-out;
+  }
+
+  @keyframes fadeIn {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+  }
+
+  /* Slide-up Animation */
+  .animate-slide-up {
+    animation: slideUp 2s ease-in-out;
+  }
+
+  @keyframes slideUp {
+    0% { transform: translateY(30px); opacity: 0; }
+    100% { transform: translateY(0); opacity: 1; }
+  }
+
+  .hide-asterisk {
+    display: none;
+  }
+
+  /* Hover Effects for Form Fields */
+  mat-form-field:hover {
+    border-color: #ffa500; /* Change border color on hover */
+    transition: border-color 0.3s ease;
+  }
+
+  .mat-input-element:hover {
+    border-bottom: 2px solid #ffa500; /* Change bottom border color on hover */
+    transition: border-bottom 0.3s ease;
+  }
+
+  /* Hover Effects for Icon Buttons */
+  mat-icon-button:hover mat-icon {
+    color: #ffa500; /* Change icon color on hover */
+    transform: scale(1.2); /* Slightly enlarge the icon on hover */
+    transition: color 0.3s ease, transform 0.3s ease;
+  }
+  .forgot-password { 
+    margin-top: 10px;
+    cursor: pointer;
+    transition: color 0.3s ease;
+   }
+   .forgot-password:hover {
+    color: #1e90ff;
+  }
+  
+  .forgot-password:active {
+    color: #008000;
+  }
+   .custom-login-btn {
+    background-color: #ffa500 !important; 
+    color: #ffffff !important;
+  }
+  
+  .custom-login-btn:hover {
+    background-color: #ff8c00 !important;
+  }
+  
+}

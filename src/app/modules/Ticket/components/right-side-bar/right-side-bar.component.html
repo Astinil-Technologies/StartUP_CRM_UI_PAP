@@ -1,0 +1,53 @@
+<!-- Floating Ticket Button (only when panel is hidden) -->
+<button
+  *ngIf="!showActivityPanel"
+  mat-fab
+  type="button"
+  aria-label="Show Activity"
+  class="activity-fab"
+  (click)="toggleActivityPanel()"
+>
+  🎫 Ticket
+</button>
+
+<!-- Activity Panel (fixed right) -->
+<mat-card class="activity-panel" *ngIf="showActivityPanel">
+  <mat-card-title class="p-2" style="display: flex; justify-content: space-between; align-items: center;">
+    <span>Activity</span>
+    <button
+      mat-icon-button
+      type="button"
+      aria-label="Hide Activity"
+      (click)="toggleActivityPanel()"
+    >
+      <mat-icon>close</mat-icon>
+    </button>
+  </mat-card-title>
+
+  <mat-divider></mat-divider>
+
+  <!-- Scrollable Activity List -->
+  <div class="activity-scroll">
+    <div class="activity-list" *ngFor="let activity of activities">
+      <mat-card class="activity-item">
+        <div class="message">{{ activity.message }}</div>
+        <div class="meta">
+          <span class="creator">{{ activity.createdBy }}</span> · 
+          <span class="time">{{ activity.createdAt | date:'shortTime' }}</span>
+        </div>
+      </mat-card>
+    </div>
+  </div>
+
+  <!-- Comment Input -->
+  <div class="activity-footer">
+    <mat-form-field appearance="fill" class="comment-field">
+      <textarea matInput placeholder="Write a comment..." [(ngModel)]="newComment"></textarea>
+    </mat-form-field>
+    <div class="send-btn">
+      <button mat-raised-button color="primary" [disabled]="!newComment?.trim()" (click)="sendComment()">
+        Send
+      </button>
+    </div>
+  </div>
+</mat-card>

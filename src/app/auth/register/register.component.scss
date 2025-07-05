@@ -1,0 +1,194 @@
+.register-container {
+  max-width: 400px;
+  margin: auto;
+  background-color: #F4ECC6;
+  border-radius: 16px;
+  box-shadow: 0 2px 4px rgba(238, 232, 232, 0.1);
+
+  h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    font-family: 'Roboto', sans-serif;
+    font-weight: 500;
+    color: white;
+  }
+
+  mat-form-field {
+    width: 100%;
+    color: rgb(15, 15, 14);
+
+  }
+  
+  button {
+    display: block;
+    margin: 10px auto;
+    width: 100%;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+
+    
+    &:hover {
+      color: #000000;
+      transform: scale(1.05);
+    }
+  }
+ 
+  .welcome-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #F4ECC6;
+    padding: 20px;
+    height: 100px;
+    text-align: center;
+}
+
+  .error-message {
+    color: red;
+    font-size: 14px;
+    margin-top: -10px;
+  } 
+
+  .mandatory {
+    color: red;
+    font-size: 1.2em;
+  }
+
+  .company-icon {
+    font-size: 30px;
+    color: rgba(55,33,12);
+  }
+  .back-icon{
+    margin-right: auto;
+  }
+  .register-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin: auto;
+    padding: 20px;
+    background-color: #DD9532;
+  }
+
+  .login-header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+  }
+
+  .token-display {
+    margin-top: 20px;
+    font-size: 1em;
+    color: #333;
+  }
+
+  .animated-bg {
+    background: linear-gradient(135deg, #f5f7fa, #e2c3c9);
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    animation: backgroundAnimation 15s infinite alternate;
+  }
+
+  @keyframes backgroundAnimation {
+    0% { background: linear-gradient(135deg, #f5f7fa, #c3cfe2); }
+    100% { background: linear-gradient(135deg, #c3cfe2, #f5f7fa); }
+  }
+
+  .animate-fade-in {
+    animation: fadeIn 2s ease-in-out;
+  }
+
+  @keyframes fadeIn {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+  }
+
+  .animate-slide-up {
+    animation: slideUp 2s ease-in-out;
+  }
+
+  @keyframes slideUp {
+    0% { transform: translateY(30px); opacity: 0; }
+    100% { transform: translateY(0); opacity: 1; }
+  }
+
+  .hide-asterisk {
+    display: none;
+  }
+
+  .mat-input-element:hover {
+    border-bottom: 2px solid #0260c5;
+    transition: border-bottom 0.3s ease;
+  }
+
+  mat-icon-button:hover mat-icon {
+    color: #b8a905;
+    transform: scale(5.2);
+    transition: color 0.3s ease, transform 0.3s ease;
+  }
+
+  .already-account {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    margin-top: 20px; 
+    font-size: 16px;
+    color: #000000;
+  }
+  
+  
+}
+.page-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100%;
+  background-color: #f8f4d8;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.card-form {
+  background-color: #F3E297;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  padding: 20px;
+  max-width: 400px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  box-sizing: border-box;
+}
+
+.card-form mat-form-field {
+  width: 100%;
+}
+
+.btn-register {
+  height: 40px;
+  margin-top: 15px;
+  align-self: center;
+  background-color: #F8B419;
+  border-radius: 5px;
+  border: none;
+}
+
+.card-form {
+  text-align: center;
+  font-size: 14px;
+}
+
+.already-account {
+  font-size: 14px;
+  text-align: center;
+}
+.privacy-terms{
+  font-size: 14px;
+  text-align: center;
+}
