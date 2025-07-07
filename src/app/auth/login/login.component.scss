@@ -1,175 +1,152 @@
-.login-container {
-  max-width: 400px;
-  margin: auto;
-  padding: 20px;
+/* Entire page background is white */
+.animated-bg {
   background-color: #ffffff;
-  border-radius: 8px;
-  box-shadow: 0 5px 4px rgba(205, 141, 2, 0.963);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
 
-  h2 {
-    text-align: center;
-    margin-bottom: 20px;
-    font-family: 'Roboto', sans-serif;
-    font-weight: 500;
-  }
+/* Header bar at top */
+.header-bar {
+  display: flex;
+  align-items: center;/* Light blue header */
+  color: #ffffff;
+  padding: 10px 16px;
+  font-size: 18px;
+  font-weight: 500;
 
-  mat-form-field {
-    width: 100%;
-    margin-bottom: 16px;
+  .header-title {
+    margin-left: 8px;
   }
 
   button {
-    display: block;
-    margin: 10px auto;
+    color: #110505;
+  }
+}
+
+/* Main content area with branding and form side by side */
+.login-container {
+  max-width: 900px;
+  width: 100%;
+  margin: 40px auto 20px;
+  padding: 40px 20px;
+  display: flex;
+  background-color: #ffffff;
+  gap: 40px;
+  
+  @media (max-width: 768px) {
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+  }
+}
+
+/* Branding section on the left */
+.branding {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  h1 {
+    font-size: 2.5rem;
+    font-family: serif;
+    color: #000;
+  }
+}
+
+/* Form section on the right */
+.form-section {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+
+  form {
+    display: flex;
+    flex-direction: column;
     width: 100%;
-    transition: background-color 0.3s ease, transform 0.3s ease; /* Hover effect transition */
-    
-    &:hover {
-      background-color: #0056b3; /* Change button background on hover */
-      color: #fff; /* Ensure text color is white on hover */
-      transform: scale(1.05); /* Slightly enlarge the button on hover */
-    }
+     
   }
+mat-form-field {
+  width: 100%;
+  
+}
 
-  button[mat-button] {
-    text-align: center;
-  }
+.forgot-password {
+  margin: 4px 0;
+  cursor: pointer;
+  color: #666;
+  font-size: 14px;
+  transition: color 0.3s ease;
+  text-decoration: underline;
+}
 
-  .back-button {
+.forgot-password:hover {
+  color: #1e90ff;
+}
+
+.forgot-password:active {
+  color: #008000;
+}
+
+  .login-btn {
+    box-shadow: 10px 9px 4px rgba(0, 0, 0, 0.2);
+    background-color: #c8e2bd !important;
+    color: #000 !important;
+    border: 1px solid #a9cfa0;
     margin-bottom: 16px;
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    overflow: hidden; /* Ensure content stays within button bounds */
-  }
+    width: 100%;
+    transition: background-color 0.3s ease;
+    font-family: Neuton;
 
-  .animated-back-button {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem; /* Spacing between icon and text */
-    color: #3f51b5; /* Primary color */
-    transition: color 0.3s ease;
-  
     &:hover {
-      color: #283593; /* Darker shade on hover */
-    }
-  
-    mat-icon {
-      font-size: 20px;
-      transition: transform 0.3s ease;
-    }
-  
-    span {
-      display: inline-block;
-      transition: transform 0.3s ease;
-    }
-  
-    &:hover span {
-      transform: translateX(-5px); /* Slide back the text on hover */
+      background-color: #c0dcb2 !important;
     }
   }
 
-  .error-message {
-    color: #f44336; // Material Red for error
-    font-size: 14px;
-    margin-top: -10px;
-  } 
+  .register-btn {
+    box-shadow: 10px 9px 4px rgba(0, 0, 0, 0.2);
+    background-color: #99a3a4 !important;
+    color: #000 !important;
+    border: 1px solid #999;
+    width: 100%;
+    transition: background-color 0.3s ease;
+    font-family: Neuton;
+    &:hover {
+      background-color: #bbbbbb !important;
+    }
+  }
+}
 
-  .mandatory {
-    color: red;
-    font-size: 1.2em; /* Adjust the size as needed */
-  }
+/* Terms footer at bottom */
+.terms-footer {
+  background-color: #f2f2f2;
+  color: #333;
+  text-align: center;
+  padding: 12px;
+  font-size: 14px;
+  margin-top: auto;
+}
+::ng-deep .mat-form-field-appearance-fill .mat-form-field-underline {
+  display: none;
+  background-color: #ffffff;
+  border-radius: 15px;
+}
 
-  .register-header, .login-header {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 20px; /* Adjust spacing as needed */
-  }
+/* Also style the actual input's background if you want consistent rounding */
+.mat-input-element {
+  border-radius: 200px;
+}
+.animated-bg {
+  background-color: #ffffff;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
 
-  .token-display {
-    margin-top: 20px; /* Adjust spacing as needed */
-    font-size: 1em;
-    color: #333;
-  }
-
-  /* Background Animation */
-  .animated-bg {
-    background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
-    height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    animation: backgroundAnimation 15s infinite alternate;
-  }
-
-  @keyframes backgroundAnimation {
-    0% { background: linear-gradient(135deg, #f5f7fa, #c3cfe2); }
-    100% { background: linear-gradient(135deg, #c3cfe2, #f5f7fa); }
-  }
-
-  /* Fade-in Animation */
-  .animate-fade-in {
-    animation: fadeIn 2s ease-in-out;
-  }
-
-  @keyframes fadeIn {
-    0% { opacity: 0; }
-    100% { opacity: 1; }
-  }
-
-  /* Slide-up Animation */
-  .animate-slide-up {
-    animation: slideUp 2s ease-in-out;
-  }
-
-  @keyframes slideUp {
-    0% { transform: translateY(30px); opacity: 0; }
-    100% { transform: translateY(0); opacity: 1; }
-  }
-
-  .hide-asterisk {
-    display: none;
-  }
-
-  /* Hover Effects for Form Fields */
-  mat-form-field:hover {
-    border-color: #ffa500; /* Change border color on hover */
-    transition: border-color 0.3s ease;
-  }
-
-  .mat-input-element:hover {
-    border-bottom: 2px solid #ffa500; /* Change bottom border color on hover */
-    transition: border-bottom 0.3s ease;
-  }
-
-  /* Hover Effects for Icon Buttons */
-  mat-icon-button:hover mat-icon {
-    color: #ffa500; /* Change icon color on hover */
-    transform: scale(1.2); /* Slightly enlarge the icon on hover */
-    transition: color 0.3s ease, transform 0.3s ease;
-  }
-  .forgot-password { 
-    margin-top: 10px;
-    cursor: pointer;
-    transition: color 0.3s ease;
-   }
-   .forgot-password:hover {
-    color: #1e90ff;
-  }
-  
-  .forgot-password:active {
-    color: #008000;
-  }
-   .custom-login-btn {
-    background-color: #ffa500 !important; 
-    color: #ffffff !important;
-  }
-  
-  .custom-login-btn:hover {
-    background-color: #ff8c00 !important;
-  }
-  
+/* Make main content grow and allow scrolling */
+.login-container {
+  flex: 1 0 auto;
+  overflow-y: auto;
 }

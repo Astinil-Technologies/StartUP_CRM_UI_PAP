@@ -51,7 +51,7 @@ export class LoginComponent {
     private navigationService: NavigationService
   ) {
     this.loginForm = this.fb.group({
-      email: ['', [Validators.required, Validators.email]],
+      email: ['', [Validators.required]],
       password: [
         '',
         [
