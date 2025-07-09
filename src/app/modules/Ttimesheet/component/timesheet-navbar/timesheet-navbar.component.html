@@ -1,39 +1,36 @@
 <div class="container">
   <div class="content-wrapper">
-    <div class="sidebar">
+    <div class="sidebar" [ngClass]="{ 'shift-up': !topNavbarVisible }">
       <nav>
         <ul class="nav-links">
           <li>
-            <a
-              routerLink="/layout/timesheet/homepage"
-              routerLinkActive="active"
-            >
-              Home Page
+            <a routerLink="/layout/timesheet/homepage" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" title="Home">
+              <i class="fas fa-home"></i>
             </a>
           </li>
           <li>
-            <a routerLink="/layout/timesheet/logtime" routerLinkActive="active">
-              LogTime
+            <a routerLink="/layout/timesheet/logtime" routerLinkActive="active" title="Log Time">
+              <i class="fas fa-clock"></i>
             </a>
           </li>
           <li>
-            <a
-              routerLink="/layout/timesheet/attendance"
-              routerLinkActive="active"
-            >
-              Attendance
+            <a routerLink="/layout/timesheet/attendance" routerLinkActive="active" title="Attendance">
+              <i class="fas fa-calendar-check"></i>
             </a>
           </li>
           <li>
-            <a routerLink="/settings" routerLinkActive="active"> Search </a>
+            <a routerLink="/settings" routerLinkActive="active" title="Search">
+              <i class="fas fa-search"></i>
+            </a>
           </li>
+          
         </ul>
       </nav>
     </div>
 
-    <!-- Main Content -->
     <div class="main-content">
       <router-outlet></router-outlet>
     </div>
   </div>
 </div>
+
