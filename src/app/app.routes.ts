@@ -58,6 +58,8 @@ import { OverViewComponent } from './modules/myTask/components/over-view/over-vi
 import { TodayOverdueComponent } from './modules/myTask/components/today-overdue/today-overdue.component';
 import { TaskAssignedComponent } from './modules/myTask/components/task-assigned/task-assigned.component';
 
+
+
 // Video Meeting Module
 import VideoCallComponent from './modules/video-meet/components/video-call/video-call.component';
 import { ChatComponent } from './modules/video-meet/components/chat/chat.component';
@@ -70,6 +72,15 @@ import { FileSidebarComponent } from './modules/file/components/layout/file-side
 import { UploadComponent } from './modules/file/components/upload/upload.component';
 import { ReceivedComponent } from './modules/file/components/received/received.component';
 
+
+//right side bar module
+
+import { LinksComponent } from './modules/Ticket/components/pages/links/links.component';
+import { MoreComponent } from './modules/Ticket/components/pages/more/more.component';
+import { ActivityComponent } from './modules/Ticket/components/pages/activity/activity.component';
+
+
+
 export const routes: Routes = [
   { path: '', redirectTo: '/login-main', pathMatch: 'full' },
 
@@ -79,6 +90,15 @@ export const routes: Routes = [
   { path: 'register', component: RegisterComponent },
   { path: 'forgot-password', component: ForgotPasswordPopupComponent },
   { path: 'reset-password', component: ResetPasswordComponent },
+
+
+  
+  
+  { path: 'activity', component: ActivityComponent },
+  { path: 'links', component: LinksComponent },
+  { path: 'more', component: MoreComponent },
+  { path: '', redirectTo: '/layout/ticket', pathMatch: 'full' },
+  
 
   // Static Component Testing
   { path: 'cyber', component: FooterSectionComponent },

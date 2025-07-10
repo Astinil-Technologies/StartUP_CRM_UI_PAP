@@ -1,0 +1,27 @@
+<div class="overlay" (click)="close.emit()"></div>
+<div class="links-drawer">
+  <div class="drawer-header">
+    <h2>Add to this task</h2>
+    <button (click)="close.emit()">✕</button>
+  </div>
+
+  <div class="connect-url">
+    <p>Connect a URL</p>
+    <input type="text" placeholder="Paste any link..." />
+    <div class="icons">
+      <!-- Replace with real icons -->
+      <span>🔗</span> <span>📁</span> <span>📷</span> <span>🌐</span> <span>📺</span><span>▶️</span> ...
+    </div>
+  </div>
+
+  <div class="relationships">
+    <p>Add Relationship</p>
+    <div class="grid">
+      <button>Link Task</button>
+      <button>Waiting on</button>
+      <button>Blocking</button>
+      <button>Link Doc</button>
+      <button>➕ Custom</button>
+    </div>
+  </div>
+</div>

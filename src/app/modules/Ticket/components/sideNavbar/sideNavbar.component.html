@@ -1,22 +1,33 @@
-
 <div class="container">
   <div class="content-wrapper">
+    <!-- Left Sidebar -->
     <div class="sidebar">
       <ul class="nav-links">
-        <li><a routerLink="/layout/ticket/" routerLinkActive="active">Raise Ticket</a></li>
-        <li><a routerLink="/layout/ticket/myticket" routerLinkActive="active">My Tickets</a></li>
-      
+        <li>
+          <a routerLink="/layout/ticket/" routerLinkActive="active">Raise Ticket</a>
+        </li>
+        <li>
+          <a routerLink="/layout/ticket/myticket" routerLinkActive="active">My Tickets</a>
+        </li>
       </ul>
     </div>
-    
+
+    <!-- Main Content -->
     <div class="main-content">
       <router-outlet></router-outlet>
     </div>
-  </div>
+
+    <div class="sidebar-right">
+  <ul class="nav-links">
+    <li><a href="#">Activity</a></li>
+    <li><a (click)="toggleLinksTextPanel()">🔗</a></li>
+    <li><a (click)="toggleLinksPanel()">➕</a></li>
+  </ul>
 </div>
 
-
-
-
-
-
+ <!-- Slide-in Panel for + button -->
+<app-links *ngIf="showLinksPanel" (close)="toggleLinksPanel()"></app-links>
+<!-- Slide-in Panel for Links text -->
+    <app-more *ngIf="showLinksTextPanel" (close)="toggleLinksTextPanel()"></app-more>
+  </div>
+</div>

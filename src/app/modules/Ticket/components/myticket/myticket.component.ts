@@ -25,6 +25,7 @@ interface PaginatedTickets {
   number: number;
 }
 
+
 @Component({
   selector: 'app-myticket',
   standalone: true,
@@ -32,6 +33,8 @@ interface PaginatedTickets {
   templateUrl: './myticket.component.html',
   styleUrls: ['./myticket.component.scss']
 })
+
+
 export class MyticketComponent implements OnInit {
   private baseUrl = environment.baseUrl;
   apiUrl = `${this.baseUrl}/tickets/getAllTickets`;

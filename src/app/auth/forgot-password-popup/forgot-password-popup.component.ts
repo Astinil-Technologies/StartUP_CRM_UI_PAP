@@ -24,11 +24,11 @@ import { UserService } from 'src/app/core/services/userservice/user.service';
     MatSelectModule,
     MatDialogModule,
     HttpClientModule,
-    MatSnackBarModule
+    MatSnackBarModule,
   ],
   templateUrl: './forgot-password-popup.component.html',
   styleUrls: ['./forgot-password-popup.component.scss'],
-  providers: [UserService]
+  providers: [UserService],
 })
 export class ForgotPasswordPopupComponent {
   @Output() close = new EventEmitter<void>();
@@ -55,10 +55,14 @@ export class ForgotPasswordPopupComponent {
         },
         error: (error: any) => {
           console.error('Error sending reset link', error);
-          this.snackBar.open('Error sending reset link. Please try again.', 'Close', {
-            duration: 3000,
-          });
-        }
+          this.snackBar.open(
+            'Error sending reset link. Please try again.',
+            'Close',
+            {
+              duration: 3000,
+            }
+          );
+        },
       });
     }
   }
