@@ -8,14 +8,25 @@ import { AuthService } from 'src/app/core/services/authservice/auth.service';
 import { TokenService } from 'src/app/core/services/tokenservice/token.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { NavigationService } from 'src/app/core/services/navigationservice/navigation.service';
-
-
+import { LoginComponent } from '../login/login.component';
+import { RegisterComponent } from '../register/register.component';
+import { CommonModule } from '@angular/common';
+import { trigger,state,style,animate,transition,} from '@angular/animations';
 @Component({
   selector: 'app-login-main',
   standalone: true,
   imports: [
     MatIconModule,
-    MatDialogModule,
+    MatDialogModule,LoginComponent,
+  RegisterComponent,
+    CommonModule,
+  ],
+   animations: [ 
+    trigger('expandCollapse', [
+      state('expanded', style({ height: '*', opacity: 1, padding: '16px' })),
+      state('collapsed', style({ height: '0px', opacity: 0, padding: '0px' })),
+      transition('expanded <=> collapsed', [animate('500ms ease-in-out')])
+    ])
   ],
   templateUrl: './login-main.component.html',
   styleUrl: './login-main.component.scss'
@@ -23,7 +34,8 @@ import { NavigationService } from 'src/app/core/services/navigationservice/navig
 export class LoginMainComponent implements OnInit {
   user: any;
   loggedIn: boolean | undefined;
-
+activeTab: 'signin' | 'signup' | null = null;
+isExpanded = false;
   constructor(
     private router: Router,
     private dialog: MatDialog,
@@ -47,6 +59,15 @@ export class LoginMainComponent implements OnInit {
         { theme: 'outline', size: 'large' }
       );
     };
+  }
+  setActiveTab(tab: 'signin' | 'signup') {
+    if (this.activeTab === tab && this.isExpanded) {
+      this.isExpanded = false; 
+      this.activeTab = null;
+      return;
+    }
+    this.activeTab = tab;
+    this.isExpanded = true; 
   }
 
   handleCredentialResponse(response: any): void {

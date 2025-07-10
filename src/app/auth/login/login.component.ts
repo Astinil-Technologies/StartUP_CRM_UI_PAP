@@ -1,4 +1,5 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter,  OnInit,
+  NgZone,AfterViewInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
@@ -15,6 +16,14 @@ import { TokenService } from 'src/app/core/services/tokenservice/token.service';
 import { ForgotPasswordPopupComponent } from '../forgot-password-popup/forgot-password-popup.component';
 import { Location } from '@angular/common';
 import { NavigationService } from 'src/app/core/services/navigationservice/navigation.service';
+
+// Add Google type declaration to avoid TS error
+declare global {
+  interface Window {
+    google: any;
+  }
+}
+
 
 @Component({
   selector: 'app-login',
@@ -48,10 +57,12 @@ export class LoginComponent {
     private tokenService: TokenService,
     private snackBar: MatSnackBar,
     private location: Location,
-    private navigationService: NavigationService
+    private navigationService: NavigationService,
+    private ngZone: NgZone,
+    private http: HttpClient
   ) {
     this.loginForm = this.fb.group({
-      email: ['', [Validators.required, Validators.email]],
+      email: ['', [Validators.required]],
       password: [
         '',
         [
@@ -62,6 +73,29 @@ export class LoginComponent {
       ],
       rememberMe: [false],
     });
+  }
+ngOnInit(): void {
+  if (window.google && window.google.accounts?.id) {
+    window.google.accounts.id.initialize({
+      client_id: '282387866257-nkoqplsvhptndjn1e8spi3aaio7vkr3g.apps.googleusercontent.com',
+      callback: this.handleCredentialResponse.bind(this),
+    });
+  } else {
+    console.warn('Google Sign-In SDK not loaded.');
+  }
+}
+  ngAfterViewInit(): void {
+    if (window.google && window.google.accounts?.id) {
+      window.google.accounts.id.renderButton(
+        document.getElementById('google-signin-button'),
+        {
+          theme: 'outline',
+          size: 'large',
+          text: 'signin_with',
+          shape: 'rectangular',
+        }
+      );
+    }
   }
 
   onLogin(): void {
@@ -97,7 +131,30 @@ export class LoginComponent {
       );
     }
   }
+  handleCredentialResponse(response: any): void {
+    this.sendGoogleTokenToBackend(response.credential);
+  }
 
+  sendGoogleTokenToBackend(token: string): void {
+    this.authService.googleLogin(token).subscribe({
+      next: (response: any) => {
+        this.tokenService.storeTokens(
+          response.data.accessToken,
+          response.data.refreshToken
+        );
+        this.ngZone.run(() => {
+          this.navigationService.navigateBasedOnRole();
+        });
+      },
+      error: (error) => {
+        console.error('Google Sign-In failed:', error);
+        this.snackBar.open('Google login failed.', 'Close', {
+          duration: 3000,
+          panelClass: ['error-snackbar'],
+        });
+      }
+    });
+  }
   private handleLoginError(error: HttpErrorResponse): void {
     console.error(error);
 
