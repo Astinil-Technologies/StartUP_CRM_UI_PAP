@@ -1,25 +1,8 @@
-<!-- Floating Ticket Button (only when panel is hidden) -->
-<button
-  *ngIf="!showActivityPanel"
-  mat-fab
-  type="button"
-  aria-label="Show Activity"
-  class="activity-fab"
-  (click)="toggleActivityPanel()"
->
-  🎫 Ticket
-</button>
-
 <!-- Activity Panel (fixed right) -->
 <mat-card class="activity-panel" *ngIf="showActivityPanel">
   <mat-card-title class="p-2" style="display: flex; justify-content: space-between; align-items: center;">
     <span>Activity</span>
-    <button
-      mat-icon-button
-      type="button"
-      aria-label="Hide Activity"
-      (click)="toggleActivityPanel()"
-    >
+    <button mat-icon-button type="button" aria-label="Hide Activity" (click)="close.emit()">
       <mat-icon>close</mat-icon>
     </button>
   </mat-card-title>
@@ -45,7 +28,7 @@
       <textarea matInput placeholder="Write a comment..." [(ngModel)]="newComment"></textarea>
     </mat-form-field>
     <div class="send-btn">
-      <button mat-raised-button color="primary" [disabled]="!newComment?.trim()" (click)="sendComment()">
+      <button mat-raised-button color="primary" [disabled]="!newComment.trim()" (click)="sendComment()">
         Send
       </button>
     </div>

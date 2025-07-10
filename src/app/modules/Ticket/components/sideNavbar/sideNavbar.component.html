@@ -1,11 +1,14 @@
 <div class="container">
   <div class="content-wrapper">
-
     <!-- Left Sidebar -->
     <div class="sidebar sidebar-left">
       <ul class="nav-links">
-        <li><a routerLink="/layout/ticket/" routerLinkActive="active">Raise Ticket</a></li>
-        <li><a routerLink="/layout/ticket/myticket" routerLinkActive="active">My Tickets</a></li>
+        <li>
+          <a routerLink="/layout/ticket/" routerLinkActive="active">Raise Ticket</a>
+        </li>
+        <li>
+          <a routerLink="/layout/ticket/myticket" routerLinkActive="active">My Tickets</a>
+        </li>
       </ul>
     </div>
 
@@ -17,9 +20,13 @@
     <!-- Right Sidebar -->
     <div class="sidebar sidebar-right">
       <ul class="nav-links">
-       <li><a routerLink="/layout/ticket/activity" routerLinkActive="active">Activity</a></li>
+        <li>
+          <a href="#" (click)="toggleActivity($event)" [class.active]="showActivityPanel"> <i class="fa-regular fa-message fs-3"></i></a>
+        </li>
       </ul>
     </div>
-
   </div>
+
+  <!-- Activity Panel -->
+  <activity [showActivityPanel]="showActivityPanel" (close)="closeActivity()"></activity>
 </div>

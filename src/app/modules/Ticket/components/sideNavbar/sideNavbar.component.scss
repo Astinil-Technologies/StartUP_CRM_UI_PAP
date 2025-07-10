@@ -33,7 +33,7 @@
   width: 70px;
   background-color: orange;
   padding-top: 50px;
-  z-index: 1050; // 👈 High enough to stay above other elements
+  z-index:  500; // 👈 High enough to stay above other elements
 }
 
 .main-content {
@@ -85,3 +85,4 @@
     }
   }
 }
+www

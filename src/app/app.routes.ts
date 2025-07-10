@@ -69,7 +69,8 @@ import { FileSidebarComponent } from './modules/file/components/layout/file-side
 
 import { UploadComponent } from './modules/file/components/upload/upload.component';
 import { ReceivedComponent } from './modules/file/components/received/received.component';
-import { RightSideBarComponent } from './modules/Ticket/components/right-side-bar/right-side-bar.component';
+
+import { ActivityComponent } from './modules/Ticket/components/activity/activity.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: '/login-main', pathMatch: 'full' },
@@ -122,7 +123,7 @@ export const routes: Routes = [
         children: [
           { path: '', component: RaiseTicketComponent },
           { path: 'myticket', component: MyticketComponent },
-           { path: 'activity', component: RightSideBarComponent },
+           { path: 'activity', component: ActivityComponent },
           { path: 'update-ticket/:id', component: UpdateTicketComponent },
         ],
       },

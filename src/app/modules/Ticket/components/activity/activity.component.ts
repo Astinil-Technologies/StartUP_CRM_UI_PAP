@@ -1,5 +1,5 @@
+import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -15,7 +15,7 @@ interface Activity {
 }
 
 @Component({
-  selector: 'app-right-side-bar',
+  selector: 'activity',
   standalone: true,
   imports: [
     CommonModule,
@@ -27,10 +27,13 @@ interface Activity {
     MatDividerModule,
     MatIconModule
   ],
-  templateUrl: './right-side-bar.component.html',
-  styleUrls: ['./right-side-bar.component.scss']
+  templateUrl: './activity.component.html',
+  styleUrls: ['./activity.component.scss']
 })
-export class RightSideBarComponent {
+export class ActivityComponent {
+  @Input() showActivityPanel: boolean = false;
+  @Output() close = new EventEmitter<void>();
+
   activities: Activity[] = [
     {
       message: 'Ticket created',
@@ -45,11 +48,6 @@ export class RightSideBarComponent {
   ];
 
   newComment: string = '';
-  showActivityPanel: boolean = false;
-
-  toggleActivityPanel(): void {
-    this.showActivityPanel = !this.showActivityPanel;
-  }
 
   sendComment(): void {
     const trimmed = this.newComment.trim();
@@ -61,14 +59,5 @@ export class RightSideBarComponent {
       });
       this.newComment = '';
     }
-  }
-
-  formatTime(isoDate: string): string {
-    const date = new Date(isoDate);
-    return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-  }
-
-  trackByIndex(index: number): number {
-    return index;
   }
 }

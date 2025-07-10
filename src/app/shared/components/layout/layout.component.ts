@@ -8,7 +8,8 @@ import { FooterSectionComponent } from '../footer-section/footer-section.compone
 import { NavbarComponent } from '../navbar/navbar.component';
 import { SidebarComponentComponent } from 'src/app/modules/student/components/sidebar-component/sidebar-component.component';
 import { ReminderNotifierService } from 'src/app/modules/reminders/reminder-notifier.service';
-import { RightSideBarComponent } from 'src/app/modules/Ticket/components/right-side-bar/right-side-bar.component';
+import { ActivityComponent } from 'src/app/modules/Ticket/components/activity/activity.component';
+
 @Component({
   selector: 'app-layout',
   standalone: true,
@@ -21,7 +22,7 @@ import { RightSideBarComponent } from 'src/app/modules/Ticket/components/right-s
     FooterSectionComponent,
     NavbarComponent,
     SidebarComponentComponent,
-    RightSideBarComponent
+    ActivityComponent
     ],
   templateUrl: './layout.component.html',
   styleUrls: ['./layout.component.scss'] 
