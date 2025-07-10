@@ -1,73 +1,36 @@
-<div class="animated-bg">
+<form [formGroup]="loginForm" (ngSubmit)="onLogin()">
+  <mat-form-field appearance="fill">
+    <mat-label>Username or Phone Number or Email *</mat-label>
+    <input matInput type="text" formControlName="email" required autocomplete="username" />
+  </mat-form-field>
 
-  <!-- Header bar with back arrow and title -->
-  <div class="header-bar">
-    <button mat-icon-button (click)="navigateBack()">
-      <mat-icon>arrow_back</mat-icon>
+  <mat-form-field appearance="fill">
+    <mat-label>Password *</mat-label>
+    <input
+      matInput
+      [type]="hidePassword ? 'password' : 'text'"
+      formControlName="password"
+      required
+      autocomplete="current-password"
+    />
+    <button
+      mat-icon-button
+      matSuffix
+      type="button"
+      (click)="togglePasswordVisibility()"
+      aria-label="Toggle password visibility"
+    >
+      <mat-icon>{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
     </button>
-  
-  </div>
+  </mat-form-field>
 
-  <!-- Main content area -->
-  <div class="login-container">
+  <div class="forgot-password" (click)="ForgotPassword()">Forgot Password</div>
 
-    <!-- Left side branding -->
-    <div class="branding">
-      <h1>StartAhb</h1>
-    </div>
+  <button mat-raised-button type="submit" class="login-btn">Login</button>
 
-    <!-- Form section -->
-    <div class="form-section">
-      <form [formGroup]="loginForm" (ngSubmit)="onLogin()">
 
-        <!-- Username / Email / Phone field -->
-        <mat-form-field appearance="fill">
-          <mat-label>Username or Phone Number or Email</mat-label>
-          <input matInput type="text" formControlName="email" required autocomplete="username"/>
-        </mat-form-field>
-
-        <!-- Password field with show/hide -->
-        <mat-form-field appearance="fill">
-          <mat-label>Password</mat-label>
-          <input
-            matInput
-            [type]="hidePassword ? 'password' : 'text'"
-            formControlName="password"
-            required
-            autocomplete="current-password"
-          />
-          <button
-            mat-icon-button
-            matSuffix
-            type="button"
-            (click)="togglePasswordVisibility()"
-            aria-label="Toggle password visibility">
-            <mat-icon>{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
-          </button>
-        </mat-form-field>
-
-        <!-- Forgot Password link -->
-        <div class="forgot-password" (click)="ForgotPassword()">
-          Forgot Password
-        </div>
-
-        <!-- Login button -->
-        <button mat-raised-button type="submit" class="login-btn">
-          Login
-        </button>
-     
-
-        <!-- Register button -->
-        <button mat-button type="button" class="register-btn" (click)="navigateToRegister()">
-          Create New Account
-        </button>
-
-      </form>
-    </div>
-  </div>
-
-  <!-- Terms and conditions footer -->
-  <div class="terms-footer">
-    Terms and conditions
-  </div>
-</div>
+  <div id="google-signin-button" class="social-btn-container"></div>
+  <button mat-stroked-button type="button" class="social-btn">
+    Sign in with GitHub
+  </button>
+</form>

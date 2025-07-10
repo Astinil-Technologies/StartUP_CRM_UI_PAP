@@ -1,152 +1,72 @@
-/* Entire page background is white */
-.animated-bg {
-  background-color: #ffffff;
-  min-height: 100vh;
+form {
   display: flex;
   flex-direction: column;
-}
-
-/* Header bar at top */
-.header-bar {
-  display: flex;
-  align-items: center;/* Light blue header */
-  color: #ffffff;
-  padding: 10px 16px;
-  font-size: 18px;
-  font-weight: 500;
-
-  .header-title {
-    margin-left: 8px;
-  }
-
-  button {
-    color: #110505;
-  }
-}
-
-/* Main content area with branding and form side by side */
-.login-container {
-  max-width: 900px;
   width: 100%;
-  margin: 40px auto 20px;
-  padding: 40px 20px;
-  display: flex;
-  background-color: #ffffff;
-  gap: 40px;
-  
-  @media (max-width: 768px) {
-    flex-direction: column;
-    align-items: center;
-    gap: 20px;
-  }
-}
+  gap: 16px;
 
-/* Branding section on the left */
-.branding {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  h1 {
-    font-size: 2.5rem;
-    font-family: serif;
-    color: #000;
-  }
-}
-
-/* Form section on the right */
-.form-section {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-
-  form {
-    display: flex;
-    flex-direction: column;
+  mat-form-field {
     width: 100%;
-     
+
+    ::ng-deep .mat-form-field-flex {
+      background-color: white !important;
+      border-radius: 50 !important;
+      box-shadow: none;
+      border: 1px solid #ccc;
+      padding-left: 8px;
+    }
+
+    ::ng-deep .mat-form-field-appearance-fill .mat-form-field-underline {
+      display: none;
+    }
+
+    ::ng-deep .mat-input-element {
+      border-radius: 15px;
+      font-size: 14px;
+    }
+
+    ::ng-deep .mat-icon {
+      color: black;
+    }
   }
-mat-form-field {
-  width: 100%;
-  
-}
 
-.forgot-password {
-  margin: 4px 0;
-  cursor: pointer;
-  color: #666;
-  font-size: 14px;
-  transition: color 0.3s ease;
-  text-decoration: underline;
-}
-
-.forgot-password:hover {
-  color: #1e90ff;
-}
-
-.forgot-password:active {
-  color: #008000;
-}
-
-  .login-btn {
-    box-shadow: 10px 9px 4px rgba(0, 0, 0, 0.2);
-    background-color: #c8e2bd !important;
-    color: #000 !important;
-    border: 1px solid #a9cfa0;
-    margin-bottom: 16px;
-    width: 100%;
-    transition: background-color 0.3s ease;
-    font-family: Neuton;
+  .forgot-password {
+    margin-top: -10px;
+    font-size: 14px;
+    color: #444;
+    text-align: left;
+    cursor: pointer;
+    text-decoration: underline;
+    padding-left: 4px;
+    font-family: Arial;
 
     &:hover {
-      background-color: #c0dcb2 !important;
+      color: #0077cc;
     }
+  }
+
+  .login-btn {
+    background-color: #c8e2bd;
+    color: black;
+    font-family: Neuton;
+    box-shadow: 5px 5px 4px rgba(0, 0, 0, 0.2);
+    font-weight: bold;
+    width: 100%;
+    text-transform: none;
   }
 
   .register-btn {
-    box-shadow: 10px 9px 4px rgba(0, 0, 0, 0.2);
-    background-color: #99a3a4 !important;
-    color: #000 !important;
-    border: 1px solid #999;
-    width: 100%;
-    transition: background-color 0.3s ease;
+    background-color: #9da5a6;
+    color: black;
     font-family: Neuton;
-    &:hover {
-      background-color: #bbbbbb !important;
-    }
+    box-shadow: 5px 5px 4px rgba(0, 0, 0, 0.2);
+    font-weight: bold;
+    width: 100%;
+    text-transform: none;
   }
-}
 
-/* Terms footer at bottom */
-.terms-footer {
-  background-color: #f2f2f2;
-  color: #333;
-  text-align: center;
-  padding: 12px;
-  font-size: 14px;
-  margin-top: auto;
-}
-::ng-deep .mat-form-field-appearance-fill .mat-form-field-underline {
-  display: none;
-  background-color: #ffffff;
-  border-radius: 15px;
-}
-
-/* Also style the actual input's background if you want consistent rounding */
-.mat-input-element {
-  border-radius: 200px;
-}
-.animated-bg {
-  background-color: #ffffff;
-  min-height: 100vh;
+  .social-btn-container {
   display: flex;
-  flex-direction: column;
-  overflow-y: auto;
+  justify-content: center;
+  margin-top: 12px;
 }
-
-/* Make main content grow and allow scrolling */
-.login-container {
-  flex: 1 0 auto;
-  overflow-y: auto;
 }

@@ -10,6 +10,7 @@ import { environment } from 'src/environments/environment';
 import { CommonModule, Location } from '@angular/common';
 import { passwordMatchValidator } from './password-match.validator';
 import { TokenService } from 'src/app/core/services/tokenservice/token.service';
+import { LoginComponent } from '../login/login.component';
 
 @Component({
   selector: 'app-register',
@@ -29,7 +30,7 @@ export class RegisterComponent {
   registerForm: FormGroup;
   hidePassword: boolean = true;
   hideConfirmPassword: boolean = true;
-
+  selectedTab: 'signup' | 'signin' = 'signup';
   constructor(
     private fb: FormBuilder,
     private router: Router,
@@ -56,6 +57,9 @@ export class RegisterComponent {
       },
       { validators: passwordMatchValidator } 
     );
+  }
+   selectTab(tab: 'signup' | 'signin') {
+    this.selectedTab = tab;
   }
 
   /**
