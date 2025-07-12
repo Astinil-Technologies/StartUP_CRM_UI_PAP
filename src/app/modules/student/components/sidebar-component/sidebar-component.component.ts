@@ -34,16 +34,13 @@ export class SidebarComponentComponent implements OnInit {
   statusOptions: string[] = ['ONLINE', 'OFFLINE', 'IN_MEETING'];
 
   userData: any = null;
-  // isProfileBoxVisible: boolean = false;
   isLoading: boolean = true;
 
   showAddAccountBox = false;
   showSwitchAccountBox = false;
 
-  //selectedProfileImage: File | null = null;
   previewUrl: string | null = null;
- // isEditingProfileImage = false;
-  //showSaveButton = false;
+
 
   switchEmail: string = '';
   switchPassword: string = '';
@@ -58,10 +55,7 @@ export class SidebarComponentComponent implements OnInit {
 
   ngOnInit() {
     this.userId = this.authService.getId();
-    // if (this.userId) {
-    //   this.getUserDetails(this.userId);
-    // }
-    // this.loadUserProfile();
+  
     this.userDataService.userData$.subscribe((data) => {
     if (data) {
       this.userData = data;
@@ -121,15 +115,12 @@ export class SidebarComponentComponent implements OnInit {
           status: response.status || 'Online',
         };
 
-       //if (!this.previewUrl) {
+       
   if (this.userData.profileImageUrl?.startsWith('data:image')) {
     this.previewUrl = this.userData.profileImageUrl;
   } else if (this.userData.profileImageUrl) {
     this.previewUrl = `${this.baseUrl}/${this.userData.profileImageUrl}`;
-//   } else {
-//     this.previewUrl = null;
-//     this.isEditingProfileImage = true;
-//   }
+
  }
 
         this.isLoading = false;
@@ -164,9 +155,7 @@ export class SidebarComponentComponent implements OnInit {
     );
   }
 
-  // toggleProfileBox() {
-  //   this.isProfileBoxVisible = !this.isProfileBoxVisible;
-  // }
+ 
 
   openAddAccount() {
     this.showAddAccountBox = true;
@@ -192,63 +181,6 @@ export class SidebarComponentComponent implements OnInit {
   closeSidebar(): void {
     this.isSidebarOpen = false;
   }
-
-  // enableImageEdit() {
-  //   this.isEditingProfileImage = true;
-  // }
-
-  // onProfileImageSelected(event: Event): void {
-  //   const file = (event.target as HTMLInputElement).files?.[0];
-
-  //   if (file) {
-  //     const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
-
-  //     if (!allowedTypes.includes(file.type)) {
-  //       alert('Invalid file type. Please upload a JPG, JPEG, PNG, or WEBP image.');
-  //       return;
-  //     }
-
-  //     if (file.size > 2 * 1024 * 1024) {
-  //       alert('Image is too large. Maximum size allowed is 2MB.');
-  //       return;
-  //     }
-
-  //     this.selectedProfileImage = file;
-  //     this.showSaveButton = true;
-
-  //     const reader = new FileReader();
-  //     reader.onload = () => {
-  //       this.previewUrl = reader.result as string;
-  //     };
-  //     reader.readAsDataURL(file);
-  //   }
-  // }
-
-  // uploadProfileImage(): void {
-  //   if (!this.selectedProfileImage || !this.userId) return;
-
-  //   const formData = new FormData();
-  //   formData.append('image', this.selectedProfileImage);
-
-  //   const url = `${this.baseUrl}/api/v1/users/${this.userId}/upload-profile-image`;
-  //   const token = this.authService.getAccessToken();
-
-  //   const headers = new HttpHeaders({
-  //     Authorization: `Bearer ${token}`
-  //   });
-
-  //   this.http.post(url, formData, { headers }).subscribe(
-  //     (response) => {
-  //       console.log('Profile image uploaded successfully', response);
-  //       this.isEditingProfileImage = false;
-  //       this.showSaveButton = false;
-  //       this.loadUserProfile();
-  //     },
-  //     (error) => {
-  //       console.error('Error uploading profile image:', error);
-  //     }
-  //   );
-  // }
 
   switchAccount(): void {
     const url = `${this.baseUrl}/auth/switch-account`;
