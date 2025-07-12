@@ -3,7 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 import { EditProfileService } from 'src/app/core/services/editProfileService/edit-profile-service';
-
+import { UserDataService } from 'src/app/core/services/user-data.service';
 @Component({
   selector: 'app-edit-profile',
   standalone: true,
@@ -24,7 +24,9 @@ export class EditProfileComponent implements OnInit {
   originalProfileImage: string | ArrayBuffer | null = null;
   imageChanged: boolean = false;
 
-  constructor(private editProfileService: EditProfileService) { }
+  constructor(private editProfileService: EditProfileService,
+    private userDataService: UserDataService
+  ) { }
 
   ngOnInit() {
     this.profileForm = new FormGroup({
