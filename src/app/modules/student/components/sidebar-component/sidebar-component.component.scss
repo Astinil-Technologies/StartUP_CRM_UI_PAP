@@ -12,7 +12,7 @@
 
   .dashboard-container {
     width: 280px;
-    background-color: #eb980aad;
+    background-color: #f8f9fa;
     position: fixed;
     top: 0;
     bottom: 0;
@@ -31,23 +31,23 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding: 15px;
+      padding: 12px;
       border-bottom: 1px solid #e0e0e0;
-      background-color: #f0d9b5;
+     // background-color: #f0d9b5;
 
       .user-name {
         font-size: 1rem;
         font-weight: 600;
-        margin-bottom: 8px;
+        margin-bottom: 4px 0 10px 0;
         color: #333;
       }
 
       .profile-avatar-box {
         margin-bottom: 10px;
-
+        position: relative;
         .profile-avatar-img {
-          width: 60px;
-          height: 60px;
+          width: 70px;
+          height: 70px;
           object-fit: cover;
           border-radius: 6px;
           border: 2px solid #cccccc;
@@ -65,7 +65,28 @@
           background-color: #3ac297b3;
           border-radius: 6px;
         }
+        .edit-icon-img {
+            position: absolute;
+            bottom: -5px;
+            right: -5px;
+            width: 24px;
+            height: 24px;
+            background-color: white;
+            border-radius: 50%;
+            padding: 2px;
+            cursor: pointer;
+            box-shadow: 0 0 4px rgba(0, 0, 0, 0.2);
+         img {
+          width: 100%;
+          height: 100%;
+          object-fit: contain;
+          }
+
+        &:hover {
+          box-shadow: 0 0 6px rgba(0, 0, 0, 0.4);
+        }
       }
+    }
     }
 
     .upload-profile-section {
@@ -108,13 +129,13 @@
 
         li {
           list-style: none;
-          padding: 6px;
+          padding: 4px;
           border-radius: 6px;
           transition: background 0.2s;
           cursor: pointer;
 
           &:hover {
-            background-color: #f2d7b6;
+            background-color: #f3f7f7f3;
           }
 
           a {

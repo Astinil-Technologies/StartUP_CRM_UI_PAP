@@ -12,27 +12,26 @@
         </div>
 
         
-        <div class="profile-avatar-box">
-          <ng-container *ngIf="previewUrl; else initials">
-            <img [src]="previewUrl" alt="Profile" class="profile-avatar-img square-avatar" />
+         <div class="profile-avatar-box">
+          <ng-container *ngIf="userData?.profileImage; else initials">
+            <img
+              [src]="'data:image/png;base64,' + userData.profileImage"
+              alt="Profile"
+              class="profile-avatar-img square-avatar"
+            />
           </ng-container>
           <ng-template #initials>
             <div class="profile-avatar-initials square-avatar">
               {{ firstName?.charAt(0) }}{{ lastName?.charAt(0) }}
             </div>
           </ng-template>
-        </div>
-
-        
-        <div class="upload-profile-section">
-          <div *ngIf="!isEditingProfileImage">
-            <button class="edit-btn" (click)="enableImageEdit()">Edit</button>
-          </div>
-
-          <div *ngIf="isEditingProfileImage" class="edit-section">
-            <input type="file" id="profileImage" (change)="onProfileImageSelected($event)" accept="image/png, image/jpeg, image/jpg, image/webp" />
-            <button class="save-btn" (click)="uploadProfileImage()">Save</button>
-          </div>
+          <a
+    [routerLink]="['/layout/edit-profile']"
+    class="edit-icon-img"
+    title="Edit Profile"
+  >
+    <img src="assets/download.png" alt="Edit" />
+  </a>
         </div>
       </div>
 
@@ -40,11 +39,9 @@
       <div class="sidebar">
         <ul class="nav-items">
           <li><a routerLink="/home" routerLinkActive="active">Email: {{ userData?.email }}</a></li>
-          <li><a routerLink="/home" routerLinkActive="active">Mobile Number: {{ userData?.mobile_no }}</a></li>
+          <li><a routerLink="/home" routerLinkActive="active">Mobile Number: {{ userData?.mobileNo || 'N/A'}}</a></li>
           <li><a routerLink="/home" routerLinkActive="active">Location: {{ userData?.location || 'N/A' }}</a></li>
           <li><a routerLink="/home" routerLinkActive="active">Bio: {{ userData?.bio || 'No bio available' }}</a></li>
-
-        
           <li>
             <div class="status-dropdown" *ngIf="!isLoading">
               <label for="status">Status:</label>
@@ -57,26 +54,18 @@
           </li>
 
           <li><a routerLink="/home" routerLinkActive="active">CreatedAt: {{ userData?.createdAt }}</a></li>
-
-          
           <li><button (click)="openAddAccount()" class="account-btn">➕ Add Account</button></li>
           <li><button (click)="openSwitchAccount()" class="account-btn">🔁 Switch Account</button></li>
-        </ul>
-
-        
+        </ul>  
         <div class="logout-wrapper">
           <div class="logout-center">
             <button class="logout-btn" (click)="logout()">🚪 Log Out</button>
           </div>
-        </div>
-
-        
+        </div>  
         <div *ngIf="showAddAccountBox" class="popup-box">
           <button class="close-btn" (click)="closePopup()">×</button>
           <app-register></app-register>
         </div>
-
-        
         <div *ngIf="showSwitchAccountBox" class="popup-box">
           <button class="close-btn" (click)="closePopup()">×</button>
           <app-login [isSwitchAccountMode]="true" (loginSuccess)="closePopup()"></app-login>

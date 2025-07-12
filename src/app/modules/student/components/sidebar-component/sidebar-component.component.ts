@@ -8,7 +8,6 @@ import { AuthService } from 'src/app/core/services/authservice/auth.service';
 import { FormsModule } from '@angular/forms';
 import { RegisterComponent } from 'src/app/auth/register/register.component';
 import { LoginComponent } from 'src/app/auth/login/login.component';
-import { LoginMainComponent } from 'src/app/auth/login-main/login-main.component';
 import { UserDataService } from 'src/app/core/services/user-data.service';
 
 @Component({
@@ -20,7 +19,6 @@ import { UserDataService } from 'src/app/core/services/user-data.service';
     RouterModule,
     RegisterComponent,
     LoginComponent,
-    LoginMainComponent,
     FormsModule
   ],
   templateUrl: './sidebar-component.component.html',
@@ -36,16 +34,16 @@ export class SidebarComponentComponent implements OnInit {
   statusOptions: string[] = ['ONLINE', 'OFFLINE', 'IN_MEETING'];
 
   userData: any = null;
-  isProfileBoxVisible: boolean = false;
+  // isProfileBoxVisible: boolean = false;
   isLoading: boolean = true;
 
   showAddAccountBox = false;
   showSwitchAccountBox = false;
 
-  selectedProfileImage: File | null = null;
+  //selectedProfileImage: File | null = null;
   previewUrl: string | null = null;
-  isEditingProfileImage = false;
-  showSaveButton = false;
+ // isEditingProfileImage = false;
+  //showSaveButton = false;
 
   switchEmail: string = '';
   switchPassword: string = '';
@@ -60,10 +58,26 @@ export class SidebarComponentComponent implements OnInit {
 
   ngOnInit() {
     this.userId = this.authService.getId();
-    if (this.userId) {
-      this.getUserDetails(this.userId);
+    // if (this.userId) {
+    //   this.getUserDetails(this.userId);
+    // }
+    // this.loadUserProfile();
+    this.userDataService.userData$.subscribe((data) => {
+    if (data) {
+      this.userData = data;
+      this.firstName = data.firstName;
+      this.lastName = data.lastName;
+
+      if (data.profileImageUrl?.startsWith('data:image')) {
+        this.previewUrl = data.profileImageUrl;
+      } else if (data.profileImageUrl) {
+        this.previewUrl = `${this.baseUrl}/${data.profileImageUrl}`;
+      }
+
+      this.cdr.detectChanges();
     }
-    this.loadUserProfile();
+   
+  });
   }
 
   logout() {
@@ -107,13 +121,16 @@ export class SidebarComponentComponent implements OnInit {
           status: response.status || 'Online',
         };
 
-        if (this.userData.profileImageUrl) {
-          this.previewUrl = `${this.baseUrl}/${this.userData.profileImageUrl}`;
-          this.isEditingProfileImage = false;
-        } else {
-          this.previewUrl = null;
-          this.isEditingProfileImage = true;
-        }
+       //if (!this.previewUrl) {
+  if (this.userData.profileImageUrl?.startsWith('data:image')) {
+    this.previewUrl = this.userData.profileImageUrl;
+  } else if (this.userData.profileImageUrl) {
+    this.previewUrl = `${this.baseUrl}/${this.userData.profileImageUrl}`;
+//   } else {
+//     this.previewUrl = null;
+//     this.isEditingProfileImage = true;
+//   }
+ }
 
         this.isLoading = false;
         this.userDataService.setUserData(this.userData);
@@ -147,9 +164,9 @@ export class SidebarComponentComponent implements OnInit {
     );
   }
 
-  toggleProfileBox() {
-    this.isProfileBoxVisible = !this.isProfileBoxVisible;
-  }
+  // toggleProfileBox() {
+  //   this.isProfileBoxVisible = !this.isProfileBoxVisible;
+  // }
 
   openAddAccount() {
     this.showAddAccountBox = true;
@@ -176,62 +193,62 @@ export class SidebarComponentComponent implements OnInit {
     this.isSidebarOpen = false;
   }
 
-  enableImageEdit() {
-    this.isEditingProfileImage = true;
-  }
+  // enableImageEdit() {
+  //   this.isEditingProfileImage = true;
+  // }
 
-  onProfileImageSelected(event: Event): void {
-    const file = (event.target as HTMLInputElement).files?.[0];
+  // onProfileImageSelected(event: Event): void {
+  //   const file = (event.target as HTMLInputElement).files?.[0];
 
-    if (file) {
-      const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
+  //   if (file) {
+  //     const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
 
-      if (!allowedTypes.includes(file.type)) {
-        alert('Invalid file type. Please upload a JPG, JPEG, PNG, or WEBP image.');
-        return;
-      }
+  //     if (!allowedTypes.includes(file.type)) {
+  //       alert('Invalid file type. Please upload a JPG, JPEG, PNG, or WEBP image.');
+  //       return;
+  //     }
 
-      if (file.size > 2 * 1024 * 1024) {
-        alert('Image is too large. Maximum size allowed is 2MB.');
-        return;
-      }
+  //     if (file.size > 2 * 1024 * 1024) {
+  //       alert('Image is too large. Maximum size allowed is 2MB.');
+  //       return;
+  //     }
 
-      this.selectedProfileImage = file;
-      this.showSaveButton = true;
+  //     this.selectedProfileImage = file;
+  //     this.showSaveButton = true;
 
-      const reader = new FileReader();
-      reader.onload = () => {
-        this.previewUrl = reader.result as string;
-      };
-      reader.readAsDataURL(file);
-    }
-  }
+  //     const reader = new FileReader();
+  //     reader.onload = () => {
+  //       this.previewUrl = reader.result as string;
+  //     };
+  //     reader.readAsDataURL(file);
+  //   }
+  // }
 
-  uploadProfileImage(): void {
-    if (!this.selectedProfileImage || !this.userId) return;
+  // uploadProfileImage(): void {
+  //   if (!this.selectedProfileImage || !this.userId) return;
 
-    const formData = new FormData();
-    formData.append('image', this.selectedProfileImage);
+  //   const formData = new FormData();
+  //   formData.append('image', this.selectedProfileImage);
 
-    const url = `${this.baseUrl}/api/v1/users/${this.userId}/upload-profile-image`;
-    const token = this.authService.getAccessToken();
+  //   const url = `${this.baseUrl}/api/v1/users/${this.userId}/upload-profile-image`;
+  //   const token = this.authService.getAccessToken();
 
-    const headers = new HttpHeaders({
-      Authorization: `Bearer ${token}`
-    });
+  //   const headers = new HttpHeaders({
+  //     Authorization: `Bearer ${token}`
+  //   });
 
-    this.http.post(url, formData, { headers }).subscribe(
-      (response) => {
-        console.log('Profile image uploaded successfully', response);
-        this.isEditingProfileImage = false;
-        this.showSaveButton = false;
-        this.loadUserProfile();
-      },
-      (error) => {
-        console.error('Error uploading profile image:', error);
-      }
-    );
-  }
+  //   this.http.post(url, formData, { headers }).subscribe(
+  //     (response) => {
+  //       console.log('Profile image uploaded successfully', response);
+  //       this.isEditingProfileImage = false;
+  //       this.showSaveButton = false;
+  //       this.loadUserProfile();
+  //     },
+  //     (error) => {
+  //       console.error('Error uploading profile image:', error);
+  //     }
+  //   );
+  // }
 
   switchAccount(): void {
     const url = `${this.baseUrl}/auth/switch-account`;

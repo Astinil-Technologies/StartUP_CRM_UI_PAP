@@ -27,7 +27,7 @@ import { StudentsWishlistComponent } from './modules/student/components/my-learn
 import { StudentsArchivedComponent } from './modules/student/components/my-learning/my-learning-sub-comonents/students-archived/students-archived.component';
 import { StudentsLearningToolsComponent } from './modules/student/components/my-learning/my-learning-sub-comonents/students-learning-tools/students-learning-tools.component';
 import { MessagesComponent } from './modules/student/components/sidebar-component/messages/messages.component';
-
+import { EditProfileComponent } from './modules/student/components/sidebar-component/edit-profile/edit-profile.component';
 // Admin Modules
 import { AdminDashboardComponent } from './modules/admin/admin-dashboard/admin-dashboard.component';
 import { ManageCoursesComponent } from './modules/admin/components/manage-courses/manage-courses.component';
@@ -75,8 +75,8 @@ export const routes: Routes = [
 
   // Auth Routes
   { path: 'login-main', component: LoginMainComponent },
-  { path: 'login', component: LoginComponent },
-  { path: 'register', component: RegisterComponent },
+//  { path: 'login', component: LoginComponent },
+//  { path: 'register', component: RegisterComponent },
   { path: 'forgot-password', component: ForgotPasswordPopupComponent },
   { path: 'reset-password', component: ResetPasswordComponent },
 
@@ -92,6 +92,7 @@ export const routes: Routes = [
     children: [
       { path: 'dashboard', component: HomeSectionComponent },
       { path: 'navbar', component: NavbarComponent },
+      {path: 'edit-profile', component: EditProfileComponent },
 
       {
         path: 'timesheet',
