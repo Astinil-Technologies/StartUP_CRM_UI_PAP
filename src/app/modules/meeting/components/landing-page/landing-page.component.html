@@ -1,0 +1,38 @@
+<div class="landing-container">
+  <!-- Left Panel: 2x2 Grid of Buttons -->
+  <div class="left-panel">
+    <div class="action-card orange" (click)="onCreateMeeting()">
+      <mat-icon>videocam</mat-icon>
+      <span>New Meeting</span>
+    </div>
+    <div class="action-card blue" (click)="onJoinMeeting()">
+      <mat-icon>meeting_room</mat-icon>
+      <span>Join</span>
+    </div>
+    <div class="action-card purple" (click)="onScheduleMeeting()">
+      <mat-icon>event</mat-icon>
+      <span>Schedule</span>
+    </div>
+    <div class="action-card green" (click)="onShareScreen()">
+      <mat-icon>screen_share</mat-icon>
+      <span>Share Screen</span>
+    </div>
+  </div>
+
+  <!-- Right Panel: Calendar -->
+  <div class="right-panel">
+    <h2>{{ currentTime }}</h2>
+    <p>{{ currentDate }}</p>
+
+    <ng-container *ngIf="todayMeetings.length > 0; else noMeeting">
+      <div *ngFor="let meeting of todayMeetings" class="meeting-card">
+        <span class="meeting-time">{{ meeting.startTime | date:'shortTime' }}</span>
+        <span class="meeting-title">{{ meeting.title }}</span>
+      </div>
+    </ng-container>
+
+    <ng-template #noMeeting>
+      <p class="no-meeting">No meetings today</p>
+    </ng-template>
+  </div>
+</div>
