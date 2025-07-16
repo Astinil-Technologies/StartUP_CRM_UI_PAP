@@ -93,7 +93,12 @@ export const routes: Routes = [
       { path: 'dashboard', component: HomeSectionComponent },
       { path: 'navbar', component: NavbarComponent },
       {path: 'edit-profile', component: EditProfileComponent },
-
+      {
+        path: 'meeting-landing',
+        loadComponent: () =>
+          import('./modules/meeting/components/landing-page/landing-page.component')
+            .then(m => m.LandingPageComponent)
+      },
       {
         path: 'timesheet',
         component: TimesheetNavbarComponent,
