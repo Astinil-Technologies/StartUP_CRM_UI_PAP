@@ -22,12 +22,11 @@
   <!-- Right Panel: Calendar -->
   <div class="right-panel">
     <h2>{{ currentTime }}</h2>
-    <p>{{ currentDate }}</p>
-
     <ng-container *ngIf="todayMeetings.length > 0; else noMeeting">
       <div *ngFor="let meeting of todayMeetings" class="meeting-card">
         <span class="meeting-time">{{ meeting.startTime | date:'shortTime' }}</span>
         <span class="meeting-title">{{ meeting.title }}</span>
+         <a [href]="'/join/' + meeting.meetingId" target="_blank" class="join-link">Join</a>
       </div>
     </ng-container>
 

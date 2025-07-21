@@ -65,6 +65,19 @@ export class LandingPageComponent implements OnInit {
     if (value instanceof Date) return value;
     const fixed = value.includes(' ') ? value.replace(' ', 'T') : value;
     const parsed = new Date(fixed);
+    // let patched = value;
+
+    // // Convert "2025-07-15 15:30:00" → "2025-07-15T15:30:00"
+    // if (patched.includes(' ') && !patched.includes('T')) {
+    //   patched = patched.replace(' ', 'T');
+    // }
+
+    // // Add 'Z' to ensure UTC if no timezone offset is present
+    // // if (!patched.endsWith('Z') && !patched.includes('+')) {
+    // //   patched += 'Z';
+    // // }
+
+    // const parsedDate = new Date(patched);
     return isNaN(parsed.getTime()) ? undefined : parsed;
   }
    private updateDateTime(): void {
