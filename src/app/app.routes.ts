@@ -99,6 +99,12 @@ export const routes: Routes = [
           import('./modules/meeting/components/landing-page/landing-page.component')
             .then(m => m.LandingPageComponent)
       },
+        {
+      path: 'schedule-meeting',
+      loadComponent: () =>
+        import('./modules/meeting/components/schedule-meeting/schedule-meeting.component')
+          .then((m) => m.ScheduleMeetingComponent),
+    },
       {
         path: 'timesheet',
         component: TimesheetNavbarComponent,
