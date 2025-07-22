@@ -69,6 +69,7 @@ import { FileSidebarComponent } from './modules/file/components/layout/file-side
 
 import { UploadComponent } from './modules/file/components/upload/upload.component';
 import { ReceivedComponent } from './modules/file/components/received/received.component';
+import { LandingPageComponent } from './modules/meeting/components/landing-page/landing-page.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: '/login-main', pathMatch: 'full' },
@@ -99,12 +100,31 @@ export const routes: Routes = [
           import('./modules/meeting/components/landing-page/landing-page.component')
             .then(m => m.LandingPageComponent)
       },
+
         {
       path: 'schedule-meeting',
       loadComponent: () =>
         import('./modules/meeting/components/schedule-meeting/schedule-meeting.component')
           .then((m) => m.ScheduleMeetingComponent),
     },
+    {
+        path: 'meet/:id',
+        loadComponent: () =>
+          import('./modules/meeting/components/video-call/video-call.component')
+            .then(m => m.VideoCallComponent),
+      },
+
+    {
+        path: 'meeting',
+        component: LandingPageComponent,
+        // canActivate: [authGuard],
+        children: [
+          { path: 'videocall', component: VideoCallComponent }
+          // { path: 'received', component: ReceivedComponent },
+        ],
+      },
+
+
       {
         path: 'timesheet',
         component: TimesheetNavbarComponent,
@@ -243,12 +263,14 @@ export const routes: Routes = [
 
   // Standalone Lazy-Loaded Video Call
   {
-    path: 'meet/:id',
-    loadComponent: () =>
-      import(
-        './modules/video-meet/components/video-call/video-call.component'
-      ).then((m) => m.default),
-  },
+  path: 'layout',
+  children: [
+    {
+      path: 'meet/:id',
+      component: VideoCallComponent,
+    },
+  ],
+},
 
   // Fallback
   { path: '**', redirectTo: '/login' },

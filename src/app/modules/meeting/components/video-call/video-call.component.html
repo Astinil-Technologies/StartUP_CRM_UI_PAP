@@ -1,0 +1,63 @@
+<div class="video-container">
+  <video #videoElement autoplay muted playsinline></video>
+</div>
+
+<div class="video-call-container">
+  <!-- Top Bar -->
+  <div class="top-bar">
+    <div class="meeting-id"> 927233</div>
+  </div>
+
+  <!-- Main Video Area -->
+  <div class="video-area">
+    <video #video autoplay muted playsinline></video>
+  </div>
+
+  <!-- Bottom Toolbar -->
+  <div class="bottom-toolbar">
+    <div class="toolbar-left">
+      <button mat-icon-button (click)="toggleMute()">
+        <mat-icon>{{ isMuted ? 'mic_off' : 'mic' }}</mat-icon>
+        <span>{{ isMuted ? 'Unmute' : 'Mute' }}</span>
+      </button>
+
+      <button mat-icon-button (click)="toggleVideo()">
+        <mat-icon>{{ isVideoOff ? 'videocam_off' : 'videocam' }}</mat-icon>
+        <span>{{ isVideoOff ? 'Start Video' : 'Stop Video' }}</span>
+      </button>
+    </div>
+
+    <div class="toolbar-center">
+      <button mat-icon-button>
+        <mat-icon>groups</mat-icon>
+        <span>Participants</span>
+      </button>
+
+      <button mat-icon-button>
+        <mat-icon>chat</mat-icon>
+        <span>Chat</span>
+      </button>
+
+      <button mat-icon-button>
+        <mat-icon>emoji_emotions</mat-icon>
+        <span>Reactions</span>
+      </button>
+
+      <button mat-icon-button>
+        <mat-icon>screen_share</mat-icon>
+        <span>Share</span>
+      </button>
+
+       <button mat-icon-button>
+        <mat-icon>settings</mat-icon>
+        <span>Setting</span>
+      </button>
+
+    <div class="toolbar-right">
+      <button mat-raised-button color="warn" (click)="leaveCall()">
+        <mat-icon>call_end</mat-icon>
+        <span>Leave</span>
+      </button>
+    </div>
+  </div>
+</div>
