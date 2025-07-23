@@ -57,6 +57,8 @@ import { MyTaskNavbarComponent } from './modules/myTask/components/my-task-navba
 import { OverViewComponent } from './modules/myTask/components/over-view/over-view.component';
 import { TodayOverdueComponent } from './modules/myTask/components/today-overdue/today-overdue.component';
 import { TaskAssignedComponent } from './modules/myTask/components/task-assigned/task-assigned.component';
+// workspace
+import { WorkspaceComponent } from './modules/Ticket/components/workspace/workspace.component';
 
 // Video Meeting Module
 import VideoCallComponent from './modules/video-meet/components/video-call/video-call.component';
@@ -134,6 +136,7 @@ export const routes: Routes = [
           { path: '', component: RaiseTicketComponent },
           { path: 'myticket', component: MyticketComponent },
           { path: 'update-ticket/:id', component: UpdateTicketComponent },
+          { path: 'workspace', component: WorkspaceComponent },
         ],
       },
 

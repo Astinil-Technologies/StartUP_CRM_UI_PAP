@@ -1,0 +1,71 @@
+<!-- Header -->
+<div class="workspace-section">
+  <div class="workspace-title">Work Space</div>
+  <button class="create-button" (click)="openModal()">+ Create</button>
+</div>
+
+<!-- Switch Workspace Dropdown -->
+<div class="options">
+  <button class="btn-switch" (click)="toggleDropdown()">
+    Switch Workspace <span class="arrow">{{ showDropdown ? '▲' : '▼' }}</span>
+  </button>
+  <div class="dropdown-list" *ngIf="showDropdown">
+    <div *ngFor="let ws of workspaces" (click)="selectWorkspace(ws.name)">
+      {{ ws.name }}
+    </div>
+  </div>
+</div>
+
+<!-- Workspace List -->
+<ng-container *ngFor="let ws of workspaces; let i = index">
+  <div *ngIf="isWorkspaceVisible(ws.name)"
+       class="workspace-item"
+       (contextmenu)="openContextMenu($event, i)"
+       (click)="clickWorkspace($event, ws.name)">
+    <i class="fas fa-folder"></i>
+    <span class="workspace-name">{{ ws.name }}</span>
+    <span class="three-dots" (click)="openContextMenu($event, i)">⋯</span>
+  </div>
+</ng-container>
+
+<!-- Context Menu -->
+<div class="context-menu"
+     *ngIf="contextMenuVisible"
+     [ngStyle]="contextMenuPosition"
+     (mouseleave)="closeContextMenu()">
+  <div (click)="renameWorkspace(selectedIndex!)">Rename</div>
+  <div (click)="editWorkspace(selectedIndex!)">Edit</div>
+  <div (click)="deleteWorkspace(selectedIndex!)">Delete</div>
+</div>
+
+<!-- Modal -->
+<div class="modal-overlay" *ngIf="showModal">
+  <div class="modal-container">
+    <div class="modal-header">
+      <h3>Create New Workspace</h3>
+      <button class="close-btn" (click)="closeModal()">×</button>
+    </div>
+    <div class="modal-body">
+      <input [(ngModel)]="newWorkspaceName" placeholder="Workspace Name" />
+    </div>
+    <div class="modal-footer">
+      <button class="btn-submit" (click)="createWorkspace()">Submit</button>
+    </div>
+  </div>
+</div>
+
+<!-- Folder Popup -->
+<div class="folder-popup"
+     *ngIf="showFolderPopup"
+     [ngStyle]="folderPopupPosition">
+  <div class="popup-header">
+    {{ activeWorkspace }}
+    <button class="popup-close" (click)="closeFolderPopup()">×</button>
+  </div>
+  <div class="popup-body">
+    <div><i class="fas fa-list"></i> List</div>
+    <div><i class="fas fa-file-alt"></i> File</div>
+    <div><i class="fas fa-folder-open"></i> Document</div>
+  </div>
+</div>
+
