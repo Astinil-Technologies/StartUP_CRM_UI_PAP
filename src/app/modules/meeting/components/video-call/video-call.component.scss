@@ -59,6 +59,22 @@
   z-index: 10;
 }
 
+.raised-hand {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  font-size: 36px;
+  animation: pulse 1s ease-in-out infinite;
+  z-index: 1000;
+}
+
+
+@keyframes pulse {
+  0% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.1); opacity: 0.8; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
 .toolbar-left,
 .toolbar-center,
 .toolbar-right {
@@ -115,3 +131,32 @@
   }
 }
 
+.reaction-container {
+  position: relative;
+  display: inline-block;
+}
+
+.emoji-picker {
+  position: absolute;
+  bottom: 40px; // Adjust based on your button height
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 8px;
+  background: white;
+  padding: 8px 12px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  z-index: 10;
+
+  button {
+    font-size: 22px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+
+    &:hover {
+      transform: scale(1.3);
+    }
+  }
+}

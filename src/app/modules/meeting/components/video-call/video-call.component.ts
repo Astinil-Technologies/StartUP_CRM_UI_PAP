@@ -15,10 +15,12 @@ export class VideoCallComponent implements OnInit {
   isMuted = false;
   isVideoStopped = false;
   videoOn = true;
+  showEmojiPicker = false;
+  raisedHand = false;
   userIdTail: string = 'XXXX';
   mediaStream!: MediaStream;
   meetingId: string = '';
-isVideoOff: any;
+ isVideoOff: any;
   router: any;
 
   constructor(private route: ActivatedRoute) {} 
@@ -53,6 +55,11 @@ async startVideo() {
     this.isMuted = !this.isMuted;
     this.mediaStream?.getAudioTracks().forEach(track => (track.enabled = !this.isMuted));
   }
+  
+  
+  toggleReactions() {
+    this.showEmojiPicker = !this.showEmojiPicker;
+  }
 
 async toggleVideo() {
   this.isVideoStopped = !this.isVideoStopped;
@@ -67,13 +74,18 @@ async toggleVideo() {
   }
 }
 
-
-
-
-  async shareScreen() {
+   async shareScreen() {
     try {
       const screenStream = await (navigator.mediaDevices as any).getDisplayMedia({ video: true });
       this.videoElementRef.nativeElement.srcObject = screenStream;
+
+      // Optional: replace original stream
+      screenStream.getVideoTracks()[0].onended = () => {
+        if (this.mediaStream) {
+          this.videoElementRef.nativeElement.srcObject = this.mediaStream;
+        }
+      };
+
     } catch (error) {
       console.error('Screen sharing failed', error);
       alert('Screen sharing failed or was denied.');
@@ -90,19 +102,28 @@ async toggleVideo() {
 }
 
 
-  openParticipants() {
-    alert('Participants list will open (feature not implemented yet).');
-  }
+   openParticipants()
+    { alert('Participants feature coming soon'); }
 
-  openChat() {
-    alert('Chat will open (feature not implemented yet).');
+  openChat()
+   { alert('Chat feature coming soon'); }
+   
+ sendReaction(emoji: string) {
+    alert(`You reacted with ${emoji}`);
+    this.showEmojiPicker = false;
   }
+  
+  
+raiseHand() {
+  this.raisedHand = !this.raisedHand;
+}
 
-  sendReaction() {
-    alert('Reaction sent!');
-  }
+  openSecurityOptions() 
+  { alert('Security options coming soon'); }
 
-  openSecurityOptions() {
-    alert('Security settings will open (feature not implemented yet).');
+  ngOnDestroy(): void {
+    if (this.mediaStream) {
+      this.mediaStream.getTracks().forEach(track => track.stop());
+    }
   }
 }

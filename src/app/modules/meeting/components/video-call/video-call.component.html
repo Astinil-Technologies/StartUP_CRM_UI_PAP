@@ -21,37 +21,57 @@
         <span>{{ isMuted ? 'Unmute' : 'Mute' }}</span>
       </button>
 
-      <button mat-icon-button (click)="toggleVideo()">
-        <mat-icon>{{ isVideoOff ? 'videocam_off' : 'videocam' }}</mat-icon>
-        <span>{{ isVideoOff ? 'Start Video' : 'Stop Video' }}</span>
+      <button mat-icon-button (click)="toggleVideo()" class="control-button">
+         <mat-icon>{{ isVideoOff ? 'videocam_off' : 'videocam' }}</mat-icon>
+        <span>{{ isVideoOff ? 'On' : 'Off' }}</span>
       </button>
     </div>
-
+    
+  
     <div class="toolbar-center">
-      <button mat-icon-button>
+      <div class="raised-hand" *ngIf="raisedHand">✋</div>
+
+      <button mat-icon-button (click)="raiseHand()">
+        <mat-icon>back_hand</mat-icon>
+        <span>RaiseHand</span>
+     </button>
+
+      <button mat-icon-button (click)="openParticipants()">
         <mat-icon>groups</mat-icon>
         <span>Participants</span>
-      </button>
+     </button>
 
-      <button mat-icon-button>
-        <mat-icon>chat</mat-icon>
-        <span>Chat</span>
-      </button>
+<!-- Chat -->
+   <button mat-icon-button (click)="openChat()">
+      <mat-icon>chat</mat-icon>
+      <span>Chat</span>
+   </button>
 
-      <button mat-icon-button>
-        <mat-icon>emoji_emotions</mat-icon>
-        <span>Reactions</span>
-      </button>
+<!-- Reactions -->
+   <!-- Reaction Button -->
+<button (click)="toggleReactions()">😊 Reactions</button>
 
-      <button mat-icon-button>
-        <mat-icon>screen_share</mat-icon>
-        <span>Share</span>
-      </button>
+<!-- Emoji Picker -->
+<div class="emoji-picker" *ngIf="showEmojiPicker">
+  <button (click)="sendReaction('👍')">👍</button>
+  <button (click)="sendReaction('👎')">👎</button>
+  <button (click)="sendReaction('👏')">👏</button>
+  <button (click)="sendReaction('😂')">😂</button>
+  <button (click)="sendReaction('❤️')">❤️</button>
+  <button (click)="sendReaction('✋')">✋</button>
+</div>
 
-       <button mat-icon-button>
-        <mat-icon>settings</mat-icon>
-        <span>Setting</span>
-      </button>
+<!-- Share Screen -->
+   <button mat-icon-button (click)="shareScreen()">
+     <mat-icon>screen_share</mat-icon>
+     <span>Share</span>
+   </button>
+
+<!-- Security -->
+   <button mat-icon-button (click)="openSecurityOptions()">
+     <mat-icon>settings</mat-icon>
+     <span>Setting</span>
+   </button>
 
     <div class="toolbar-right">
       <button mat-raised-button color="warn" (click)="leaveCall()">
