@@ -3,11 +3,14 @@ import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { ActivatedRoute } from '@angular/router';
 import { Router } from '@angular/router';
+import { ChatComponent } from '../chat/chat.component';
+import { UserDataService } from 'src/app/core/services/user-data.service';
+import { WebSocketService } from 'src/app/core/services/websocket.service';
 
 @Component({
   selector: 'app-video-call',
   standalone: true,
-  imports: [CommonModule, MatIconModule],
+  imports: [CommonModule, MatIconModule,ChatComponent],
   templateUrl: './video-call.component.html',
   styleUrls: ['./video-call.component.scss']
 })
@@ -21,17 +24,33 @@ export class VideoCallComponent implements OnInit {
   mediaStream!: MediaStream;
   meetingId: string = '';
  isVideoOff: any;
-  router: any;
+  username: string = '';
+  showChat: boolean = false;
+  isChatVisible: any;
+  chatMessages: any[] = [];
 
-  constructor(private route: ActivatedRoute) {} 
+  @ViewChild('videoElement', { static: true }) videoElementRef!: ElementRef<HTMLVideoElement>;
+  @ViewChild('screenVideoElement', { static: true }) screenVideoElementRef!: ElementRef<HTMLVideoElement>;
+  screenStream: any;
+screenSharing: any;
+  peerConnection: any;
 
-@ViewChild('videoElement', { static: true }) videoElementRef!: ElementRef<HTMLVideoElement>;
+
+  constructor(private route: ActivatedRoute,
+    private router: Router,
+    public userDataService: UserDataService,
+    private websocketService: WebSocketService
+  ) {} 
 
   ngOnInit(): void {
     this.startVideo();
     const userId = localStorage.getItem('userId') || '';
-    this.userIdTail = userId.slice(-4).padStart(4, '0');
+    this.username = userId.slice(-4).padStart(4, '0');
     this.meetingId = this.route.snapshot.paramMap.get('id') || '';
+     this.websocketService.connect(this.meetingId); // ✅ Connect WebSocket
+    this.websocketService.onSignal().subscribe((signal: any) => {
+      this.handleIncomingSignal(signal); // ✅ Handle remote screen share (future)
+    });
     console.log('Meeting ID:', this.meetingId);
     console.log('VideoCallComponent loaded');
     const id = this.route.snapshot.paramMap.get('id');
@@ -40,7 +59,14 @@ export class VideoCallComponent implements OnInit {
 
 async startVideo() {
   try {
+    const previousMuteState = this.isMuted; // save mute state
     this.mediaStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+
+    // Apply mute state to new audio tracks
+    this.mediaStream.getAudioTracks().forEach(track => {
+      track.enabled = !previousMuteState;
+    });
+
     const video = this.videoElementRef.nativeElement;
     video.srcObject = this.mediaStream;
     video.play();
@@ -75,29 +101,20 @@ async toggleVideo() {
 }
 
    async shareScreen() {
-    try {
-      const screenStream = await (navigator.mediaDevices as any).getDisplayMedia({ video: true });
-      this.videoElementRef.nativeElement.srcObject = screenStream;
+  console.log('Its in development phase');
+}
 
-      // Optional: replace original stream
-      screenStream.getVideoTracks()[0].onended = () => {
-        if (this.mediaStream) {
-          this.videoElementRef.nativeElement.srcObject = this.mediaStream;
-        }
-      };
-
-    } catch (error) {
-      console.error('Screen sharing failed', error);
-      alert('Screen sharing failed or was denied.');
-    }
-  }
 
   leaveCall() {
   if (this.mediaStream) {
     this.mediaStream.getTracks().forEach(track => track.stop());
   }
+  if (this.screenStream) {
+      this.screenStream.getTracks().forEach((track: { stop: () => any; }) => track.stop());
+    }
   this.isMuted = false;
   this.isVideoStopped = true;
+  this.websocketService.disconnect(); // ✅ Clean disconnect
   this.router.navigate(['/layout']); // or your correct landing page route
 }
 
@@ -106,7 +123,7 @@ async toggleVideo() {
     { alert('Participants feature coming soon'); }
 
   openChat()
-   { alert('Chat feature coming soon'); }
+   { this.showChat = !this.showChat; }
    
  sendReaction(emoji: string) {
     alert(`You reacted with ${emoji}`);
@@ -120,6 +137,20 @@ raiseHand() {
 
   openSecurityOptions() 
   { alert('Security options coming soon'); }
+
+  handleMessageSent(message: any) {
+    this.chatMessages.push(message);
+    this.websocketService.sendChatMessage(this.meetingId, message);
+  }
+
+  // ✅ Optional: Handle remote screen signals (future use)
+  handleIncomingSignal(signal: any) {
+    if (signal.type === 'SCREEN_SHARE_STARTED') {
+      console.log(`${signal.sender} started screen sharing.`);
+    } else if (signal.type === 'SCREEN_SHARE_ENDED') {
+      console.log(`${signal.sender} stopped screen sharing.`);
+    }
+  }
 
   ngOnDestroy(): void {
     if (this.mediaStream) {

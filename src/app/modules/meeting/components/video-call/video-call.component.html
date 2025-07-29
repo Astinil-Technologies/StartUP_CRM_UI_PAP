@@ -1,29 +1,52 @@
-<div class="video-container">
-  <video #videoElement autoplay muted playsinline></video>
-</div>
+<!-- WRAPPER -->
+<div class="video-chat-wrapper" [ngClass]="{ 'chat-open': showChat }">
+  <!-- 🎥 VIDEO SECTION -->
+  <div class="video-container">
+    <!-- ✅ Main webcam feed -->
+    <video #videoElement autoplay muted playsinline></video>
 
-<div class="video-call-container">
-  <!-- Top Bar -->
-  <div class="top-bar">
-    <div class="meeting-id"> 927233</div>
+    <!-- ✅ Screen sharing stream (only visible when sharing) -->
+    <video
+      #screenVideoElement
+      *ngIf="screenSharing"
+      class="screen-video"
+      autoplay
+      muted
+      playsinline>
+    </video>
   </div>
 
+  <!-- 💬 CHAT SECTION -->
+  <div class="chat-container" *ngIf="showChat">
+    <app-chat
+      [roomId]="meetingId"
+      [username]="username"
+      [messages]="chatMessages"
+      (messageSent)="handleMessageSent($event)">
+    </app-chat>
+  </div>
+</div>
+
+<!-- 🔝 TOP BAR -->
+<div class="top-bar" [ngClass]="{ 'chat-open': showChat }">
+  Meeting ID: {{ meetingId }}
+</div>
   <!-- Main Video Area -->
   <div class="video-area">
     <video #video autoplay muted playsinline></video>
   </div>
 
   <!-- Bottom Toolbar -->
-  <div class="bottom-toolbar">
+  <div class="bottom-toolbar" [ngClass]="{ 'chat-open': showChat }">
     <div class="toolbar-left">
       <button mat-icon-button (click)="toggleMute()">
         <mat-icon>{{ isMuted ? 'mic_off' : 'mic' }}</mat-icon>
         <span>{{ isMuted ? 'Unmute' : 'Mute' }}</span>
       </button>
 
-      <button mat-icon-button (click)="toggleVideo()" class="control-button">
-         <mat-icon>{{ isVideoOff ? 'videocam_off' : 'videocam' }}</mat-icon>
-        <span>{{ isVideoOff ? 'On' : 'Off' }}</span>
+      <button mat-icon-button (click)="toggleVideo()">
+        <mat-icon>{{ isVideoStopped ? 'videocam_off' : 'videocam' }}</mat-icon>
+        <span>{{ isVideoStopped ? 'Start Video' : 'Stop Video' }}</span>
       </button>
     </div>
     
@@ -74,7 +97,7 @@
    </button>
 
     <div class="toolbar-right">
-      <button mat-raised-button color="warn" (click)="leaveCall()">
+      <button mat-raised-button color="warn" (click)="leaveCall()" class="leave-button">
         <mat-icon>call_end</mat-icon>
         <span>Leave</span>
       </button>
