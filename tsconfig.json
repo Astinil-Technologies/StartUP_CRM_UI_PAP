@@ -23,13 +23,21 @@
     ],
     "baseUrl": "./",  // This is required for relative module resolution
     "paths": {
-      "src/environments/*": ["src/environments/*"]
+      "src/environments/": ["src/environments/"]
     }
   },
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,
     "strictInjectionParameters": true,
     "strictInputAccessModifiers": true,
-    "strictTemplates": true
-  }
+    "strictTemplates": true,
+
+    "skipLibCheck": true
+
+  },
+ "include": [
+  "src",
+  "src/sockjs-client.d.ts",
+  "src/stompjs.d.ts"
+]
 }

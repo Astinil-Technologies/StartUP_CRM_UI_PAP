@@ -1,5 +1,7 @@
-import { Component, Input, Output, EventEmitter,  OnInit,
-  NgZone,AfterViewInit } from '@angular/core';
+import {
+  Component, Input, Output, EventEmitter, OnInit,
+  NgZone, AfterViewInit
+} from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
@@ -16,6 +18,7 @@ import { TokenService } from 'src/app/core/services/tokenservice/token.service';
 import { ForgotPasswordPopupComponent } from '../forgot-password-popup/forgot-password-popup.component';
 import { Location } from '@angular/common';
 import { NavigationService } from 'src/app/core/services/navigationservice/navigation.service';
+import { jwtDecode } from 'jwt-decode';
 
 // Add Google type declaration to avoid TS error
 declare global {
@@ -74,16 +77,16 @@ export class LoginComponent {
       rememberMe: [false],
     });
   }
-ngOnInit(): void {
-  if (window.google && window.google.accounts?.id) {
-    window.google.accounts.id.initialize({
-      client_id: '282387866257-nkoqplsvhptndjn1e8spi3aaio7vkr3g.apps.googleusercontent.com',
-      callback: this.handleCredentialResponse.bind(this),
-    });
-  } else {
-    console.warn('Google Sign-In SDK not loaded.');
+  ngOnInit(): void {
+    if (window.google && window.google.accounts?.id) {
+      window.google.accounts.id.initialize({
+        client_id: '282387866257-nkoqplsvhptndjn1e8spi3aaio7vkr3g.apps.googleusercontent.com',
+        callback: this.handleCredentialResponse.bind(this),
+      });
+    } else {
+      console.warn('Google Sign-In SDK not loaded.');
+    }
   }
-}
   ngAfterViewInit(): void {
     if (window.google && window.google.accounts?.id) {
       window.google.accounts.id.renderButton(
@@ -116,10 +119,22 @@ ngOnInit(): void {
             this.loginSuccess.emit();
           }
 
+          // ✅ Decode accessToken and store user info
+          const decoded: any = jwtDecode(response.data.accessToken);
+          if (decoded?.id && decoded?.sub) {
+            localStorage.setItem('loggedInId', decoded.id.toString());
+            localStorage.setItem('loggedInUsername', decoded.sub); // ✅ use sub for username
+            console.log('✅ Stored ID and username:', decoded);
+          } else {
+            console.warn('⚠ Could not extract id or username from token:', decoded);
+          }
+
+
           this.navigationService.navigateBasedOnRole();
         },
         error: (error: HttpErrorResponse) => this.handleLoginError(error),
       });
+
     } else {
       this.snackBar.open(
         'Please fill in all required fields correctly.',
