@@ -23,6 +23,7 @@ export class WebSocketService {
     const socket = new WebSocket('ws://localhost:8080/ws');
     this.stompClient = Stomp.over(socket);
     this.currentRoomId = roomId;
+    
 
     this.stompClient.connect({}, () => {
       this.connected = true;
