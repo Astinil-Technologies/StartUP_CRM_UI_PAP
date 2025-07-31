@@ -22,8 +22,8 @@ export class WebSocketService {
 
     const socket = new WebSocket('ws://localhost:8080/ws');
     this.stompClient = Stomp.over(socket);
-    this.stompClient.debug = () => {}; // Disable logs
     this.currentRoomId = roomId;
+    
 
     this.stompClient.connect({}, () => {
       this.connected = true;
