@@ -1,8 +1,10 @@
-.container {
-  display: flex;
-  height: 100vh;
-  flex-direction: column;
-}
+// .container {
+//   margin-left:0px;
+//   margin-right: 0px;
+//   display: flex;
+//   height: 100vh;
+//   flex-direction: column;
+// }
 
 .content-wrapper {
   display: flex;
@@ -26,7 +28,8 @@
 }
 
 .main-content {
-  margin-left: 50px;
+  margin-left: px;
+  padding-top: 0%;
   padding: 20px;
   flex-grow: 1;
 }
