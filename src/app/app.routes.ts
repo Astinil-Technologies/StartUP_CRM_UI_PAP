@@ -133,6 +133,7 @@ export const routes: Routes = [
         component: TimesheetNavbarComponent,
         canActivate: [authGuard],
         children: [
+          { path: '', redirectTo: 'homepage', pathMatch: 'full' },
           { path: 'attendance', component: AttendanceComponent },
           { path: 'myticket', component: MyticketComponent },
           { path: 'homepage', component: HomepageComponent },
