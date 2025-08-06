@@ -44,3 +44,47 @@ mat-toolbar {
   border-radius: 8px;   /* Optional: Add rounded corners */
 }
 
+
+
+/* src/app/layout/layout.component.scss */
+.app-header {
+  background-color: #007bff;
+  color: white;
+  padding: 1rem 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+
+  .app-logo {
+    font-size: 1.5rem;
+    font-weight: bold;
+    span { color: #ffcc00;
+    }
+  }
+  .app-nav a {
+    color: white;
+    text-decoration: none;
+    margin-left: 20px;
+    font-weight: 500;
+    transition: color 0.2s ease;
+    &.active-link {
+      text-decoration: underline;
+    }
+    &:hover {
+      color: #e0e0e0;
+    }
+  }
+}
+
+.app-main-content {
+  flex-grow: 1; /* Allows main content to take available space */
+}
+
+.app-footer {
+  background-color: #333;
+  color: white;
+  padding: 1rem 20px;
+  text-align: center;
+  font-size: 0.8rem;
+}

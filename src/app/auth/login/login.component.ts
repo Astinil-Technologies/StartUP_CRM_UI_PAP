@@ -1,5 +1,5 @@
-import { Component, Input, Output, EventEmitter,  OnInit,
-  NgZone,AfterViewInit } from '@angular/core';
+
+import { Component, Input, Output, EventEmitter, OnInit, NgZone, AfterViewInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
@@ -9,7 +9,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { MatDialog, MatDialogModule, MatDialogRef } from '@angular/material/dialog'; // Import MatDialogRef
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { AuthService } from 'src/app/core/services/authservice/auth.service';
 import { TokenService } from 'src/app/core/services/tokenservice/token.service';
@@ -23,7 +23,6 @@ declare global {
     google: any;
   }
 }
-
 
 @Component({
   selector: 'app-login',
@@ -41,9 +40,9 @@ declare global {
     MatDialogModule,
   ],
 })
-export class LoginComponent {
-  @Input() isSwitchAccountMode = false;               // ✅ Input for switch account mode
-  @Output() loginSuccess = new EventEmitter<void>();  // ✅ Output event to close popup
+export class LoginComponent implements OnInit, AfterViewInit { // Implement OnInit and AfterViewInit
+  @Input() isSwitchAccountMode = false;
+  @Output() loginSuccess = new EventEmitter<void>();
 
   hidePassword: boolean = true;
   loginForm: FormGroup;
@@ -52,15 +51,17 @@ export class LoginComponent {
   constructor(
     private fb: FormBuilder,
     private router: Router,
-    public dialog: MatDialog,
+    public dialog: MatDialog, // MatDialog service for opening other dialogs
     private authService: AuthService,
     private tokenService: TokenService,
     private snackBar: MatSnackBar,
-    private location: Location,
-    private navigationService: NavigationService,
-    private ngZone: NgZone,
-    private http: HttpClient
+    private location: Location, // Used for navigateBack, though might not be needed if dialogs are primary flow
+    private navigationService: NavigationService, // Used for role-based navigation
+    private ngZone: NgZone, // Used to run code inside Angular's zone for router navigation
+    private http: HttpClient, // Used for direct HTTP calls if needed, though AuthService handles login
+    public dialogRef: MatDialogRef<LoginComponent> // MatDialogRef to control this specific dialog instance
   ) {
+    // Initialize the login form with required validators
     this.loginForm = this.fb.group({
       email: ['', [Validators.required]],
       password: [
@@ -68,24 +69,29 @@ export class LoginComponent {
         [
           Validators.required,
           Validators.minLength(6),
-          Validators.pattern('^[a-zA-Z0-9]*$'),
+          Validators.pattern('^[a-zA-Z0-9]*$'), // Alphanumeric password pattern
         ],
       ],
-      rememberMe: [false],
+      rememberMe: [false], // Checkbox for remember me functionality
     });
   }
-ngOnInit(): void {
-  if (window.google && window.google.accounts?.id) {
-    window.google.accounts.id.initialize({
-      client_id: '282387866257-nkoqplsvhptndjn1e8spi3aaio7vkr3g.apps.googleusercontent.com',
-      callback: this.handleCredentialResponse.bind(this),
-    });
-  } else {
-    console.warn('Google Sign-In SDK not loaded.');
-  }
-}
-  ngAfterViewInit(): void {
+
+  ngOnInit(): void {
+    // Initialize Google Sign-In SDK when the component initializes
     if (window.google && window.google.accounts?.id) {
+      window.google.accounts.id.initialize({
+        client_id: '282387866257-nkoqplsvhptndjn1e8spi3aaio7vkr3g.apps.googleusercontent.com',
+        callback: this.handleCredentialResponse.bind(this), // Bind 'this' to maintain context
+      });
+    } else {
+      console.warn('Google Sign-In SDK not loaded.');
+    }
+  }
+
+  ngAfterViewInit(): void {
+    // Render the Google Sign-In button after the view has been initialized
+    // Only render if the element exists in this component's template
+    if (window.google && window.google.accounts?.id && document.getElementById('google-signin-button')) {
       window.google.accounts.id.renderButton(
         document.getElementById('google-signin-button'),
         {
@@ -98,29 +104,46 @@ ngOnInit(): void {
     }
   }
 
+  /**
+   * Handles the form submission for user login.
+   * On successful login, stores tokens, closes dialog, and redirects to dashboard.
+   */
   onLogin(): void {
     if (this.loginForm.valid) {
       const email = this.loginForm.get('email')?.value ?? '';
       const password = this.loginForm.get('password')?.value ?? '';
-      const rememberMe = this.loginForm.get('rememberMe')?.value ?? false;
+      const rememberMe = this.loginForm.get('rememberMe')?.value ?? false; // Not used in backend call, but kept for form
 
+      // Call the authentication service to log in the user
       this.authService.login({ username: email, password }).subscribe({
         next: (response) => {
+          // Store access and refresh tokens upon successful login
           this.tokenService.storeTokens(
             response.data.accessToken,
             response.data.refreshToken
           );
 
-          // ✅ Emit event only in switch account mode
+          // Show success message
+          this.snackBar.open('Login Successful!', 'Close', { duration: 3000, panelClass: ['success-snackbar'] });
+
+          // Close the login dialog
+          this.dialogRef.close();
+
+          // Navigate to the dashboard within Angular's zone
+          this.ngZone.run(() => {
+            this.router.navigate(['/layout/dashboard']);
+          });
+
+          // Emit event if in switch account mode (e.g., to notify parent component)
           if (this.isSwitchAccountMode) {
             this.loginSuccess.emit();
           }
-
-          this.navigationService.navigateBasedOnRole();
         },
-        error: (error: HttpErrorResponse) => this.handleLoginError(error),
+        error: (error: HttpErrorResponse) => this.handleLoginError(error), // Handle login errors
       });
     } else {
+      // If form is invalid, mark all fields as touched to display validation errors
+      this.loginForm.markAllAsTouched();
       this.snackBar.open(
         'Please fill in all required fields correctly.',
         'Close',
@@ -131,19 +154,36 @@ ngOnInit(): void {
       );
     }
   }
+
+  /**
+   * Handles the credential response from Google Sign-In.
+   * @param response The Google credential response object.
+   */
   handleCredentialResponse(response: any): void {
     this.sendGoogleTokenToBackend(response.credential);
   }
 
+  /**
+   * Sends the Google ID token to the backend for authentication.
+   * On success, stores tokens, closes dialog, and redirects to dashboard.
+   * @param token The Google ID token.
+   */
   sendGoogleTokenToBackend(token: string): void {
     this.authService.googleLogin(token).subscribe({
       next: (response: any) => {
+        // Store access and refresh tokens from Google login response
         this.tokenService.storeTokens(
           response.data.accessToken,
           response.data.refreshToken
         );
+        this.snackBar.open('Google Login Successful!', 'Close', { duration: 3000, panelClass: ['success-snackbar'] });
+
+        // Close the login dialog
+        this.dialogRef.close();
+
+        // Navigate to the dashboard within Angular's zone
         this.ngZone.run(() => {
-          this.navigationService.navigateBasedOnRole();
+          this.router.navigate(['/layout/dashboard']);
         });
       },
       error: (error) => {
@@ -152,11 +192,16 @@ ngOnInit(): void {
           duration: 3000,
           panelClass: ['error-snackbar'],
         });
-      }
+      },
     });
   }
+
+  /**
+   * Handles various HTTP error responses during login.
+   * @param error The HttpErrorResponse object.
+   */
   private handleLoginError(error: HttpErrorResponse): void {
-    console.error(error);
+    console.error(error); // Log the full error for debugging
 
     if (error.status === 401) {
       this.snackBar.open('Invalid username or password.', 'Close', {
@@ -173,21 +218,38 @@ ngOnInit(): void {
         }
       );
     } else {
-      this.snackBar.open(`${error.message}`, 'Close', {
+      // Display a generic error message if status is not specifically handled
+      this.snackBar.open(`${error.message || 'An unexpected error occurred.'}`, 'Close', {
         duration: 3000,
         panelClass: ['error-snackbar'],
       });
     }
   }
 
+  /**
+   * Opens the Forgot Password popup dialog.
+   * Closes the current login dialog first.
+   */
   ForgotPassword(): void {
-    this.dialog.open(ForgotPasswordPopupComponent);
+    this.dialogRef.close(); // Close the current login dialog
+    this.dialog.open(ForgotPasswordPopupComponent, {
+      width: '450px',
+      panelClass: 'attractive-dialog-panel', // Apply attractive styling
+      disableClose: false // Allow closing by clicking outside
+    });
   }
 
+  /**
+   * Toggles the visibility of the password input field.
+   */
   togglePasswordVisibility(): void {
     this.hidePassword = !this.hidePassword;
   }
 
+  /**
+   * Checks if the password field has a minlength error and has been touched.
+   * @returns True if minlength error is present and field is touched, false otherwise.
+   */
   passwordLengthError(): boolean {
     const hasMinLengthError =
       this.loginForm.get('password')?.hasError('minlength') ?? false;
@@ -195,6 +257,10 @@ ngOnInit(): void {
     return hasMinLengthError && isTouched;
   }
 
+  /**
+   * Checks if the password field has a pattern error (alphanumeric) and has been touched.
+   * @returns True if pattern error is present and field is touched, false otherwise.
+   */
   passwordAlphanumericError(): boolean {
     const hasPatternError =
       this.loginForm.get('password')?.hasError('pattern') ?? false;
@@ -202,11 +268,21 @@ ngOnInit(): void {
     return hasPatternError && isTouched;
   }
 
-  navigateToRegister(): void {
-    this.router.navigate(['/register']);
-  }
-
+  /**
+   * Navigates back in the browser history.
+   * This method might be less relevant if the component is primarily used as a dialog.
+   */
   navigateBack(): void {
     this.location.back();
   }
+
+  // navigateToRegister(): void {
+  //   // If you want to switch from login dialog to register dialog:
+  //   this.dialogRef.close(); // Close login dialog
+  //   this.dialog.open(RegisterComponent, {
+  //     width: '500px',
+  //     panelClass: 'attractive-dialog-panel',
+  //     disableClose: false
+  //   });
+  // }
 }

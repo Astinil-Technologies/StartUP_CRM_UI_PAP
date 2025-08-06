@@ -15,6 +15,7 @@ import { NavbarComponent } from './shared/components/navbar/navbar.component';
 import { FooterSectionComponent } from './shared/components/footer-section/footer-section.component';
 import { AdminLayoutComponent } from './shared/components/admin-layout/admin-layout.component';
 import { InstructorLayoutComponent } from './shared/components/instructor-layout/instructor-layout.component';
+import { DashboardComponent } from './shared/components/dashboard/dashboard.component';
 
 // Student Modules
 import { HomeSectionComponent } from './modules/student/components/home-section/home-section.component';
@@ -75,14 +76,15 @@ export const routes: Routes = [
 
   // Auth Routes
   { path: 'login-main', component: LoginMainComponent },
-//  { path: 'login', component: LoginComponent },
-//  { path: 'register', component: RegisterComponent },
+  //  { path: 'login', component: LoginComponent },
+  //  { path: 'register', component: RegisterComponent },
   { path: 'forgot-password', component: ForgotPasswordPopupComponent },
   { path: 'reset-password', component: ResetPasswordComponent },
 
   // Static Component Testing
   { path: 'cyber', component: FooterSectionComponent },
 
+  {path: 'dashboard', component: DashboardComponent},
   // Student Layout
   {
     path: 'layout',
@@ -90,21 +92,23 @@ export const routes: Routes = [
     canActivate: [authGuard, RoleGuard],
     data: { roles: ['ROLE_USER'] },
     children: [
+      {path:'dashboard', component: DashboardComponent},
       { path: 'dashboard', component: HomeSectionComponent },
       { path: 'navbar', component: NavbarComponent },
-      {path: 'edit-profile', component: EditProfileComponent },
+      { path: 'edit-profile', component: EditProfileComponent },
       {
         path: 'meeting-landing',
         loadComponent: () =>
           import('./modules/meeting/components/landing-page/landing-page.component')
-            .then(m => m.LandingPageComponent)
+            .then((m) => m.LandingPageComponent),
       },
-        {
-      path: 'schedule-meeting',
-      loadComponent: () =>
-        import('./modules/meeting/components/schedule-meeting/schedule-meeting.component')
-          .then((m) => m.ScheduleMeetingComponent),
-    },
+      {
+         path: 'schedule-meeting',
+        loadComponent: () =>
+          import(
+            './modules/meeting/components/schedule-meeting/schedule-meeting.component'
+          ).then((m) => m.ScheduleMeetingComponent),
+      },      
       {
         path: 'timesheet',
         component: TimesheetNavbarComponent,
@@ -136,7 +140,6 @@ export const routes: Routes = [
           { path: 'update-ticket/:id', component: UpdateTicketComponent },
         ],
       },
-
       {
         path: 'file',
         component: FileSidebarComponent,

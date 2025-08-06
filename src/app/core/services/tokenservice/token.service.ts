@@ -8,6 +8,7 @@ import jwtDecode from 'jwt-decode';
   providedIn: 'root',
 })
 export class TokenService {
+  [x: string]: any;
   private readonly accessTokenKey = 'accessToken';
   private readonly refreshTokenKey = 'refreshToken';
 
