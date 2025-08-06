@@ -1,5 +1,12 @@
-
-import { Component, Input, Output, EventEmitter, OnInit, NgZone, AfterViewInit } from '@angular/core';
+import {
+  Component,
+  Input,
+  Output,
+  EventEmitter,
+  OnInit,
+  NgZone,
+  AfterViewInit,
+} from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
@@ -9,13 +16,18 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
-import { MatDialog, MatDialogModule, MatDialogRef } from '@angular/material/dialog'; // Import MatDialogRef
+import {
+  MatDialog,
+  MatDialogModule,
+  MatDialogRef,
+} from '@angular/material/dialog'; // Import MatDialogRef
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { AuthService } from 'src/app/core/services/authservice/auth.service';
 import { TokenService } from 'src/app/core/services/tokenservice/token.service';
 import { ForgotPasswordPopupComponent } from '../forgot-password-popup/forgot-password-popup.component';
 import { Location } from '@angular/common';
 import { NavigationService } from 'src/app/core/services/navigationservice/navigation.service';
+import { jwtDecode } from 'jwt-decode';
 
 // Add Google type declaration to avoid TS error
 declare global {
@@ -40,7 +52,8 @@ declare global {
     MatDialogModule,
   ],
 })
-export class LoginComponent implements OnInit, AfterViewInit { // Implement OnInit and AfterViewInit
+export class LoginComponent implements OnInit, AfterViewInit {
+  // Implement OnInit and AfterViewInit
   @Input() isSwitchAccountMode = false;
   @Output() loginSuccess = new EventEmitter<void>();
 
@@ -80,7 +93,8 @@ export class LoginComponent implements OnInit, AfterViewInit { // Implement OnIn
     // Initialize Google Sign-In SDK when the component initializes
     if (window.google && window.google.accounts?.id) {
       window.google.accounts.id.initialize({
-        client_id: '282387866257-nkoqplsvhptndjn1e8spi3aaio7vkr3g.apps.googleusercontent.com',
+        client_id:
+          '282387866257-nkoqplsvhptndjn1e8spi3aaio7vkr3g.apps.googleusercontent.com',
         callback: this.handleCredentialResponse.bind(this), // Bind 'this' to maintain context
       });
     } else {
@@ -91,7 +105,11 @@ export class LoginComponent implements OnInit, AfterViewInit { // Implement OnIn
   ngAfterViewInit(): void {
     // Render the Google Sign-In button after the view has been initialized
     // Only render if the element exists in this component's template
-    if (window.google && window.google.accounts?.id && document.getElementById('google-signin-button')) {
+    if (
+      window.google &&
+      window.google.accounts?.id &&
+      document.getElementById('google-signin-button')
+    ) {
       window.google.accounts.id.renderButton(
         document.getElementById('google-signin-button'),
         {
@@ -124,7 +142,10 @@ export class LoginComponent implements OnInit, AfterViewInit { // Implement OnIn
           );
 
           // Show success message
-          this.snackBar.open('Login Successful!', 'Close', { duration: 3000, panelClass: ['success-snackbar'] });
+          this.snackBar.open('Login Successful!', 'Close', {
+            duration: 3000,
+            panelClass: ['success-snackbar'],
+          });
 
           // Close the login dialog
           this.dialogRef.close();
@@ -176,7 +197,10 @@ export class LoginComponent implements OnInit, AfterViewInit { // Implement OnIn
           response.data.accessToken,
           response.data.refreshToken
         );
-        this.snackBar.open('Google Login Successful!', 'Close', { duration: 3000, panelClass: ['success-snackbar'] });
+        this.snackBar.open('Google Login Successful!', 'Close', {
+          duration: 3000,
+          panelClass: ['success-snackbar'],
+        });
 
         // Close the login dialog
         this.dialogRef.close();
@@ -219,10 +243,14 @@ export class LoginComponent implements OnInit, AfterViewInit { // Implement OnIn
       );
     } else {
       // Display a generic error message if status is not specifically handled
-      this.snackBar.open(`${error.message || 'An unexpected error occurred.'}`, 'Close', {
-        duration: 3000,
-        panelClass: ['error-snackbar'],
-      });
+      this.snackBar.open(
+        `${error.message || 'An unexpected error occurred.'}`,
+        'Close',
+        {
+          duration: 3000,
+          panelClass: ['error-snackbar'],
+        }
+      );
     }
   }
 
@@ -235,7 +263,7 @@ export class LoginComponent implements OnInit, AfterViewInit { // Implement OnIn
     this.dialog.open(ForgotPasswordPopupComponent, {
       width: '450px',
       panelClass: 'attractive-dialog-panel', // Apply attractive styling
-      disableClose: false // Allow closing by clicking outside
+      disableClose: false, // Allow closing by clicking outside
     });
   }
 

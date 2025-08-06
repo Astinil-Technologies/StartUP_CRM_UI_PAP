@@ -4,11 +4,12 @@ import { Component, OnInit } from '@angular/core';
 import { AuthService } from 'src/app/core/services/authservice/auth.service';
 import { environment } from 'src/environments/environment';
 import { UserService } from 'src/app/core/services/userservice/user.service';
+import { TimesheetHomeComponent } from '../timesheet-home/timesheet-home.component';
 
 @Component({
   selector: 'app-homepage',
   standalone: true,
-  imports: [NgIf, NgClass, CommonModule],
+  imports: [NgIf, NgClass, CommonModule,TimesheetHomeComponent],
   templateUrl: './homepage.component.html',
   styleUrl: './homepage.component.scss',
 })
@@ -206,5 +207,4 @@ export class HomepageComponent implements OnInit {
       }
     );
   }
-  
 }

@@ -70,6 +70,9 @@ import { FileSidebarComponent } from './modules/file/components/layout/file-side
 
 import { UploadComponent } from './modules/file/components/upload/upload.component';
 import { ReceivedComponent } from './modules/file/components/received/received.component';
+import { LandingPageComponent } from './modules/meeting/components/landing-page/landing-page.component';
+import { ChatSidebarComponent } from './modules/chat/components/chat-sidebar/chat-sidebar.component';
+import { DirectmessagesComponent } from './modules/chat/components/directmessages/directmessages.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: '/login-main', pathMatch: 'full' },
@@ -84,7 +87,7 @@ export const routes: Routes = [
   // Static Component Testing
   { path: 'cyber', component: FooterSectionComponent },
 
-  {path: 'dashboard', component: DashboardComponent},
+  { path: 'dashboard', component: DashboardComponent },
   // Student Layout
   {
     path: 'layout',
@@ -92,28 +95,49 @@ export const routes: Routes = [
     canActivate: [authGuard, RoleGuard],
     data: { roles: ['ROLE_USER'] },
     children: [
-      {path:'dashboard', component: DashboardComponent},
+      { path: 'dashboard', component: DashboardComponent },
       { path: 'dashboard', component: HomeSectionComponent },
       { path: 'navbar', component: NavbarComponent },
       { path: 'edit-profile', component: EditProfileComponent },
       {
         path: 'meeting-landing',
         loadComponent: () =>
-          import('./modules/meeting/components/landing-page/landing-page.component')
-            .then((m) => m.LandingPageComponent),
+          import(
+            './modules/meeting/components/landing-page/landing-page.component'
+          ).then((m) => m.LandingPageComponent),
       },
       {
-         path: 'schedule-meeting',
+        path: 'meet/:id',
+        loadComponent: () =>
+          import(
+            './modules/meeting/components/video-call/video-call.component'
+          ).then((m) => m.VideoCallComponent),
+      },
+
+      {
+        path: 'schedule-meeting',
         loadComponent: () =>
           import(
             './modules/meeting/components/schedule-meeting/schedule-meeting.component'
           ).then((m) => m.ScheduleMeetingComponent),
-      },      
+      },
+
+      {
+        path: 'meeting',
+        component: LandingPageComponent,
+        // canActivate: [authGuard],
+        children: [
+          { path: 'videocall', component: VideoCallComponent },
+          // { path: 'received', component: ReceivedComponent },
+        ],
+      },
+
       {
         path: 'timesheet',
         component: TimesheetNavbarComponent,
         canActivate: [authGuard],
         children: [
+          { path: '', redirectTo: 'homepage', pathMatch: 'full' },
           { path: 'attendance', component: AttendanceComponent },
           { path: 'myticket', component: MyticketComponent },
           { path: 'homepage', component: HomepageComponent },
@@ -140,6 +164,16 @@ export const routes: Routes = [
           { path: 'update-ticket/:id', component: UpdateTicketComponent },
         ],
       },
+      {
+        path: 'chat',
+        component: ChatSidebarComponent,
+        canActivate: [authGuard],
+        children: [
+          { path: '', component: ChatSidebarComponent },
+          { path: 'directmessages', component: DirectmessagesComponent },
+        ],
+      },
+
       {
         path: 'file',
         component: FileSidebarComponent,
@@ -246,11 +280,13 @@ export const routes: Routes = [
 
   // Standalone Lazy-Loaded Video Call
   {
-    path: 'meet/:id',
-    loadComponent: () =>
-      import(
-        './modules/video-meet/components/video-call/video-call.component'
-      ).then((m) => m.default),
+    path: 'layout',
+    children: [
+      {
+        path: 'meet/:id',
+        component: VideoCallComponent,
+      },
+    ],
   },
 
   // Fallback
