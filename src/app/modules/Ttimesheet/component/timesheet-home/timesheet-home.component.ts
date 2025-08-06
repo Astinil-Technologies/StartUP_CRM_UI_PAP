@@ -17,17 +17,10 @@ export class TimesheetHomeComponent implements OnInit {
   currentUser: User | null = null;
   userId = '';
   username = '';
-  today: Date = new Date(); // Real today's date
+  today: Date = new Date();
   currentTime: string = '';
-  calendarDates: {
-    date: Date;
-    isToday: boolean;
-    isWeekend: boolean;
-    isYesterday: boolean;
-    isTomorrow: boolean;
-    disabled: boolean;
-    message?: string;
-  }[] = [];
+
+  displayedDate: Date = new Date(); // used for dynamic heading
 
   selectedDate: Date | null = null;
   showModal = false;
@@ -40,11 +33,16 @@ export class TimesheetHomeComponent implements OnInit {
     'January', 'February', 'March', 'April', 'May', 'June',
     'July', 'August', 'September', 'October', 'November', 'December'
   ];
-
   years: number[] = [];
-
   selectedMonth: number = new Date().getMonth();
   selectedYear: number = new Date().getFullYear();
+
+  weekDays: string[] = [
+    'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'
+  ];
+
+  calendarDates: any[] = [];
+  calendarTable: any[][] = [];
 
   constructor(
     private timesheetService: TimesheetService,
@@ -55,7 +53,8 @@ export class TimesheetHomeComponent implements OnInit {
     this.generateYearRange();
     this.updateTime();
     setInterval(() => this.updateTime(), 1000);
-    this.generateCalendar();
+
+    this.onMonthOrYearChange(); // Initial calendar and heading
 
     this.userService.getUserProfile().subscribe({
       next: (user) => {
@@ -77,22 +76,24 @@ export class TimesheetHomeComponent implements OnInit {
     this.currentTime = new Date().toLocaleTimeString();
   }
 
-  weekDays: string[] = [
-    'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'
-  ];
-
-  calendarTable: any[][] = [];
+  generateYearRange() {
+    const currentYear = new Date().getFullYear();
+    const range = 10;
+    for (let i = currentYear - range; i <= currentYear + range; i++) {
+      this.years.push(i);
+    }
+  }
 
   generateCalendar() {
-    const start = new Date(this.selectedYear, this.selectedMonth, 1); // use selected month
-    const startDay = start.getDay(); // get weekday of 1st date
+    const start = new Date(this.selectedYear, this.selectedMonth, 1);
+    const startDay = start.getDay();
 
     this.calendarDates = [];
     this.calendarTable = [];
 
     const currentMonth = start.getMonth();
     let currentDate = new Date(start);
-    currentDate.setDate(currentDate.getDate() - startDay); // go back to start of week
+    currentDate.setDate(currentDate.getDate() - startDay);
 
     for (let week = 0; week < 5; week++) {
       const weekRow: any[] = [];
@@ -108,7 +109,7 @@ export class TimesheetHomeComponent implements OnInit {
         let message = '';
 
         if (date.getMonth() !== currentMonth) {
-          weekRow.push(null); // empty cell
+          weekRow.push(null);
           currentDate.setDate(currentDate.getDate() + 1);
           continue;
         }
@@ -155,20 +156,45 @@ export class TimesheetHomeComponent implements OnInit {
     );
   }
 
+  addDays(date: Date, days: number): Date {
+    const result = new Date(date);
+    result.setDate(result.getDate() + days);
+    return result;
+  }
+
+  formatDate(date: Date): string {
+    return date.toISOString().split('T')[0];
+  }
+
   isCurrentMonthYearDisplayed(): boolean {
     const now = new Date();
     return this.selectedMonth === now.getMonth() &&
            this.selectedYear === now.getFullYear();
   }
 
-  formatDate(date: Date): string {
-    return date.toISOString().split('T')[0]; // yyyy-mm-dd
+  onMonthOrYearChange() {
+    this.displayedDate = new Date(this.selectedYear, this.selectedMonth, 1);
+    this.generateCalendar();
   }
 
-  addDays(date: Date, days: number): Date {
-    const result = new Date(date);
-    result.setDate(result.getDate() + days);
-    return result;
+  goToPreviousMonth() {
+    if (this.selectedMonth === 0) {
+      this.selectedMonth = 11;
+      this.selectedYear--;
+    } else {
+      this.selectedMonth--;
+    }
+    this.onMonthOrYearChange();
+  }
+
+  goToNextMonth() {
+    if (this.selectedMonth === 11) {
+      this.selectedMonth = 0;
+      this.selectedYear++;
+    } else {
+      this.selectedMonth++;
+    }
+    this.onMonthOrYearChange();
   }
 
   onDateClick(dateObj: any) {
@@ -206,37 +232,5 @@ export class TimesheetHomeComponent implements OnInit {
     this.workDone = '';
     this.blockers = '';
     this.plans = '';
-  }
-
-  goToPreviousMonth() {
-    if (this.selectedMonth === 0) {
-      this.selectedMonth = 11;
-      this.selectedYear--;
-    } else {
-      this.selectedMonth--;
-    }
-    this.onMonthOrYearChange();
-  }
-
-  goToNextMonth() {
-    if (this.selectedMonth === 11) {
-      this.selectedMonth = 0;
-      this.selectedYear++;
-    } else {
-      this.selectedMonth++;
-    }
-    this.onMonthOrYearChange();
-  }
-
-  generateYearRange() {
-    const currentYear = new Date().getFullYear();
-    const range = 10;
-    for (let i = currentYear - range; i <= currentYear + range; i++) {
-      this.years.push(i);
-    }
-  }
-
-  onMonthOrYearChange() {
-    this.generateCalendar(); // Keep real today
   }
 }
