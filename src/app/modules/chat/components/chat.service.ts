@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import SockJS from 'sockjs-client/dist/sockjs';
 import { AuthService } from 'src/app/core/services/authservice/auth.service';
-import { Client, Message, over } from 'stompjs';
+import { Client, Message, StompSubscription } from '@stomp/stompjs';
 import { Observable } from 'rxjs';
 
 @Injectable({
