@@ -1,23 +1,23 @@
 import { Injectable } from '@angular/core';
 import SockJS from 'sockjs-client/dist/sockjs';
 import { AuthService } from 'src/app/core/services/authservice/auth.service';
-import { Client, Message, over } from 'stompjs';
+import { Client, Message } from 'stompjs';
 import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ChatService {
-  private stompClient: Client;
+  // private stompClient: Client;
 
   constructor(private authService: AuthService) {  
     const socket = new SockJS('http://localhost:8080/ws'); 
-    this.stompClient = over(socket);
+    // this.stompClient = over(socket);
   }
 
   connect(onConnected: () => void): void {
     const token = this.authService.getAccessToken(); 
-    this.stompClient.connect(
+  /*  this.stompClient.connect(
       { Authorization:`Bearer ${token}`}, 
       () => {
         console.log('WebSocket connected');
@@ -27,7 +27,7 @@ export class ChatService {
         console.log('WebSocket connection failed. Retrying...');
         setTimeout(() => this.connect(onConnected), 2000); 
       }
-    );
+    );*/
   }
 
   sendMessage(senderId: string, receiverId: string, content: string): void {
@@ -37,17 +37,16 @@ export class ChatService {
       receiverId,
       content
     };
-    this.stompClient.send('/app/chat.send', {}, JSON.stringify(message));
+    // this.stompClient.send('/app/chat.send', {}, JSON.stringify(message));
   }
 
   subscribeToMessages(receiverId: string): Observable<any> {
     return new Observable(observer => {
-      this.stompClient.subscribe(`/user/${receiverId}/queue/messages`, (message) => {
+    /*  this.stompClient.subscribe(`/user/${receiverId}/queue/messages`, (message) => {
       const received = JSON.parse(message.body);
       console.log('📥 Incoming message:', received);
-      observer.next(received); 
-      });
-
+      observer.next(received);
+      });*/
     });
   }
 }

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import * as Stomp from 'stompjs';
+// import * as Stomp from 'stompjs';
 import { Observable, Subject } from 'rxjs';
 
 @Injectable({
@@ -12,16 +12,16 @@ export class WebSocketService {
   sendChatMessage(meetingId: string, message: any) {
     throw new Error('Method not implemented.');
   }
-  private stompClient: Stomp.Client | undefined;
+  // private stompClient: Stomp.Client | undefined;
   private connected = false;
   private messageSubject = new Subject<any>();
   private currentRoomId: string = '';
 
-  connect(roomId: string): void {
+ /* connect(roomId: string): void {
     if (this.connected) return;
 
     const socket = new WebSocket('ws://localhost:8080/ws');
-    this.stompClient = Stomp.over(socket);
+    // this.stompClient = Stomp.over(socket);
     this.currentRoomId = roomId;
     
 
@@ -47,7 +47,7 @@ export class WebSocketService {
   }
 
   // 🔧 Add sendSignal() as used in video-call.component.ts
-  sendSignal(payload: any, p0: { type: string; sender: string; }): void {
+/*  sendSignal(payload: any, p0: { type: string; sender: string; }): void {
     if (this.connected && this.stompClient && this.currentRoomId) {
       this.stompClient.send(`/app/signal/${this.currentRoomId}`, {}, JSON.stringify(payload));
     } else {
@@ -63,5 +63,5 @@ export class WebSocketService {
         this.currentRoomId = '';
       });
     }
-  }
+  }*/
 }

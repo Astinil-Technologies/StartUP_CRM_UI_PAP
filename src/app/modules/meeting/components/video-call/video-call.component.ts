@@ -47,10 +47,10 @@ screenSharing: any;
     const userId = localStorage.getItem('userId') || '';
     this.username = userId.slice(-4).padStart(4, '0');
     this.meetingId = this.route.snapshot.paramMap.get('id') || '';
-     this.websocketService.connect(this.meetingId); // ✅ Connect WebSocket
-    this.websocketService.onSignal().subscribe((signal: any) => {
-      this.handleIncomingSignal(signal); // ✅ Handle remote screen share (future)
-    });
+    //  this.websocketService.connect(this.meetingId); // ✅ Connect WebSocket
+    // this.websocketService.onSignal().subscribe((signal: any) => {
+    //   this.handleIncomingSignal(signal); // ✅ Handle remote screen share (future)
+    // });
     console.log('Meeting ID:', this.meetingId);
     console.log('VideoCallComponent loaded');
     const id = this.route.snapshot.paramMap.get('id');
@@ -114,7 +114,7 @@ async toggleVideo() {
     }
   this.isMuted = false;
   this.isVideoStopped = true;
-  this.websocketService.disconnect(); // ✅ Clean disconnect
+  // this.websocketService.disconnect(); // ✅ Clean disconnect
   this.router.navigate(['/layout']); // or your correct landing page route
 }
 
