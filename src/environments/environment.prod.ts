@@ -1,5 +1,10 @@
+const BASE_URL = 'http://3.108.55.79:8888';
+
 export const environment = {
     production: true,
-    apiUrl: 'http://3.108.55.79:8080';
-  };
-  
+    baseUrl: `${BASE_URL}`,
+    apiUrl: `${BASE_URL}/auth`,
+    courseUrl: `${BASE_URL}/courses/create-course`,
+    courseModuleUrl: `${BASE_URL}/api/course-modules`,
+    lessonUrl: `${BASE_URL}/api/lessons`
+};
