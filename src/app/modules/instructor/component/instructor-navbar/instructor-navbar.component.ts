@@ -50,7 +50,7 @@ export class InstructorNavbarComponent {
   
   
     getUserDetails(userId: string): void {
-      const url = `http://localhost:8080/api/v1/users/${userId}`;
+      const url = `http://localhost:8888/api/v1/users/${userId}`;
       this.http.get<any>(url).subscribe(
         (response) => {
           if (response) {

@@ -99,7 +99,7 @@ export class HomepageComponent implements OnInit {
   }
 
   checkIn() {
-    const url = `${this.baseUrl}/api/checkout/checkin`;
+    const url = `${this.baseUrl}/checkout/checkin`;
     const token = this.authService.getAccessToken();
 
     if (!token) {
@@ -129,7 +129,7 @@ export class HomepageComponent implements OnInit {
   }
 
   checkOut() {
-    const url = `${this.baseUrl}/api/checkout?totalHours=${this.checkInTime}`;
+    const url = `${this.baseUrl}/checkout?totalHours=${this.checkInTime}`;
     const token = this.authService.getAccessToken();
 
     if (!token) {
@@ -154,7 +154,7 @@ export class HomepageComponent implements OnInit {
   }
 
   loadStatus() {
-    const url = `${this.baseUrl}/api/checkout/status`;
+    const url = `${this.baseUrl}/checkout/status`;
     const token = this.authService.getAccessToken();
 
     if (!token) {

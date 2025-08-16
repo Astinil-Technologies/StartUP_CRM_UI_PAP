@@ -11,7 +11,7 @@ import { environment } from 'src/environments/environment';
   providedIn: 'root'
 })
 export class UserService { 
-  private apiUrl = 'http://localhost:8080/api/v1/users'; 
+  private apiUrl = 'http://localhost:8888/api/v1/users'; 
 
   private baseUrl = environment.baseUrl;
   private cachedUserData: any = null;

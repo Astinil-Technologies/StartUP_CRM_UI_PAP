@@ -26,7 +26,7 @@ export class AdminPichartComponent {
   }
 
   fetchUserCounts(): void {
-    this.http.get<any>('http://localhost:8080/api/v1/users/user-counts')
+    this.http.get<any>('http://localhost:8888/api/v1/users/user-counts')
       .subscribe((response) => {
         if (response && response.data) {
           const userCounts = response.data;

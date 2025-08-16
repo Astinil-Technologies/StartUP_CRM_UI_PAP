@@ -59,7 +59,7 @@ export class ManageUsersComponent implements OnInit {
       params = params.append('role', this.roleFilter);
     }
   
-    const url = 'http://localhost:8080/api/v1/users';
+    const url = 'http://localhost:8888/api/v1/users';
   
     // Perform the HTTP GET request
     this.http.get<any>(url, { headers, params }).subscribe(
@@ -183,7 +183,7 @@ export class ManageUsersComponent implements OnInit {
     }
 
     const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
-    const url = `http://localhost:8080/api/v1/users/${userId}`;
+    const url = `http://localhost:8888/api/v1/users/${userId}`;
     this.http.delete(url, { headers }).subscribe(
       () => {
         this.users = this.users.filter(user => user.id !== userId);

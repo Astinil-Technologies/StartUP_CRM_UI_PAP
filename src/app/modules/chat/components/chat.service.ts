@@ -11,7 +11,7 @@ export class ChatService {
   // private stompClient: Client;
 
   constructor(private authService: AuthService) {  
-    const socket = new SockJS('http://localhost:8080/ws'); 
+    const socket = new SockJS('http://localhost:8888/ws'); 
     // this.stompClient = over(socket);
   }
 

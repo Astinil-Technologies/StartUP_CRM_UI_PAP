@@ -7,7 +7,7 @@ import { environment } from 'src/environments/environment';
   providedIn: 'root'
 })
 export class ReminderService {
-  private apiUrl = environment.baseUrl + '/api/reminders';
+  private apiUrl = environment.baseUrl + '/reminders';
   private attachmentUrl = environment.baseUrl + '/api/attachments';
 
   constructor(private http: HttpClient) { }

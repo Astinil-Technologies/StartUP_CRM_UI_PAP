@@ -46,7 +46,7 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
     }
 
     this.stompClient = new Client({
-      brokerURL: `ws://localhost:8080/ws`,
+      brokerURL: `ws://localhost:8888/ws`,
       reconnectDelay: 5000,
       debug: (str) => console.log('[STOMP DEBUG]:', str),
       onConnect: () => {

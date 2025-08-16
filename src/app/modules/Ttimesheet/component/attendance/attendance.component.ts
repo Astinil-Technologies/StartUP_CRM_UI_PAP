@@ -35,7 +35,7 @@ export class AttendanceComponent implements OnInit{
 
   
 
-  const url = `${this.baseUrl}/api/checkout/weekly`;
+  const url = `${this.baseUrl}/checkout/weekly`;
   this.http.get<any[]>(url, { headers }).subscribe({
     next: (data) => {
       console.log('Weekly Data:', data);
