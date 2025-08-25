@@ -1,5 +1,5 @@
 
-const BASE_URL = 'http://localhost:8888';
+const BASE_URL = 'http://localhost:8082';
 
 export const environment = {
     production: true,
