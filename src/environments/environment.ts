@@ -1,5 +1,5 @@
 
-const BASE_URL = 'http://3.108.55.79:8888';
+const BASE_URL = 'http://3.108.55.79:8080';
 
 export const environment = {
     production: true,
