@@ -125,23 +125,45 @@
         </div>
       </div>
 
-      <div class="hierarchy-level level-team-leads">
-        <ng-container *ngFor="let member of contributors.slice(1, 4); let i = index">
-          <div class="contributor-node lead-node animated-node-fade-in" [style.--node-delay]="(0.3 + i * 0.1) + 's'">
-            <div class="node-image-wrapper">
-              <img [src]="member.imageSrc" [alt]="member.name" class="node-image">
-            </div>
-            <div class="node-details">
-              <span class="node-name">{{ member.name }}</span>
-              <span class="node-role">{{ member.role }}</span>
-              <span class="node-designation">{{ member.designation }}</span>
-            </div>
+   <div class="hierarchy-level level-team-leads">
+  <div class="team-leads-carousel">
+    <div class="team-leads-track">
+      <!-- First set -->
+      <ng-container *ngFor="let member of teamLeads">
+        <div class="contributor-node lead-node">
+          <div class="node-image-wrapper">
+            <img [src]="member.imageSrc" [alt]="member.name" class="node-image">
           </div>
-        </ng-container>
-      </div>
-    </div> <div class="developers-scrolling-container">
+          <div class="node-details">
+            <span class="node-name">{{ member.name }}</span>
+            <span class="node-role">{{ member.role }}</span>
+            <span class="node-designation">{{ member.designation }}</span>
+          </div>
+        </div>
+      </ng-container>
+
+      <!-- Duplicate set for smooth looping -->
+      <ng-container *ngFor="let member of teamLeads">
+        <div class="contributor-node lead-node">
+          <div class="node-image-wrapper">
+            <img [src]="member.imageSrc" [alt]="member.name" class="node-image">
+          </div>
+          <div class="node-details">
+            <span class="node-name">{{ member.name }}</span>
+            <span class="node-role">{{ member.role }}</span>
+            <span class="node-designation">{{ member.designation }}</span>
+          </div>
+        </div>
+      </ng-container>
+    </div>
+  </div>
+</div>
+
+
+    </div> 
+    <div class="developers-scrolling-container">
       <div class="developers-marquee-track">
-        <ng-container *ngFor="let member of contributors.slice(4); let i = index">
+        <ng-container *ngFor="let member of contributors.slice(10); let i = index">
           <div class="contributor-node developer-node">
             <div class="node-image-wrapper">
               <img [src]="member.imageSrc" [alt]="member.name" class="node-image">
@@ -155,6 +177,9 @@
         </ng-container>
       </div>
     </div>
+    <button (click)="goToContributors()" class="btn btn-primary">
+        Show Full Team
+    </button>
   </section>
 </div>
 

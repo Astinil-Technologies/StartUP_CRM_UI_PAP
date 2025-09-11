@@ -947,9 +947,9 @@
   animation: hangingSway 20s infinite ease-in-out alternate;
 
   &:hover {
-    transform: translateY(-8px) scale(1.05);
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
-    border-color: #007bff;
+    transform: translateY(-8px) scale(1.03);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
+    border: 2px solid #8a2be2;
   }
 
   .node-image-wrapper {
@@ -992,6 +992,17 @@
     color: #495057;
     margin-top: 0.5rem;
   }
+  .contributor-name {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #333;
+    margin-top: 1rem;
+    transition: color 0.3s;
+  }
+
+  &:hover .contributor-name {
+    color: #8a2be2;
+  }
 }
 
 // Keyframes for the pendulum sway animation
@@ -1010,11 +1021,40 @@
   &::before { display: none; }
 }
 
-.lead-node {
-  background-color: #007bff;
-  color: white;
-  .node-name, .node-role, .node-designation { color: white; }
+.team-leads-carousel {
+  width: 900px;   // 3 cards visible (280px each + gaps)
+  margin: 0 auto;
+  overflow: hidden;
+  position: relative;
 }
+
+.team-leads-track {
+  display: flex;
+  gap: 20px;
+  animation: scrollTeamLeads 5s linear infinite;
+}
+
+.lead-node {
+  flex: 0 0 280px;  // fixed card width
+}
+
+@keyframes scrollTeamLeads {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%); // because we duplicated the list
+  }
+}
+
+
+.lead-node {
+  flex: 0 0 auto;
+  width: 280px;   // keep fixed card size
+}
+
+
+
 
 .developer-node {
   .node-image-wrapper { border-color: #e9ecef; }
@@ -1034,7 +1074,7 @@
 .developers-marquee-track {
   display: flex;
   white-space: nowrap;
-  animation: marquee 30s linear infinite;
+  animation: marquee 20s linear infinite;
   padding: 0 1rem;
 }
 

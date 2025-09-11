@@ -50,9 +50,18 @@ declare var bootstrap: any; // Declare bootstrap to avoid TypeScript errors if n
   styleUrls: ['./login-main.component.scss'],
 })
 export class LoginMainComponent implements OnInit, AfterViewInit {
+currentIndex = 0;
+cardWidth = 280;
+gap = 20;
+
   switchTab(arg0: string) {
     throw new Error('Method not implemented.');
   } // Implement AfterViewInit
+
+   goToContributors() {
+    this.router.navigate(['/contributors']);  
+  }
+
   isLoggedIn = false;
   username = 'User';
   private lastScrollTop = 0; // For header hide/show on scroll
@@ -67,22 +76,22 @@ export class LoginMainComponent implements OnInit, AfterViewInit {
  // --- Data Array for All Contributors (1 Architect, 3 Team Leads, 10 Developers) ---
   contributors = [
     // Project Architect (1)
-    { name: 'Deepa Anil Kumar', role: 'Architect', designation: 'System Design', imageSrc: 'https://cdn.pixabay.com/photo/2023/06/29/01/09/portrait-8095464_1280.jpg' },
+    { name: 'Deepa Anil Kumar', role: 'Architect', designation: 'System Design', imageSrc: '../../../assets/blank-profile.jpg' },
     
     // Team Leads (3)
-    { name: 'Jeelan Shiak', role: 'Team Lead', designation: 'Mangement Lead', imageSrc: 'https://media.istockphoto.com/id/1300972574/photo/millennial-male-team-leader-organize-virtual-workshop-with-employees-online.jpg?s=1024x1024&w=is&k=20&c=4vOXvZRvhvchTRbYn9SknimKUNvKPZyJdGzHvtjqg_w=' },
-    { name: 'Shivnath jha', role: 'Team Lead', designation: 'Tech Lead', imageSrc: 'https://media.istockphoto.com/id/1329501064/photo/portrait-of-middle-aged-man-smiling-at-the-camera.jpg?s=1024x1024&w=is&k=20&c=MeAGsc7i1dyjASC0NrmT9syW9vmmPAnHLFUCsp-Lqk8=' }, 
+    { name: 'Jeelan Shaik', role: 'Team Lead', designation: 'Mangement Lead', imageSrc: '../../../assets/blank-profile.jpg' },
+    { name: 'Shivnath jha', role: 'Team Lead', designation: 'Tech Lead', imageSrc: '../../../assets/blank-profile.jpg' }, 
     { name: 'Chandradeep Kumar', role: 'Team Lead', designation: 'Tech Lead', imageSrc: '../../../assets/Chandradeep.jpg' },
+    { name: 'Sourabh Patil ', role: 'Team Lead', designation: 'Project Lead', imageSrc: '../../../assets/blank-profile.jpg' },
+    { name: 'Shivasagar Reddy', role: 'Team Lead', designation: 'Senior Developer', imageSrc: '../../../assets/blank-profile.jpg' },   
+    { name: 'Shankar kumar Saw', role: 'Team Lead', designation: 'Senior Developer', imageSrc: '../../../assets/Shankar.jpg' },
+    { name: 'Hemanta Ku.', role: 'Team Lead', designation: 'Senior Developer', imageSrc: '../../../assets/blank-profile.jpg' },
+    { name: 'Dayanidhi Tripathi', role: 'Team Lead', designation: 'Senior Developer', imageSrc: '../../../assets/blank-profile.jpg' },
     { name: 'Tavva Tejeswara Rao', role: 'Team Lead', designation: 'Senior Developer', imageSrc: '../../../assets/Teja.jpg' },
-     { name: 'Shankar kumar Saw', role: 'Team Lead', designation: 'Senior Developer', imageSrc: '../../../assets/Shankar.jpg' },
-     { name: 'Hemanta Ku.', role: 'Team Lead', designation: 'Senior Developer', imageSrc: 'https://cdn.pixabay.com/photo/2024/03/10/01/23/man-8623701_1280.jpg' },
-     { name: ' Pulak Kanti ', role: 'Team Lead', designation: 'Junior Developer', imageSrc: '../../../assets/Kanti.jpg' },
-      { name: ' Sourabh Patil ', role: 'Team Lead', designation: 'Project Lead', imageSrc: '../../../assets/Kanti.jpg' },
-    { name: 'Rakesh Goud', role: 'Developer', designation: 'Senior Developer', imageSrc: '../../../assets/Rakesha.jpg' },
-    { name: 'Dayanidhi Tripathi', role: 'Developer', designation: 'Senior Developer', imageSrc: '' },
-
     // Developers (10)
     { name: ' Kanhu Ch.Behera', role: 'Developer', designation: 'FullStack Dev ', imageSrc: '../../../assets/Kanhu.jpg' },
+    { name: ' Pulak Kanti ', role: 'Developer', designation: 'Junior Developer', imageSrc: '../../../assets/Kanti.jpg' },
+    { name: 'Rakesh Goud', role: 'Developer', designation: 'Senior Developer', imageSrc: '../../../assets/Rakesha.jpg' },
     { name: 'Nagamani', role: 'Developer', designation: 'FullStack Dev', imageSrc: '../../../assets/Nagamani.jpg' },
     { name: 'Wasim', role: 'Developer', designation: 'FullStack Devr', imageSrc: '../../../assets/Wasim.jpg' },
     { name: 'Ranjit Sahoo', role: 'Developer', designation: 'Full-Stack Dev', imageSrc: '../../../assets/Ranjit.jpg' },
@@ -92,14 +101,23 @@ export class LoginMainComponent implements OnInit, AfterViewInit {
     { name: 'Anju Nishad', role: 'Developer', designation: 'FullStack Dev', imageSrc: '../../../assets/Anju.jpg' },
     { name: 'Rajalaxmi', role: 'Developer', designation: 'FullStack Dev', imageSrc: '../../../assets/Rajyalaxmi.jpg' },
     { name: 'NagaSaiRam', role: 'Developer', designation: 'FullStack Dev', imageSrc: '../../../assets/Sai.jpg' },
-    { name: 'Rakesha Maradana', role: 'Developer', designation: 'FullStack Dev', imageSrc: '../../../assets/Rakesh-Maradana.jpg' },
-    // { name: 'Muthaiah V D S R K Siddarth Raj', role: 'Developer', designation: 'Backend Dev', imageSrc: '../../../assets/Sai.jpg' },
-    { name: 'Sabinedi Balachandra', role: 'Developer', designation: 'FullStack Dev', imageSrc: '../../../assets/Sai.jpg' },
-    { name: 'Lakshmi Narayana Murthy Pappula', role: 'Developer', designation: 'FullStack Dev', imageSrc: '../../../assets/Sai.jpg' },
+    { name: 'Rakesha Maradana', role: 'Developer', designation: 'FullStack Dev', imageSrc: '../../../assets/blank-profile.jpg' },
+    { name: 'Lakshmi Narayana Murthy Pappula', role: 'Developer', designation: 'FullStack Dev', imageSrc: '../../../assets/blank-profile.jpg' },
     { name: 'Devavrat Upadhyay', role: 'Developer', designation: 'FullStack Dev', imageSrc: '../../../assets/Deva.jpg' },
+    { name: 'Sabinedi Balachandra', role: 'Developer', designation: 'FullStack Dev', imageSrc: '../../../assets/blank-profile.jpg' },
+   
    
 
   ];
+
+ architects = this.contributors.filter(c => c.role === 'Architect');
+
+teamLeads = this.contributors.filter(c => 
+  c.role.includes('Team Lead') 
+);
+
+
+
   
 
   constructor(
@@ -116,6 +134,10 @@ export class LoginMainComponent implements OnInit, AfterViewInit {
   ) {}
 
   ngOnInit(): void {
+    setInterval(() => {
+    this.currentIndex = (this.currentIndex + 1) % this.teamLeads.length;
+  }, 3000); // scroll every 3s
+
     this.isLoggedIn = (this.tokenService as any).hasValidToken();
     this.username = (this.tokenService as any).getUsername() || 'User';
 

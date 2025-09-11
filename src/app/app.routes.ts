@@ -8,6 +8,7 @@ import { RegisterComponent } from './auth/register/register.component';
 import { ForgotPasswordPopupComponent } from './auth/forgot-password-popup/forgot-password-popup.component';
 import { ResetPasswordComponent } from './auth/reset-password/reset-password.component';
 import { LoginMainComponent } from './auth/login-main/login-main.component';
+import { ContributorsComponent } from './auth/contributors/contributors.component';
 
 // Shared Components
 import { LayoutComponent } from './shared/components/layout/layout.component';
@@ -79,6 +80,7 @@ export const routes: Routes = [
 
   // Auth Routes
   { path: 'login-main', component: LoginMainComponent },
+   { path: 'contributors', component: ContributorsComponent },
   //  { path: 'login', component: LoginComponent },
   //  { path: 'register', component: RegisterComponent },
   { path: 'forgot-password', component: ForgotPasswordPopupComponent },
