@@ -2,13 +2,15 @@ import { CommonModule } from '@angular/common';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Component, Input, OnInit, ChangeDetectorRef } from '@angular/core';
 import { MatIconModule } from '@angular/material/icon';
-import { Router, RouterModule } from '@angular/router';
+import { Router, RouterModule, NavigationEnd } from '@angular/router';
 import { environment } from 'src/environments/environment';
 import { AuthService } from 'src/app/core/services/authservice/auth.service';
 import { FormsModule } from '@angular/forms';
 import { RegisterComponent } from 'src/app/auth/register/register.component';
 import { LoginComponent } from 'src/app/auth/login/login.component';
 import { UserDataService } from 'src/app/core/services/user-data.service';
+import { EditProfileComponent } from "./edit-profile/edit-profile.component";
+import { filter } from 'rxjs/operators';
 
 @Component({
   selector: 'app-sidebar-component',
@@ -19,12 +21,17 @@ import { UserDataService } from 'src/app/core/services/user-data.service';
     RouterModule,
     RegisterComponent,
     LoginComponent,
-    FormsModule
+    FormsModule,
+    EditProfileComponent
   ],
   templateUrl: './sidebar-component.component.html',
   styleUrl: './sidebar-component.component.scss',
 })
 export class SidebarComponentComponent implements OnInit {
+  toggleSidebar() {
+    this.isSidebarOpen = !this.isSidebarOpen;
+  }
+
   private baseUrl = environment.baseUrl;
   userId: string | null = null;
   firstName: string | null = null;
@@ -41,37 +48,46 @@ export class SidebarComponentComponent implements OnInit {
 
   previewUrl: string | null = null;
 
-
   switchEmail: string = '';
   switchPassword: string = '';
 
   constructor(
     private authService: AuthService,
     private http: HttpClient,
-    private router: Router,
+    public router: Router,
     private cdr: ChangeDetectorRef,
     private userDataService: UserDataService
   ) {}
 
   ngOnInit() {
     this.userId = this.authService.getId();
-  
+
     this.userDataService.userData$.subscribe((data) => {
-    if (data) {
-      this.userData = data;
-      this.firstName = data.firstName;
-      this.lastName = data.lastName;
+      if (data) {
+        this.userData = data;
+        this.firstName = data.firstName;
+        this.lastName = data.lastName;
 
-      if (data.profileImageUrl?.startsWith('data:image')) {
-        this.previewUrl = data.profileImageUrl;
-      } else if (data.profileImageUrl) {
-        this.previewUrl = `${this.baseUrl}/${data.profileImageUrl}`;
+        if (data.profileImageUrl?.startsWith('data:image')) {
+          this.previewUrl = data.profileImageUrl;
+        } else if (data.profileImageUrl) {
+          this.previewUrl = `${this.baseUrl}/${data.profileImageUrl}`;
+        }
+
+        this.cdr.detectChanges();
       }
+    });
 
-      this.cdr.detectChanges();
-    }
-   
-  });
+    // 🚀 Auto-close sidebar & popups when navigating to edit-profile
+    this.router.events
+      .pipe(filter((event) => event instanceof NavigationEnd))
+      .subscribe((event: any) => {
+        if (event.url.includes('/edit-profile')) {
+          this.isSidebarOpen = false;
+          this.showAddAccountBox = false;
+          this.showSwitchAccountBox = false;
+        }
+      });
   }
 
   logout() {
@@ -115,13 +131,11 @@ export class SidebarComponentComponent implements OnInit {
           status: response.status || 'Online',
         };
 
-       
-  if (this.userData.profileImageUrl?.startsWith('data:image')) {
-    this.previewUrl = this.userData.profileImageUrl;
-  } else if (this.userData.profileImageUrl) {
-    this.previewUrl = `${this.baseUrl}/${this.userData.profileImageUrl}`;
-
- }
+        if (this.userData.profileImageUrl?.startsWith('data:image')) {
+          this.previewUrl = this.userData.profileImageUrl;
+        } else if (this.userData.profileImageUrl) {
+          this.previewUrl = `${this.baseUrl}/${this.userData.profileImageUrl}`;
+        }
 
         this.isLoading = false;
         this.userDataService.setUserData(this.userData);
@@ -155,8 +169,6 @@ export class SidebarComponentComponent implements OnInit {
     );
   }
 
- 
-
   openAddAccount() {
     this.showAddAccountBox = true;
     this.showSwitchAccountBox = false;
@@ -187,7 +199,7 @@ export class SidebarComponentComponent implements OnInit {
 
     const body = {
       email: this.switchEmail,
-      password: this.switchPassword
+      password: this.switchPassword,
     };
 
     this.http.post<any>(url, body).subscribe(
@@ -205,5 +217,15 @@ export class SidebarComponentComponent implements OnInit {
         alert(error?.error?.message || 'User not found or invalid credentials.');
       }
     );
+  }
+
+  openEditProfile(): void {
+    // 🚀 Force reset everything
+    this.showAddAccountBox = false;
+    this.showSwitchAccountBox = false;
+    this.closeSidebar();
+
+    // Navigate to edit profile page
+    this.router.navigate(['/edit-profile']);
   }
 }

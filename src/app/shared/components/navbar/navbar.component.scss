@@ -157,7 +157,7 @@
 .Name_logo {
   width: 40px;
   height: 40px;
-  border-radius: 8px;
+   border-radius: 50%; 
   background-color: #0c0ff2;
   color: white;
   font-size: 16px;
@@ -201,6 +201,7 @@
   align-items: center;
   gap: 10px; // Space between initials and logout button
   margin-left: 15px; // Space from search bar or other elements
+  border-radius: 9999px;
 }
 
 .logout-btn {
