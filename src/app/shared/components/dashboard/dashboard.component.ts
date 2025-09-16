@@ -64,17 +64,18 @@ export class DashboardComponent implements OnInit {
       description:
         'Seamless video conferencing for effective team collaboration.',
       icon: 'https://thumbs.dreamstime.com/b/virtual-online-work-business-office-video-conference-home-telework-people-sits-computer-distance-videocall-internet-freelance-263029510.jpg',
-      routerLink: '/layout/video-call', // This will navigate to /layout/video-call (your 'videomeet' page)
+      routerLink: '/layout/meeting-landing', // This will navigate to /layout/video-call (your 'videomeet' page)
       isMediaRelated: true,
     },
     {
       title: 'File Transfer Option',
       description: 'Securely upload, share, and manage files with ease.',
       icon: 'https://images.idgesg.net/images/article/2020/07/windows-10-file-explorer-icon-big-100852153-large.jpg?auto=webp&quality=85,70',
-      routerLink: '/layout/file-transfer', // This will navigate to /layout/file-transfer (your 'file' page)
+      routerLink: '/layout/file', // This will navigate to /layout/file-transfer (your 'file' page)
       isMediaRelated: true,
     },
     {
+      
       title: 'Timesheet Option',
       description:
         'Effortlessly log working hours and manage project schedules.',
@@ -94,14 +95,14 @@ export class DashboardComponent implements OnInit {
       title: 'Attendance Option',
       description: 'Daily attendance view and tracking.',
       icon: 'https://tse2.mm.bing.net/th/id/OIP.O_6UfAXU7VwAxtLz0ncjAQHaHW?pid=Api&P=0&h=180',
-      routerLink: '/layout/attendance', // This will navigate to /layout/attendance
+      routerLink: '/layout/timesheet/attendance', // This will navigate to /layout/attendance
       isMediaRelated: false,
     },
     {
       title: 'Check-In / Check-Out',
       description: 'Users can mark their start and end time for the day.',
       icon: 'https://icon-library.com/images/check-in-check-out-icon/check-in-check-out-icon-20.jpg',
-      routerLink: '/layout/check-in-out', // This will navigate to /layout/check-in-out
+      routerLink: '/layout/timesheet/homepage', // This will navigate to /layout/check-in-out
       isMediaRelated: false,
     },
     {
