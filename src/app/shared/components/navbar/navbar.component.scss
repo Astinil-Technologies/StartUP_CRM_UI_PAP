@@ -199,8 +199,8 @@
 .user-profile-section {
   display: flex;
   align-items: center;
-  gap: 10px; // Space between initials and logout button
-  margin-left: 15px; // Space from search bar or other elements
+  gap: 5px; // Space between initials and logout button
+  margin-left: 10px; // Space from search bar or other elements
 }
 
 .logout-btn {
@@ -221,3 +221,9 @@
     transform: translateY(0);
   }
 }
+.home-icon{
+  font-size: 10px;   /* smaller than default 24px */
+  vertical-align: middle; /* keeps it aligned with text */
+  color:white;
+}
+
