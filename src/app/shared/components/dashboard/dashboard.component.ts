@@ -70,7 +70,7 @@ export class DashboardComponent implements OnInit {
     {
       title: 'File Transfer Option',
       description: 'Securely upload, share, and manage files with ease.',
-      icon: 'https://images.idgesg.net/images/article/2020/07/windows-10-file-explorer-icon-big-100852153-large.jpg?auto=webp&quality=85,70',
+      icon: 'https://media.istockphoto.com/id/532417235/vector/moving-documents-between-two-folders.jpg?s=612x612&w=0&k=20&c=0JmJcQbWzEmIw-GWX9BCoPQBH-bYb2jui5-w2W3ygSk=',
       routerLink: '/layout/file-transfer', // This will navigate to /layout/file-transfer (your 'file' page)
       isMediaRelated: true,
     },
@@ -100,7 +100,7 @@ export class DashboardComponent implements OnInit {
     {
       title: 'Check-In / Check-Out',
       description: 'Users can mark their start and end time for the day.',
-      icon: 'https://icon-library.com/images/check-in-check-out-icon/check-in-check-out-icon-20.jpg',
+      icon: 'https://www.shutterstock.com/image-vector/checkin-checkout-icon-vector-filled-260nw-574755751.jpg',
       routerLink: '/layout/check-in-out', // This will navigate to /layout/check-in-out
       isMediaRelated: false,
     },
