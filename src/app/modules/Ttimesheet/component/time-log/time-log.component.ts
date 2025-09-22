@@ -1,6 +1,15 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { HttpClient } from '@angular/common/http';
+import { AuthService } from 'src/app/core/services/authservice/auth.service'; // make sure path is correct
+
+// Updated interface with name
+interface DayEntry {
+  name: string;
+  date: Date;
+  hours: number;
+}
 
 @Component({
   selector: 'app-time-log',
@@ -10,23 +19,29 @@ import { FormsModule } from '@angular/forms';
   styleUrls: ['./time-log.component.scss'],
 })
 export class TimeLogComponent implements OnInit {
-  selectedClient = '';
-  selectedProject = '';
-  selectedJob = '';
-  selectedWorkItem = '';
+  private http = inject(HttpClient);
+  private authService = inject(AuthService);
 
-  clients = ['Client A', 'Client B', 'Client C'];
-  projects = ['Project X', 'Project Y', 'Project Z'];
-  jobs = ['DEVELOPMENT', 'DESIGN', 'TESTING']; // match backend enum Job.java
-  workItems = ['Task 1', 'Task 2', 'Task 3'];
+  // Dropdown selections
+  selectedClient: string = '';
+  selectedProject: string = '';
+  selectedJob: string = '';
+  selectedWorkItem: string = '';
 
+  // Dropdown options
+  clients: string[] = ['Client A', 'Client B', 'Client C'];
+  projects: string[] = ['SWON123', 'Project Y', 'Project Z'];
+  jobs: string[] = ['DEVELOPMENT', 'DESIGN', 'TESTING'];
+  workItems: string[] = ['WorkItem 1', 'WorkItem 2', 'WorkItem 3'];
+
+  // View and offsets
   view: 'weekly' | 'monthly' = 'weekly';
+  weekOffset = 0;
+  monthOffset = 0;
 
-  weekOffset = 0;    // for weekly navigation
-  monthOffset = 0;   // for monthly navigation
-
-  weekDays: { name: string; date: Date; hours: number }[] = [];
-  monthDays: { date: Date; hours: number }[] = [];
+  // Entries
+  weekDays: DayEntry[] = [];
+  monthDays: DayEntry[] = [];
 
   ngOnInit(): void {
     this.generateWeek();
@@ -37,11 +52,8 @@ export class TimeLogComponent implements OnInit {
     this.weekOffset = 0;
     this.monthOffset = 0;
 
-    if (view === 'weekly') {
-      this.generateWeek();
-    } else {
-      this.generateMonth();
-    }
+    if (view === 'weekly') this.generateWeek();
+    else this.generateMonth();
   }
 
   changeOffset(delta: number): void {
@@ -57,9 +69,8 @@ export class TimeLogComponent implements OnInit {
   generateWeek(): void {
     const today = new Date();
     const startOfWeek = new Date(today);
-    const day = startOfWeek.getDay(); // 0 = Sunday
-    const diff = day === 0 ? -6 : 1 - day; // adjust to Monday start
-
+    const day = startOfWeek.getDay();
+    const diff = day === 0 ? -6 : 1 - day; // Monday start
     startOfWeek.setDate(today.getDate() + diff + this.weekOffset * 7);
 
     const dayNames = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
@@ -67,11 +78,7 @@ export class TimeLogComponent implements OnInit {
     this.weekDays = Array.from({ length: 7 }, (_, i) => {
       const date = new Date(startOfWeek);
       date.setDate(startOfWeek.getDate() + i);
-      return {
-        name: dayNames[i],
-        date: date,
-        hours: 0,
-      };
+      return { date, hours: 0, name: dayNames[i] };
     });
   }
 
@@ -79,16 +86,13 @@ export class TimeLogComponent implements OnInit {
     const today = new Date();
     const year = today.getFullYear();
     const month = today.getMonth() + this.monthOffset;
-    const firstDayOfMonth = new Date(year, month, 1);
-
     const totalDays = new Date(year, month + 1, 0).getDate();
 
-    this.monthDays = Array.from({ length: totalDays }, (_, i) => {
-      return {
-        date: new Date(year, month, i + 1),
-        hours: 0,
-      };
-    });
+    this.monthDays = Array.from({ length: totalDays }, (_, i) => ({
+      date: new Date(year, month, i + 1),
+      hours: 0,
+      name: new Date(year, month, i + 1).toLocaleDateString(undefined, { weekday: 'long' })
+    }));
   }
 
   getCurrentRange(): string {
@@ -99,19 +103,16 @@ export class TimeLogComponent implements OnInit {
       const options = { month: 'short', day: 'numeric' } as const;
       return `${start.toLocaleDateString(undefined, options)} - ${end.toLocaleDateString(undefined, options)}`;
     } else {
-      if (this.monthDays.length === 0) return '';
-      const firstDay = this.monthDays[0].date;
+      const firstDay = this.monthDays[0]?.date;
+      if (!firstDay) return '';
       const options = { month: 'long', year: 'numeric' } as const;
       return firstDay.toLocaleDateString(undefined, options);
     }
   }
 
   getTotalHours(): number {
-    if (this.view === 'weekly') {
-      return this.weekDays.reduce((sum, day) => sum + (day.hours || 0), 0);
-    } else {
-      return this.monthDays.reduce((sum, day) => sum + (day.hours || 0), 0);
-    }
+    const entries = this.view === 'weekly' ? this.weekDays : this.monthDays;
+    return entries.reduce((sum, day) => sum + (day.hours || 0), 0);
   }
 
   saveDraft(): void {
@@ -121,47 +122,52 @@ export class TimeLogComponent implements OnInit {
   }
 
   submit(): void {
+    if (!this.selectedProject || !this.selectedJob) {
+      alert('Please select a project and job!');
+      return;
+    }
+
     const isWeekly = this.view === 'weekly';
+    const entries = (isWeekly ? this.weekDays : this.monthDays)
+      .filter(day => day.hours > 0)
+      .map(day => ({
+        workDate: day.date.toISOString().split('T')[0],
+        hoursWorked: day.hours
+      }));
+
+    if (entries.length === 0) {
+      alert('No hours entered for submission!');
+      return;
+    }
 
     const payload = {
-      startDate: isWeekly
-        ? this.weekDays[0].date.toISOString().split('T')[0]
-        : this.monthDays[0].date.toISOString().split('T')[0],
-
-      endDate: isWeekly
-        ? this.weekDays[this.weekDays.length - 1].date.toISOString().split('T')[0]
-        : this.monthDays[this.monthDays.length - 1].date.toISOString().split('T')[0],
-
+      startDate: (isWeekly ? this.weekDays[0] : this.monthDays[0]).date.toISOString().split('T')[0],
+      endDate: (isWeekly
+        ? this.weekDays[this.weekDays.length - 1]
+        : this.monthDays[this.monthDays.length - 1]).date.toISOString().split('T')[0],
       timesheetType: isWeekly ? 'WEEKLY' : 'MONTHLY',
       job: this.selectedJob.toUpperCase(),
       projectId: this.selectedProject,
-
-      entries: (isWeekly ? this.weekDays : this.monthDays)
-        .filter(day => day.hours > 0)
-        .map(day => ({
-          workDate: day.date.toISOString().split('T')[0],
-          hoursWorked: day.hours
-        }))
+      entries
     };
 
-    console.log("📤 Submitting payload:", payload);
+    const token: string = this.authService.getAccessToken() as string;
+    if (!token) {
+      alert('You are not authenticated!');
+      return;
+    }
 
-    fetch("http://localhost:8888/timesheet/log", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": "Bearer " + localStorage.getItem("token") // if using JWT
+    this.http.post('http://localhost:8888/timesheet/log', payload, {
+      headers: { Authorization: `Bearer ${token}` },
+    }).subscribe({
+      next: (data) => {
+        console.log('✅ Response:', data);
+        alert('Timesheet submitted successfully!');
       },
-      body: JSON.stringify(payload)
-    })
-      .then(res => res.json())
-      .then(data => {
-        console.log("✅ Response:", data);
-        alert("Timesheet submitted successfully!");
-      })
-      .catch(err => {
-        console.error("❌ Error submitting timesheet:", err);
-        alert("Submission failed. Check console.");
-      });
+      error: (err) => {
+        console.error('❌ Error submitting timesheet:', err);
+        alert('Submission failed. Check console.');
+      }
+    });
   }
 }

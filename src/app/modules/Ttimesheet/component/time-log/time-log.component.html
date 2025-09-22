@@ -3,13 +3,7 @@
     <h2>Time Log</h2>
 
     <div class="dropdown-row">
-      <div class="dropdown-group">
-        <label for="client">Client</label>
-        <select id="client" [(ngModel)]="selectedClient">
-          <option value="">Select Client</option>
-          <option *ngFor="let client of clients">{{ client }}</option>
-        </select>
-      </div>
+
       <div class="dropdown-group">
         <label for="project">Project</label>
         <select id="project" [(ngModel)]="selectedProject">
