@@ -39,11 +39,11 @@ declare var bootstrap: any; // Declare bootstrap to avoid TypeScript errors if n
   imports: [
     MatIconModule,
     MatDialogModule,
-    LoginComponent,
-    RegisterComponent,
+    // LoginComponent, // Removed because it's not used directly in the template
+    //RegisterComponent,
     CommonModule,
     FormsModule,
-    NgClass,
+   // NgClass,
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './login-main.component.html',

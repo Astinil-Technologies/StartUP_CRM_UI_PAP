@@ -74,6 +74,9 @@ import { ReceivedComponent } from './modules/file/components/received/received.c
 import { LandingPageComponent } from './modules/meeting/components/landing-page/landing-page.component';
 import { ChatSidebarComponent } from './modules/chat/components/chat-sidebar/chat-sidebar.component';
 import { DirectmessagesComponent } from './modules/chat/components/directmessages/directmessages.component';
+import { TimeComponent } from './modules/Ttimesheet/component/time/time.component';
+import { TimeLogComponent } from './modules/Ttimesheet/component/time-log/time-log.component';
+import { TimesheetComponent } from './modules/Ttimesheet/component/timesheet/timesheet.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: '/login-main', pathMatch: 'full' },
@@ -134,17 +137,28 @@ export const routes: Routes = [
         ],
       },
 
+     {
+      path: 'timesheet',
+      component: TimesheetNavbarComponent,
+      canActivate: [authGuard],
+       children: [
+            { path: '', redirectTo: 'homepage', pathMatch: 'full' },
+            { path: 'attendance', component: AttendanceComponent },
+            { path: 'myticket', component: MyticketComponent },
+            { path: 'homepage', component: HomepageComponent },
+
       {
-        path: 'timesheet',
-        component: TimesheetNavbarComponent,
-        canActivate: [authGuard],
-        children: [
-          { path: '', redirectTo: 'homepage', pathMatch: 'full' },
-          { path: 'attendance', component: AttendanceComponent },
-          { path: 'myticket', component: MyticketComponent },
-          { path: 'homepage', component: HomepageComponent },
-        ],
-      },
+            path: 'time',
+            component: TimeComponent,
+            children: [
+              { path: '', redirectTo: 'logtime', pathMatch: 'full' },
+              { path: 'logtime', component: TimeLogComponent },
+              { path: 'sheet', component: TimesheetComponent }
+            ]
+            }
+          ]
+        },
+
 
       {
         path: 'meet',
