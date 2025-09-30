@@ -1,0 +1,274 @@
+/* Main container */
+.container {
+  display: flex;
+  flex-direction: row-reverse; /* switched to row-reverse */
+  height: 100vh;
+  width: 100vw;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #fafafa;
+  overflow: hidden;
+}
+
+/* Create Ticket – now right side */
+.left-panel {
+  width: 30%;
+  background-color: #f1f1f1;
+  padding: 20px;
+  box-sizing: border-box;
+  overflow-y: auto;
+  height: 100vh;
+  border-left: 1px solid #ddd; /* changed from right to left */
+}
+
+.left-panel h2 {
+  text-align: center;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+/* Form styling */
+.form-container {
+  width: 100%;
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+.input-field {
+  width: 100%;
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+.input-field:focus {
+  border-color: #20b2aa;
+  outline: none;
+}
+
+.btn-submit {
+  background-color: #90ee90;
+  color: #225522;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+}
+
+.btn-submit:hover {
+  background-color: #6fbf6f;
+}
+
+.btn-cancel {
+  background-color: #f2a3a3;
+  color: #7a2a2a;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 6px;
+  margin-left: 10px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+/* Get Tickets – now left side */
+.right-panel {
+  width: 70%;
+  background-color: #ffffff;
+  padding: 20px;
+  box-sizing: border-box;
+  overflow-y: auto;
+  height: 100vh;
+  border-right: 1px solid #ddd; /* optional */
+}
+
+/* Tickets table */
+.fullpage-table table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+  margin-top: 10px;
+  border: 2px solid #000;
+}
+
+.fullpage-table th,
+.fullpage-table td {
+  border: 1px solid #000;
+  padding: 10px;
+  text-align: left;
+  word-wrap: break-word;
+}
+
+.fullpage-table th {
+  background-color: #20b2aa;
+  color: white;
+  font-weight: 600;
+}
+
+/* Responsive layout */
+@media (max-width: 768px) {
+  .container {
+    flex-direction: column;
+    height: auto;
+  }
+
+  .left-panel, .right-panel {
+    width: 100%;
+    height: auto;
+  }
+
+  .left-panel {
+    border-left: none;
+    border-top: 2px solid #ddd;
+  }
+
+  .right-panel {
+    border-right: none;
+  }
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+  border: 2px solid #000; /* Outer table border */
+}
+
+th, td {
+  border: 1px solid #000; /* Cell borders */
+  padding: 10px;
+  text-align: left;
+}
+.button-row {
+  display: flex;
+  gap: 10px;
+  justify-content: center; /* center buttons horizontally */
+  margin-bottom: 20px;
+}
+
+.btn {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  color: #333;
+  background-color: #e0e0e0; /* light grey */
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.btn:hover {
+  background-color: grey; /* slightly darker grey on hover */
+}
+.btn-active {
+  background-color: grey;
+  color: white;
+  cursor: default;
+}
+.input-field.invalid {
+  border: 2px solid red;
+}
+
+.text-danger {
+  color: rgb(77, 57, 57);
+  font-size: 0.9rem;
+  margin-top: 4px;
+}
+
+.btn-active {
+  background-color: rgb(139, 109, 109) !important;
+  color: white !important;
+  cursor: not-allowed;
+}
+
+.back-button-right {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 10px;
+  padding-right: 10px;
+}
+.back-button-row {
+  display: flex;
+  justify-content: flex-end; /* aligns to the left */
+  margin-bottom: 10px;
+  padding-left: 10px;
+}
+
+.back-icon {
+  background-color: #529257;
+  color: white;
+  border: none;
+  padding: 5px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background-color 0.2s;
+}
+
+.back-icon:hover {
+  background-color: #918a8a;
+}
+/* Right side - Welcome box */
+.welcome-box {
+  flex: 1;
+  margin-left: 40px;
+  padding: 40px;
+  background-color: #ffffff;
+  border-radius: 20px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.welcome-box h1 {
+  font-size: 32px;
+  color: #333;
+}
+
+.welcome-box p {
+  font-size: 18px;
+  color: #555;
+}
+
+
+
+
+/* Optional: Red asterisk next to required labels */
+.required {
+  color: red;
+  margin-left: 4px;
+}
+
+.welcome-message {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100%; /* Full height of parent box */
+  text-align: center;
+  color: #2c3e50; /* Professional dark gray */
+}
+.welcome-message h2 {
+  font-size: 41px; /* Bigger font */
+  font-weight: 700;
+  margin: 0;
+  color: #1a73e8;
+  margin-bottom: 20px; /* space below the heading */ /* Nice professional blue */
+}
+
+.welcome-message .subtitle {
+  font-size: 19px; /* Smaller font */
+  font-weight: 400;
+  margin-top: 8px;
+  color: #555; /* Subtle gray */
+  margin-bottom: 20px; /* space below the heading */
+}
+
+.username {
+  color: #ff5722; /* Highlight username with orange */
+  font-weight: 600;
+}

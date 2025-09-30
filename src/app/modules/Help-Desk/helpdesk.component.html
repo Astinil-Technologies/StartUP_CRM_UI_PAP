@@ -1,0 +1,186 @@
+
+
+<div class="container">
+
+  <!-- LEFT PANEL: Buttons + Form + Success Msg -->
+  <div class="left-panel">
+    <h2 class="title">Help-Desk Actions</h2>
+
+    <div class="button-row">
+      <div class="button-row">
+  <button class="btn btn-create" (click)="toggleCreateTicket()">Create Ticket</button>
+  <button
+  class="btn btn-get"
+  [class.btn-active]="showTickets"
+  (click)="getAllTickets()"
+>
+  Get Tickets
+</button>
+
+</div>
+
+
+    </div>
+
+    <!-- Create Ticket Form - show only if showForm -->
+    <form
+      #ticketForm="ngForm"
+      *ngIf="showForm"
+      (ngSubmit)="submitTicket(ticketForm)"
+      class="form-container"
+      novalidate
+    >
+      <h3 class="form-title">Raise a Ticket</h3>
+
+      <div class="form-group">
+       <label>Title:<span class="required">*</span></label>
+
+        <input
+          type="text"
+          name="title"
+          [(ngModel)]="ticket.title"
+          class="input-field"
+          required
+          [class.invalid]="ticketForm.submitted && !ticket.title"
+        />
+        <div *ngIf="ticketForm.submitted && !ticket.title" class="text-danger">
+          Title is required.
+        </div>
+      </div>
+
+      <div class="form-group">
+       <label>Subject:<span class="required">*</span></label>
+
+        <select
+          name="subject"
+          [(ngModel)]="ticket.subject"
+          class="input-field"
+          (change)="onSubjectChange()"
+          required
+          [class.invalid]="ticketForm.submitted && !ticket.subject"
+        >
+          <option value="" disabled selected>Select Subject</option>
+          <option value="Code Issue">Code Issue</option>
+          <option value="Hardware Issue">Hardware Issue</option>
+          <option value="Software Issue">Software Issue</option>
+          <option value="Timesheet Issue">Timesheet Issue</option>
+          <option value="Network Issue">Network Issue</option>
+          <option value="Other">Other</option>
+        </select>
+        <div *ngIf="ticketForm.submitted && !ticket.subject" class="text-danger">
+          Subject is required.
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Description:<span class="required">*</span></label>
+
+        <textarea
+          name="description"
+          [(ngModel)]="ticket.description"
+          class="input-field"
+          rows="4"
+          required
+          [class.invalid]="ticketForm.submitted && !ticket.description"
+        ></textarea>
+        <div *ngIf="ticketForm.submitted && !ticket.description" class="text-danger">
+          Description is required.
+        </div>
+      </div>
+
+      <!-- Image Upload -->
+      <div class="form-group">
+        <label>Image Upload (max 5MB):</label>
+        <input type="file" accept="image/*" (change)="onImageChange($event)" />
+        <div *ngIf="imageError" class="text-danger">{{ imageError }}</div>
+      </div>
+
+      <!-- Video Upload -->
+      <div class="form-group">
+        <label>Video Upload (max 10MB):</label>
+        <input type="file" accept="video/*" (change)="onVideoChange($event)" />
+        <div *ngIf="videoError" class="text-danger">{{ videoError }}</div>
+      </div>
+
+      <!-- Other File Upload -->
+      <div class="form-group">
+        <label>File Upload (max 5MB):</label>
+        <input type="file" (change)="onFileChange($event)" />
+        <div *ngIf="fileError" class="text-danger">{{ fileError }}</div>
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="btn btn-submit">Submit</button>
+        <button
+          type="button"
+          class="btn btn-cancel"
+          (click)="resetForm(ticketForm, true)"
+        >
+          Cancel
+        </button>
+      </div>
+    </form>
+
+    <!-- Success message below form -->
+    <div *ngIf="successBlast" class="confirmation-box">
+      <h3>🎉 Ticket Raised Successfully!</h3>
+      <p><strong>👤 Username:</strong> {{ ticketResponse.username }}</p>
+      <p><strong>🎫 Ticket ID:</strong> {{ ticketResponse.ticketId }}</p>
+      <p><strong>📌 Status:</strong> {{ ticketResponse.status }}</p>
+      <p><strong>📅 Date:</strong> {{ ticketResponse.fullDateTime | date: 'dd/MM/yyyy' }}</p>
+      <p><strong>⏰ Time:</strong> {{ ticketResponse.fullDateTime | date: 'HH:mm:ss' }}</p>
+      <p><strong>📝 Subject:</strong> {{ ticketResponse.description }}</p>
+    </div>
+  </div>
+  <!-- RIGHT PANEL -->
+<div class="right-panel">
+
+  <!-- Welcome message (default) -->
+  <div *ngIf="!showTickets && !showForm" class="welcome-message">
+    <h2>
+    Welcome to StartAhb Helpdesk👋
+  </h2>
+  <p class="subtitle">Your one-stop destination for support</p>
+  </div>
+
+  <!-- Tickets List -->
+  <div *ngIf="showTickets">
+    <!-- BACK Button Row -->
+    <div class="back-button-row">
+      <button class="back-icon" (click)="showTickets = false">close</button>
+    </div>
+
+    <h3>All Tickets</h3>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Ticket ID</th>
+          <th>Title</th>
+          <th>Subject</th>
+          <th>Status</th>
+          <th>Date</th>
+          <th>Time</th>
+          <th>Username</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let t of tickets">
+          <td>{{ t.ticketId }}</td>
+          <td>{{ t.title }}</td>
+          <td>{{ cleanQuotes(t.subject) }}</td>
+          <td>{{ formatStatus(t.status) }}</td>
+          <td>{{ t.fullDateTime | date: 'dd/MM/yyyy' }}</td>
+          <td>{{ t.fullDateTime | date: 'HH:mm:ss' }}</td>
+          <td>{{ t.username }}</td>
+          <td>
+            <button class="icon-btn delete-btn" (click)="deleteTicket(t.ticketId)" title="Delete Ticket">🗑️</button>
+            <button class="icon-btn edit-btn" (click)="editTicket(t)" title="Edit Ticket">✏️</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+</div>

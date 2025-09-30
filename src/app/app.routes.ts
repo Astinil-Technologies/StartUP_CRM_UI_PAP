@@ -73,6 +73,7 @@ import { ReceivedComponent } from './modules/file/components/received/received.c
 import { LandingPageComponent } from './modules/meeting/components/landing-page/landing-page.component';
 import { ChatSidebarComponent } from './modules/chat/components/chat-sidebar/chat-sidebar.component';
 import { DirectmessagesComponent } from './modules/chat/components/directmessages/directmessages.component';
+import { HelpDeskComponent } from './modules/Help-Desk/helpdesk.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: '/login-main', pathMatch: 'full' },
@@ -288,6 +289,17 @@ export const routes: Routes = [
       },
     ],
   },
+  {
+  path: 'layout',
+  component: LayoutComponent,
+  canActivate: [authGuard, RoleGuard],
+  data: { roles: ['ROLE_USER'] },
+  children: [
+    // ...existing layout children
+    { path: 'help-desk', component: HelpDeskComponent },
+  ]
+},
+
 
   // Fallback
   { path: '**', redirectTo: '/login' },
