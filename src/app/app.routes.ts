@@ -77,7 +77,6 @@ import { DirectmessagesComponent } from './modules/chat/components/directmessage
 import { TimeComponent } from './modules/Ttimesheet/component/time/time.component';
 import { TimeLogComponent } from './modules/Ttimesheet/component/time-log/time-log.component';
 import { TimesheetComponent } from './modules/Ttimesheet/component/timesheet/timesheet.component';
-import { ApproveTimesheetComponent } from './modules/Ttimesheet/component/approve-timesheet/approve-timesheet.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: '/login-main', pathMatch: 'full' },
@@ -147,7 +146,6 @@ export const routes: Routes = [
             { path: 'attendance', component: AttendanceComponent },
             { path: 'myticket', component: MyticketComponent },
             { path: 'homepage', component: HomepageComponent },
-             {path: 'approve-timesheet', component: ApproveTimesheetComponent },
 
       {
             path: 'time',

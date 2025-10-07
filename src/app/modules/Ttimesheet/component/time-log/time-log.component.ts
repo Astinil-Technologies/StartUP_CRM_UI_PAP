@@ -2,15 +2,13 @@ import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
-import { AuthService } from 'src/app/core/services/authservice/auth.service';
+import { AuthService } from 'src/app/core/services/authservice/auth.service'; // make sure path is correct
 
+// Updated interface with name
 interface DayEntry {
   name: string;
   date: Date;
-  hours: number | null;
-  disabled: boolean;
-  formattedDate: string;
-  isSubmitted: boolean;
+  hours: number;
 }
 
 @Component({
@@ -24,40 +22,38 @@ export class TimeLogComponent implements OnInit {
   private http = inject(HttpClient);
   private authService = inject(AuthService);
 
+  // Dropdown selections
   selectedClient: string = '';
   selectedProject: string = '';
   selectedJob: string = '';
   selectedWorkItem: string = '';
 
+  // Dropdown options
   clients: string[] = ['Client A', 'Client B', 'Client C'];
   projects: string[] = ['SWON123', 'Project Y', 'Project Z'];
   jobs: string[] = ['DEVELOPMENT', 'DESIGN', 'TESTING'];
   workItems: string[] = ['WorkItem 1', 'WorkItem 2', 'WorkItem 3'];
 
+  // View and offsets
   view: 'weekly' | 'monthly' = 'weekly';
   weekOffset = 0;
   monthOffset = 0;
 
+  // Entries
   weekDays: DayEntry[] = [];
   monthDays: DayEntry[] = [];
-  isTimesheetSubmitted: boolean = false;
 
   ngOnInit(): void {
     this.generateWeek();
-    this.generateMonth();
-    this.checkTimesheetSubmission();
   }
 
   setView(view: 'weekly' | 'monthly'): void {
     this.view = view;
     this.weekOffset = 0;
     this.monthOffset = 0;
-    if (view === 'weekly') {
-      this.generateWeek();
-    } else {
-      this.generateMonth();
-    }
-    this.checkTimesheetSubmission();
+
+    if (view === 'weekly') this.generateWeek();
+    else this.generateMonth();
   }
 
   changeOffset(delta: number): void {
@@ -68,7 +64,6 @@ export class TimeLogComponent implements OnInit {
       this.monthOffset += delta;
       this.generateMonth();
     }
-    this.checkTimesheetSubmission();
   }
 
   generateWeek(): void {
@@ -83,17 +78,8 @@ export class TimeLogComponent implements OnInit {
     this.weekDays = Array.from({ length: 7 }, (_, i) => {
       const date = new Date(startOfWeek);
       date.setDate(startOfWeek.getDate() + i);
-      return { 
-        date, 
-        hours: null,
-        name: dayNames[i], 
-        disabled: false,
-        isSubmitted: false,
-        formattedDate: date.toLocaleDateString(undefined, { month: 'short', day: 'numeric' })
-      };
+      return { date, hours: 0, name: dayNames[i] };
     });
-
-    this.fetchTimesheetHistoryForRange(this.weekDays[0].date, this.weekDays[6].date);
   }
 
   generateMonth(): void {
@@ -102,73 +88,11 @@ export class TimeLogComponent implements OnInit {
     const month = today.getMonth() + this.monthOffset;
     const totalDays = new Date(year, month + 1, 0).getDate();
 
-    this.monthDays = Array.from({ length: totalDays }, (_, i) => {
-      const date = new Date(year, month, i + 1);
-      return {
-        date,
-        hours: null,
-        name: date.toLocaleDateString(undefined, { weekday: 'long' }),
-        disabled: false,
-        isSubmitted: false,
-        formattedDate: date.toLocaleDateString(undefined, { month: 'short', day: 'numeric' })
-      };
-    });
-
-    this.fetchTimesheetHistoryForRange(this.monthDays[0].date, this.monthDays[this.monthDays.length - 1].date);
-  }
-
-  fetchTimesheetHistoryForRange(startDate: Date, endDate: Date): void {
-    const token: string = this.authService.getAccessToken() as string;
-    if (!token) {
-      alert('You are not authenticated!');
-      return;
-    }
-
-    this.http.get(`http://localhost:8888/timesheet/history`, {
-      headers: { Authorization: `Bearer ${token}` }
-    }).subscribe({
-      next: (response: any) => {
-        const allTimesheets = response?.data || [];
-
-        // Flatten all entries from all timesheets in the range
-        const entriesInRange = allTimesheets.flatMap((ts: any) => 
-          ts.entries?.filter((entry: any) => {
-            const entryDate = new Date(entry.workDate);
-            return entryDate >= startDate && entryDate <= endDate;
-          }) || []
-        );
-
-        // Decide which array to update based on view & update days accordingly
-        const targetDays = this.view === 'weekly' ? this.weekDays : this.monthDays;
-
-        targetDays.forEach(day => {
-          const match = entriesInRange.find((e: any) =>
-            e.workDate === day.date.toISOString().split('T')[0]
-          );
-          if (match) {
-            day.hours = match.hoursWorked;
-            day.disabled = true;
-            day.isSubmitted = true;
-          } else {
-            day.hours = null;
-            day.disabled = false;
-            day.isSubmitted = false;
-          }
-        });
-
-        // Update timesheet submission flag
-        this.isTimesheetSubmitted = entriesInRange.length > 0;
-      },
-      error: (err) => {
-        console.error('Error fetching timesheet history:', err);
-        alert('Error fetching timesheet history!');
-      }
-    });
-  }
-
-  getTotalHours(): number {
-    const entries = this.view === 'weekly' ? this.weekDays : this.monthDays;
-    return entries.reduce((sum, day) => sum + (day.hours || 0), 0);
+    this.monthDays = Array.from({ length: totalDays }, (_, i) => ({
+      date: new Date(year, month, i + 1),
+      hours: 0,
+      name: new Date(year, month, i + 1).toLocaleDateString(undefined, { weekday: 'long' })
+    }));
   }
 
   getCurrentRange(): string {
@@ -186,9 +110,9 @@ export class TimeLogComponent implements OnInit {
     }
   }
 
-  checkTimesheetSubmission(): void {
-    // Already handled by fetchTimesheetHistoryForRange inside generateWeek/Month
-    // So no separate backend call needed here
+  getTotalHours(): number {
+    const entries = this.view === 'weekly' ? this.weekDays : this.monthDays;
+    return entries.reduce((sum, day) => sum + (day.hours || 0), 0);
   }
 
   saveDraft(): void {
@@ -198,13 +122,14 @@ export class TimeLogComponent implements OnInit {
   }
 
   submit(): void {
-    if (!this.selectedProject || !this.selectedJob || !this.selectedWorkItem) {
-      alert('Please select a project, job, and work item!');
+    if (!this.selectedProject || !this.selectedJob) {
+      alert('Please select a project and job!');
       return;
     }
 
-    const entries = (this.view === 'weekly' ? this.weekDays : this.monthDays)
-      .filter(day => day.hours !== null && day.hours > 0 && !day.disabled && !day.isSubmitted)
+    const isWeekly = this.view === 'weekly';
+    const entries = (isWeekly ? this.weekDays : this.monthDays)
+      .filter(day => day.hours > 0)
       .map(day => ({
         workDate: day.date.toISOString().split('T')[0],
         hoursWorked: day.hours
@@ -216,14 +141,13 @@ export class TimeLogComponent implements OnInit {
     }
 
     const payload = {
-      startDate: (this.view === 'weekly' ? this.weekDays[0] : this.monthDays[0]).date.toISOString().split('T')[0],
-      endDate: (this.view === 'weekly'
+      startDate: (isWeekly ? this.weekDays[0] : this.monthDays[0]).date.toISOString().split('T')[0],
+      endDate: (isWeekly
         ? this.weekDays[this.weekDays.length - 1]
         : this.monthDays[this.monthDays.length - 1]).date.toISOString().split('T')[0],
-      timesheetType: this.view === 'weekly' ? 'WEEKLY' : 'MONTHLY',
+      timesheetType: isWeekly ? 'WEEKLY' : 'MONTHLY',
       job: this.selectedJob.toUpperCase(),
       projectId: this.selectedProject,
-      workItem: this.selectedWorkItem,
       entries
     };
 
@@ -239,40 +163,10 @@ export class TimeLogComponent implements OnInit {
       next: (data) => {
         console.log('✅ Response:', data);
         alert('Timesheet submitted successfully!');
-        this.isTimesheetSubmitted = true;
-
-        // Sync the data from weekly to monthly or vice versa
-        if (this.view === 'weekly') {
-          this.syncEntriesToMonthly(entries);
-        } else {
-          this.syncEntriesToWeekly(entries);
-        }
       },
       error: (err) => {
         console.error('❌ Error submitting timesheet:', err);
         alert('Submission failed. Check console.');
-      }
-    });
-  }
-
-  syncEntriesToMonthly(entries: any[]): void {
-    entries.forEach(entry => {
-      const matchingDay = this.monthDays.find(day => day.date.toISOString().split('T')[0] === entry.workDate);
-      if (matchingDay) {
-        matchingDay.hours = entry.hoursWorked;
-        matchingDay.disabled = true;
-        matchingDay.isSubmitted = true;
-      }
-    });
-  }
-
-  syncEntriesToWeekly(entries: any[]): void {
-    entries.forEach(entry => {
-      const matchingDay = this.weekDays.find(day => day.date.toISOString().split('T')[0] === entry.workDate);
-      if (matchingDay) {
-        matchingDay.hours = entry.hoursWorked;
-        matchingDay.disabled = true;
-        matchingDay.isSubmitted = true;
       }
     });
   }
