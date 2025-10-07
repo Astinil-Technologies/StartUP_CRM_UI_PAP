@@ -1,0 +1,90 @@
+<div class="time-log-container">
+  <!-- Tabs for Weekly and Monthly -->
+  <div class="tabs">
+    <button class="tab-button" [class.active]="view === 'weekly'" (click)="setView('weekly')">Weekly</button>
+    <button class="tab-button" [class.active]="view === 'monthly'" (click)="setView('monthly')">Monthly</button>
+  </div>
+
+  <!-- Project, Job, and Work Item Selection Dropdowns -->
+  <div class="dropdowns">
+    <div class="dropdown">
+      <label for="project">Select Project:</label>
+      <select id="project" [(ngModel)]="selectedProject" required>
+        <option value="" disabled selected>Select a project</option>
+        <option *ngFor="let project of projects" [value]="project">{{ project }}</option>
+      </select>
+    </div>
+
+    <div class="dropdown">
+      <label for="job">Select Job:</label>
+      <select id="job" [(ngModel)]="selectedJob" required>
+        <option value="" disabled selected>Select a job</option>
+        <option *ngFor="let job of jobs" [value]="job">{{ job }}</option>
+      </select>
+    </div>
+
+    <div class="dropdown">
+      <label for="workItem">Select Work Item:</label>
+      <select id="workItem" [(ngModel)]="selectedWorkItem" required>
+        <option value="" disabled selected>Select a work item</option>
+        <option *ngFor="let workItem of workItems" [value]="workItem">{{ workItem }}</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Weekly View -->
+  <div *ngIf="view === 'weekly'" class="weekly-view">
+    <div class="week-info">
+      <button (click)="changeOffset(-1)">←</button>
+      <span>{{ getCurrentRange() }}</span>
+      <button (click)="changeOffset(1)">→</button>
+    </div>
+
+    <div class="week-grid">
+      <div *ngFor="let day of weekDays" class="day-entry">
+        <div class="day-date">{{ day.formattedDate }}</div>
+        <div class="day-name">{{ day.name }}</div>
+        <input 
+          type="number" 
+          [(ngModel)]="day.hours" 
+          [disabled]="day.disabled" 
+          placeholder="Enter hours" 
+          min="0" max="24" step="0.25"
+        />
+      </div>
+    </div>
+
+    <div class="actions">
+      <button (click)="saveDraft()" class="save-draft">Save Draft</button>
+      <button (click)="submit()" class="submit">Submit Timesheet</button>
+    </div>
+  </div>
+
+  <!-- Monthly View -->
+  <div *ngIf="view === 'monthly'" class="monthly-view">
+    <div class="month-info">
+      <button (click)="changeOffset(-1)">←</button>
+      <span>{{ getCurrentRange() }}</span>
+      <button (click)="changeOffset(1)">→</button>
+    </div>
+
+    <div class="month-grid">
+      <div *ngFor="let day of monthDays" class="day-entry">
+        <div class="day-date">{{ day.formattedDate }}</div>
+        <div class="day-name">{{ day.name }}</div>
+        <input 
+          type="number" 
+          [(ngModel)]="day.hours" 
+          [disabled]="day.disabled" 
+          placeholder="Enter hours" 
+          min="0" max="24" step="0.25"
+        />
+      </div>
+    </div>
+
+    <div class="actions">
+      <button (click)="saveDraft()" class="save-draft">Save Draft</button>
+      <button (click)="submit()" class="submit">Submit Timesheet</button>
+    </div>
+  </div>
+</div>
