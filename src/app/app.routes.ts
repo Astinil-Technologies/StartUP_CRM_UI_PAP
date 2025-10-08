@@ -74,6 +74,8 @@ import { ReceivedComponent } from './modules/file/components/received/received.c
 import { LandingPageComponent } from './modules/meeting/components/landing-page/landing-page.component';
 import { ChatSidebarComponent } from './modules/chat/components/chat-sidebar/chat-sidebar.component';
 import { DirectmessagesComponent } from './modules/chat/components/directmessages/directmessages.component';
+//leavemanagement
+import { LeavemanagementComponent } from './modules/leavemanagement/leavemanagement.component';
 import { TimeComponent } from './modules/Ttimesheet/component/time/time.component';
 import { TimeLogComponent } from './modules/Ttimesheet/component/time-log/time-log.component';
 import { TimesheetComponent } from './modules/Ttimesheet/component/timesheet/timesheet.component';
@@ -228,6 +230,8 @@ export const routes: Routes = [
       },
 
       { path: 'messages', component: MessagesComponent },
+      //leavemanagement
+       { path: 'leavemanagement', component: LeavemanagementComponent },
 
       {
         path: 'reminders',
