@@ -49,7 +49,7 @@ import { CreateLessonsComponent } from './modules/instructor/component/create-le
 import { TimesheetNavbarComponent } from './modules/Ttimesheet/component/timesheet-navbar/timesheet-navbar.component';
 import { HomepageComponent } from './modules/Ttimesheet/component/homepage/homepage.component';
 import { AttendanceComponent } from './modules/Ttimesheet/component/attendance/attendance.component';
-
+import { ApproveTimesheetComponent } from './modules/Ttimesheet/component/approve-timesheet/approve-timesheet.component';
 // Ticketing Module
 import { SideNavbarComponent } from './modules/Ticket/components/sideNavbar/sideNavbar.component';
 import { RaiseTicketComponent } from './modules/Ticket/components/raise-ticket/raise-ticket.component';
@@ -74,11 +74,16 @@ import { ReceivedComponent } from './modules/file/components/received/received.c
 import { LandingPageComponent } from './modules/meeting/components/landing-page/landing-page.component';
 import { ChatSidebarComponent } from './modules/chat/components/chat-sidebar/chat-sidebar.component';
 import { DirectmessagesComponent } from './modules/chat/components/directmessages/directmessages.component';
-//leavemanagement
-import { LeavemanagementComponent } from './modules/leavemanagement/leavemanagement.component';
 import { TimeComponent } from './modules/Ttimesheet/component/time/time.component';
 import { TimeLogComponent } from './modules/Ttimesheet/component/time-log/time-log.component';
 import { TimesheetComponent } from './modules/Ttimesheet/component/timesheet/timesheet.component';
+//leavemanagement
+//import { LeavemanagementComponent } from './modules/leavemanagement/leavemanagement.component';
+import { NavbarComponentLeaveManagement } from './modules/leave-management/component/navbar-leave-management/navbar-leave-management.component'; 
+import { EmployeeDashboardComponent } from './modules/leave-management/component/employee-dashboard/employee-dashboard.component';
+import { ApplyLeaveComponent } from './modules/leave-management/component/apply-leave/apply-leave.component';
+import {MyRequestsComponent} from './modules/leave-management/component/my-requests/my-requests.component';
+import { ReportsComponent } from './modules/leave-management/component/reports/reports.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: '/login-main', pathMatch: 'full' },
@@ -148,6 +153,7 @@ export const routes: Routes = [
             { path: 'attendance', component: AttendanceComponent },
             { path: 'myticket', component: MyticketComponent },
             { path: 'homepage', component: HomepageComponent },
+            {path: 'approve-timesheet', component: ApproveTimesheetComponent },
 
       {
             path: 'time',
@@ -231,7 +237,16 @@ export const routes: Routes = [
 
       { path: 'messages', component: MessagesComponent },
       //leavemanagement
-       { path: 'leavemanagement', component: LeavemanagementComponent },
+      
+      {path: 'leave-management', component: NavbarComponentLeaveManagement,
+      children: [
+            {path: 'employee-dashboard', component: EmployeeDashboardComponent },
+            {path: 'apply-leave', component: ApplyLeaveComponent },
+            {path: 'my-requests', component: MyRequestsComponent },
+            {path: 'reports', component: ReportsComponent },
+            { path: '', redirectTo: 'employee-dashboard', pathMatch: 'full' }
+          ]
+      },
 
       {
         path: 'reminders',

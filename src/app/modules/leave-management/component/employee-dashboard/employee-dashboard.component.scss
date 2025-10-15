@@ -1,0 +1,130 @@
+/* 🌐 Dashboard Container */
+.dashboard-container {
+  background: #f4f6fa;
+  min-height: 90vh;
+  font-family: "Segoe UI", sans-serif;
+  padding: 30px 50px;
+  margin-top: 30px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* 🏷️ Title */
+.title {
+  font-size: 24px;
+  font-weight: 600;
+  color: #222;
+  margin-bottom: 25px;
+}
+
+/* 📊 Cards Grid - FIXED to wrap properly */
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); /* ensures wrapping */
+  gap: 24px;
+  margin-bottom: 35px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.card {
+  background: #fff;
+  border-radius: 14px;
+  padding: 22px 20px;
+  text-align: center;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.08);
+  transition: all 0.25s ease-in-out;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.12);
+}
+
+.card .icon {
+  font-size: 30px;
+  margin-bottom: 8px;
+  color: #777;
+}
+
+.card h3 {
+  font-size: 15px;
+  color: #555;
+  margin-bottom: 5px;
+}
+
+.card .value {
+  font-size: 22px;
+  font-weight: bold;
+  color: #333;
+}
+
+/* 🎨 Card colors */
+.card.total .icon { color: #5c6bc0; }
+.card.pending .icon { color: #f9a825; }
+.card.approved .icon { color: #43a047; }
+.card.rejected .icon { color: #e53935; }
+.card.total-days .icon { color: #6a1b9a; }
+
+/* 🧾 Activity Section */
+.activity-section {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 25px;
+}
+
+.activity-card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 20px 24px;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.08);
+}
+
+.activity-card h3 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 12px;
+}
+
+.activity-card h3 .material-icons {
+  font-size: 20px;
+  color: #1a73e8;
+}
+
+.activity-card p,
+.activity-card ul {
+  font-size: 14px;
+  color: #555;
+  line-height: 1.6;
+}
+
+.activity-card ul {
+  list-style-type: disc;
+  padding-left: 20px;
+}
+
+/* 📱 Responsive Design */
+@media (max-width: 992px) {
+  .cards-grid {
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  }
+  .activity-section {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 600px) {
+  .dashboard-container {
+    padding: 20px;
+  }
+  .title {
+    font-size: 20px;
+  }
+  .card .value {
+    font-size: 20px;
+  }
+}
