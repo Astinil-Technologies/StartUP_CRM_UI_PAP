@@ -16,6 +16,7 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { FormsModule } from '@angular/forms';
 import { MatSelectModule } from '@angular/material/select';
+import { MatTableModule } from '@angular/material/table';
 @Component({
   selector: 'app-reminder-list',
   standalone: true,
@@ -31,10 +32,11 @@ import { MatSelectModule } from '@angular/material/select';
     MatButtonToggleModule,
     MatDatepickerModule,
     MatNativeDateModule,
-    MatSelectModule
+    MatSelectModule,
+    MatTableModule
   ],
   templateUrl: './reminder-list.component.html',
-  styleUrl: './reminder-list.component.scss'
+  styleUrls: ['./reminder-list.component.scss'] 
 })
 export class ReminderListComponent {
   reminders: Reminder[] = [];

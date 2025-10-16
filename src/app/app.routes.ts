@@ -49,7 +49,7 @@ import { CreateLessonsComponent } from './modules/instructor/component/create-le
 import { TimesheetNavbarComponent } from './modules/Ttimesheet/component/timesheet-navbar/timesheet-navbar.component';
 import { HomepageComponent } from './modules/Ttimesheet/component/homepage/homepage.component';
 import { AttendanceComponent } from './modules/Ttimesheet/component/attendance/attendance.component';
-import { ApproveTimesheetComponent } from './modules/Ttimesheet/component/approve-timesheet/approve-timesheet.component';
+
 // Ticketing Module
 import { SideNavbarComponent } from './modules/Ticket/components/sideNavbar/sideNavbar.component';
 import { RaiseTicketComponent } from './modules/Ticket/components/raise-ticket/raise-ticket.component';
@@ -74,16 +74,7 @@ import { ReceivedComponent } from './modules/file/components/received/received.c
 import { LandingPageComponent } from './modules/meeting/components/landing-page/landing-page.component';
 import { ChatSidebarComponent } from './modules/chat/components/chat-sidebar/chat-sidebar.component';
 import { DirectmessagesComponent } from './modules/chat/components/directmessages/directmessages.component';
-import { TimeComponent } from './modules/Ttimesheet/component/time/time.component';
-import { TimeLogComponent } from './modules/Ttimesheet/component/time-log/time-log.component';
-import { TimesheetComponent } from './modules/Ttimesheet/component/timesheet/timesheet.component';
-//leavemanagement
-//import { LeavemanagementComponent } from './modules/leavemanagement/leavemanagement.component';
-import { NavbarComponentLeaveManagement } from './modules/leave-management/component/navbar-leave-management/navbar-leave-management.component'; 
-import { EmployeeDashboardComponent } from './modules/leave-management/component/employee-dashboard/employee-dashboard.component';
-import { ApplyLeaveComponent } from './modules/leave-management/component/apply-leave/apply-leave.component';
-import {MyRequestsComponent} from './modules/leave-management/component/my-requests/my-requests.component';
-import { ReportsComponent } from './modules/leave-management/component/reports/reports.component';
+import { ReminderSidebarComponent } from './modules/reminders/reminder-sidebar/reminder-sidebar.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: '/login-main', pathMatch: 'full' },
@@ -91,8 +82,6 @@ export const routes: Routes = [
   // Auth Routes
   { path: 'login-main', component: LoginMainComponent },
    { path: 'contributors', component: ContributorsComponent },
-  //  { path: 'login', component: LoginComponent },
-  //  { path: 'register', component: RegisterComponent },
   { path: 'forgot-password', component: ForgotPasswordPopupComponent },
   { path: 'reset-password', component: ResetPasswordComponent },
 
@@ -107,10 +96,13 @@ export const routes: Routes = [
     canActivate: [authGuard, RoleGuard],
     data: { roles: ['ROLE_USER'] },
     children: [
+      //{ path: 'reminders',component: ReminderLayoutComponent},
+      //{ path: 'reminders',component: ReminderSidebarComponent },
       { path: 'dashboard', component: DashboardComponent },
       { path: 'dashboard', component: HomeSectionComponent },
       { path: 'navbar', component: NavbarComponent },
       { path: 'edit-profile', component: EditProfileComponent },
+ 
       {
         path: 'meeting-landing',
         loadComponent: () =>
@@ -144,29 +136,17 @@ export const routes: Routes = [
         ],
       },
 
-     {
-      path: 'timesheet',
-      component: TimesheetNavbarComponent,
-      canActivate: [authGuard],
-       children: [
-            { path: '', redirectTo: 'homepage', pathMatch: 'full' },
-            { path: 'attendance', component: AttendanceComponent },
-            { path: 'myticket', component: MyticketComponent },
-            { path: 'homepage', component: HomepageComponent },
-            {path: 'approve-timesheet', component: ApproveTimesheetComponent },
-
       {
-            path: 'time',
-            component: TimeComponent,
-            children: [
-              { path: '', redirectTo: 'logtime', pathMatch: 'full' },
-              { path: 'logtime', component: TimeLogComponent },
-              { path: 'sheet', component: TimesheetComponent }
-            ]
-            }
-          ]
-        },
-
+        path: 'timesheet',
+        component: TimesheetNavbarComponent,
+        canActivate: [authGuard],
+        children: [
+          { path: '', redirectTo: 'homepage', pathMatch: 'full' },
+          { path: 'attendance', component: AttendanceComponent },
+          { path: 'myticket', component: MyticketComponent },
+          { path: 'homepage', component: HomepageComponent },
+        ],
+      },
 
       {
         path: 'meet',
@@ -227,6 +207,7 @@ export const routes: Routes = [
         component: MyLearningComponent,
         canActivate: [authGuard],
         children: [
+        
           { path: '', component: StudentsAllCoursesComponent },
           { path: 'my-lists', component: StudentsMyListsComponent },
           { path: 'wishlist', component: StudentsWishlistComponent },
@@ -236,47 +217,19 @@ export const routes: Routes = [
       },
 
       { path: 'messages', component: MessagesComponent },
-      //leavemanagement
-      
-      {path: 'leave-management', component: NavbarComponentLeaveManagement,
-      children: [
-            {path: 'employee-dashboard', component: EmployeeDashboardComponent },
-            {path: 'apply-leave', component: ApplyLeaveComponent },
-            {path: 'my-requests', component: MyRequestsComponent },
-            {path: 'reports', component: ReportsComponent },
-            { path: '', redirectTo: 'employee-dashboard', pathMatch: 'full' }
-          ]
-      },
-
-      {
-        path: 'reminders',
-        children: [
-          {
-            path: '',
-            loadComponent: () =>
-              import(
-                './modules/reminders/reminder-list/reminder-list.component'
-              ).then((m) => m.ReminderListComponent),
-          },
-          {
-            path: 'new',
-            loadComponent: () =>
-              import(
-                './modules/reminders/reminder-form/reminder-form.component'
-              ).then((m) => m.ReminderFormComponent),
-          },
-          {
-            path: ':id/edit',
-            loadComponent: () =>
-              import(
-                './modules/reminders/reminder-form/reminder-form.component'
-              ).then((m) => m.ReminderFormComponent),
-          },
-        ],
-      },
+ {
+  path: 'reminders',
+  component: ReminderSidebarComponent, // Layout with sidebar
+  children: [
+    { path: 'list',component: ReminderListComponent },
+    { path: 'new',component: ReminderFormComponent },
+    { path: ':id/edit',component: ReminderFormComponent },
+    { path: '', redirectTo: 'list', pathMatch: 'full' }
+  ]
+}
     ],
   },
-
+  
   // Admin Layout
   {
     path: 'admin-layout',
