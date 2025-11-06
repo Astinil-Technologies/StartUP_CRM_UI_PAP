@@ -50,21 +50,22 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
       reconnectDelay: 5000,
       debug: (str) => console.log('[STOMP DEBUG]:', str),
       onConnect: () => {
-        console.log('✅ STOMP connected');
+        console.log('✅ STOMP connected for chat');
 
-        this.stompClient.subscribe(`/topic/chat/${this.roomId}`, (message: IMessage) => {
+        // Subscribe to meeting chat topic
+        this.stompClient.subscribe(`/topic/meeting/${this.roomId}/chat`, (message: IMessage) => {
           try {
             const body = JSON.parse(message.body);
             if (body && body.sender && body.message) {
               const msg = {
                 sender: body.sender,
                 content: body.message,
-                timestamp: new Date()
+                timestamp: new Date(body.timestamp || Date.now())
               };
               this.messages.push(msg);
 
               localStorage.setItem(`chat_${this.roomId}`, JSON.stringify(this.messages));
-              this.scrollToBottom(); // ✅ scroll on receiving
+              this.scrollToBottom();
             } else {
               console.warn('Malformed chat message received:', body);
             }
@@ -92,16 +93,16 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
     const msg = {
       sender: this.username,
       message: this.newMessage,
-      roomId: this.roomId
+      timestamp: new Date().toISOString()
     };
 
     this.stompClient.publish({
-      destination: `/app/chat/${this.roomId}`,
+      destination: `/app/meeting/${this.roomId}/chat`,
       body: JSON.stringify(msg)
     });
 
     this.newMessage = '';
-    this.scrollToBottom(); // ✅ scroll on sending
+    this.scrollToBottom();
   }
 
   scrollToBottom(): void {

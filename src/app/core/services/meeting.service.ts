@@ -8,7 +8,7 @@ import { environment } from 'src/environments/environment';
   providedIn: 'root'
 })
 export class MeetingService {
-  private apiUrl = environment.baseUrl + '/api/v1/meetings';
+  private apiUrl = environment.baseUrl + '/meetings';
 
   constructor(private http: HttpClient) {}
 
@@ -16,19 +16,18 @@ export class MeetingService {
     return this.http.post<MeetingDto>(this.apiUrl, dto);
   }
 
-  joinMeeting(meetingId: string, userId: number): Observable<MeetingDto> {
-    const params = new HttpParams().set('userId', userId);
-    return this.http.post<MeetingDto>(`${this.apiUrl}/${meetingId}/join`, null, { params });
+  joinMeeting(identifier: string, password?: string): Observable<MeetingDto> {
+    let params = new HttpParams();
+    if (password) params = params.set('password', password);
+    return this.http.post<MeetingDto>(`${this.apiUrl}/${identifier}/join`, null, { params });
   }
 
-  getUpcomingMeetings(userId: number): Observable<MeetingDto[]> {
-    const params = new HttpParams().set('userId', userId);
-    return this.http.get<MeetingDto[]>(`${this.apiUrl}/upcoming`, { params });
+  getUpcomingMeetings(): Observable<MeetingDto[]> {
+    return this.http.get<MeetingDto[]>(`${this.apiUrl}/upcoming`);
   }
 
-  getPastMeetings(userId: number): Observable<MeetingDto[]> {
-    const params = new HttpParams().set('userId', userId);
-    return this.http.get<MeetingDto[]>(`${this.apiUrl}/history`, { params });
+  getPastMeetings(): Observable<MeetingDto[]> {
+    return this.http.get<MeetingDto[]>(`${this.apiUrl}/history`);
   }
 
   updateMeeting(id: number, dto: MeetingDto): Observable<MeetingDto> {
@@ -46,5 +45,9 @@ export class MeetingService {
   kickUser(meetingId: string, userId: number): Observable<void> {
     const params = new HttpParams().set('userId', userId);
     return this.http.post<void>(`${this.apiUrl}/${meetingId}/kick`, null, { params });
+  }
+
+  getParticipants(meetingId: string): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/${meetingId}/participants`);
   }
 }

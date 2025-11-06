@@ -60,11 +60,7 @@ import { OverViewComponent } from './modules/myTask/components/over-view/over-vi
 import { TodayOverdueComponent } from './modules/myTask/components/today-overdue/today-overdue.component';
 import { TaskAssignedComponent } from './modules/myTask/components/task-assigned/task-assigned.component';
 
-// Video Meeting Module
-import VideoCallComponent from './modules/video-meet/components/video-call/video-call.component';
-import { ChatComponent } from './modules/video-meet/components/chat/chat.component';
-import { ScheduleMeetingDialogComponent } from './modules/video-meet/components/schedule-meeting-dialog/schedule-meeting-dialog.component';
-import { HomeComponent as VideoMeetHomeComponent } from './modules/video-meet/components/home/home.component';
+
 import { ReminderListComponent } from './modules/reminders/reminder-list/reminder-list.component';
 import { ReminderFormComponent } from './modules/reminders/reminder-form/reminder-form.component';
 import { FileSidebarComponent } from './modules/file/components/layout/file-sidebar/file-sidebar.component';
@@ -128,15 +124,7 @@ export const routes: Routes = [
           ).then((m) => m.ScheduleMeetingComponent),
       },
 
-      {
-        path: 'meeting',
-        component: LandingPageComponent,
-        // canActivate: [authGuard],
-        children: [
-          { path: 'videocall', component: VideoCallComponent },
-          // { path: 'received', component: ReceivedComponent },
-        ],
-      },
+      
 
      {
       path: 'timesheet',
@@ -162,16 +150,6 @@ export const routes: Routes = [
         },
 
 
-      {
-        path: 'meet',
-        component: VideoMeetHomeComponent,
-        canActivate: [authGuard],
-        children: [
-          { path: '', component: VideoCallComponent },
-          { path: 'chat', component: ChatComponent },
-          { path: 'schedule', component: ScheduleMeetingDialogComponent },
-        ],
-      },
       {
         path: 'ticket',
         component: SideNavbarComponent,
@@ -293,17 +271,6 @@ export const routes: Routes = [
       { path: 'create-courses', component: CreateCourseComponent },
       { path: 'create-module', component: CreateCourseModulesComponent },
       { path: 'create-course-lesson', component: CreateLessonsComponent },
-    ],
-  },
-
-  // Standalone Lazy-Loaded Video Call
-  {
-    path: 'layout',
-    children: [
-      {
-        path: 'meet/:id',
-        component: VideoCallComponent,
-      },
     ],
   },
 
