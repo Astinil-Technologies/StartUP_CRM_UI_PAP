@@ -1,67 +1,116 @@
 import { Injectable } from '@angular/core';
-// import * as Stomp from 'stompjs';
 import { Observable, Subject } from 'rxjs';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class WebSocketService {
-  send(arg0: string, arg1: { type: string; sender: string; }) {
-    throw new Error('Method not implemented.');
-  }
-  sendChatMessage(meetingId: string, message: any) {
-    throw new Error('Method not implemented.');
-  }
-  // private stompClient: Stomp.Client | undefined;
+  private socket: WebSocket | null = null;
   private connected = false;
   private messageSubject = new Subject<any>();
-  private currentRoomId: string = '';
+  private chatSubject = new Subject<any>();
+  private participantSubject = new Subject<any>();
+  private signalSubject = new Subject<any>();
+  private currentMeetingId: string = '';
 
- /* connect(roomId: string): void {
-    if (this.connected) return;
+  connect(meetingId: string): void {
+    if (this.connected && this.currentMeetingId === meetingId) return;
 
-    const socket = new WebSocket('ws://localhost:8888/ws');
-    // this.stompClient = Stomp.over(socket);
-    this.currentRoomId = roomId;
-    
+    this.disconnect();
+    this.currentMeetingId = meetingId;
 
-    this.stompClient.connect({}, () => {
+    const wsUrl = environment.baseUrl.replace('http', 'ws') + '/ws';
+    this.socket = new WebSocket(wsUrl);
+
+    this.socket.onopen = () => {
       this.connected = true;
-      console.log('🟢 WebSocket connected');
+      console.log('🟢 WebSocket connected to meeting:', meetingId);
+    };
 
-      if (this.stompClient) {
-        this.stompClient.subscribe(`/topic/signal/${roomId}`, (message) => {
-          if (message.body) {
-            this.messageSubject.next(JSON.parse(message.body));
-          }
-        });
+    this.socket.onmessage = (event) => {
+      try {
+        const message = JSON.parse(event.data);
+        this.handleMessage(message);
+      } catch (error) {
+        console.error('Error parsing WebSocket message:', error);
       }
-    }, (error) => {
+    };
+
+    this.socket.onerror = (error) => {
       console.error('WebSocket error:', error);
-    });
+    };
+
+    this.socket.onclose = () => {
+      this.connected = false;
+      console.log('🔴 WebSocket disconnected');
+    };
   }
 
-  // 🔧 Fix for: onSignal() expected to return Observable
+  private handleMessage(message: any): void {
+    if (message.destination) {
+      if (message.destination.includes('/chat')) {
+        this.chatSubject.next(message.body);
+      } else if (message.destination.includes('/participants')) {
+        this.participantSubject.next(message.body);
+      } else if (message.destination.includes('/signal')) {
+        this.signalSubject.next(message.body);
+      }
+    }
+    this.messageSubject.next(message);
+  }
+
+  sendChatMessage(meetingId: string, message: any): void {
+    this.sendMessage(`/app/meeting/${meetingId}/chat`, message);
+  }
+
+  sendParticipantAction(meetingId: string, action: any): void {
+    this.sendMessage(`/app/meeting/${meetingId}/participant-action`, action);
+  }
+
+  sendWebRTCSignal(meetingId: string, signal: any): void {
+    this.sendMessage(`/app/meeting/${meetingId}/webrtc-signal`, signal);
+  }
+
+  private sendMessage(destination: string, body: any): void {
+    if (this.socket && this.connected) {
+      const message = {
+        command: 'SEND',
+        destination: destination,
+        body: JSON.stringify(body)
+      };
+      this.socket.send(JSON.stringify(message));
+    } else {
+      console.error('WebSocket not connected');
+    }
+  }
+
+  onChatMessage(): Observable<any> {
+    return this.chatSubject.asObservable();
+  }
+
+  onParticipantUpdate(): Observable<any> {
+    return this.participantSubject.asObservable();
+  }
+
   onSignal(): Observable<any> {
+    return this.signalSubject.asObservable();
+  }
+
+  onMessage(): Observable<any> {
     return this.messageSubject.asObservable();
   }
 
-  // 🔧 Add sendSignal() as used in video-call.component.ts
-/*  sendSignal(payload: any, p0: { type: string; sender: string; }): void {
-    if (this.connected && this.stompClient && this.currentRoomId) {
-      this.stompClient.send(`/app/signal/${this.currentRoomId}`, {}, JSON.stringify(payload));
-    } else {
-      console.error('WebSocket not connected or roomId missing');
+  disconnect(): void {
+    if (this.socket) {
+      this.socket.close();
+      this.socket = null;
+      this.connected = false;
+      this.currentMeetingId = '';
     }
   }
 
-  disconnect(): void {
-    if (this.connected && this.stompClient) {
-      this.stompClient.disconnect(() => {
-        console.log('🔴 WebSocket disconnected');
-        this.connected = false;
-        this.currentRoomId = '';
-      });
-    }
-  }*/
+  isConnected(): boolean {
+    return this.connected;
+  }
 }

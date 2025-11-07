@@ -1,9 +1,11 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
+import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute } from '@angular/router';
 import { Router } from '@angular/router';
 import { ChatComponent } from '../chat/chat.component';
+import { ParticipantsComponent } from '../participants/participants.component';
 import { UserDataService } from 'src/app/core/services/user-data.service';
 import { WebSocketService } from 'src/app/core/services/websocket.service';
 
@@ -39,22 +41,31 @@ screenSharing: any;
   constructor(private route: ActivatedRoute,
     private router: Router,
     public userDataService: UserDataService,
-    private websocketService: WebSocketService
+    private websocketService: WebSocketService,
+    private dialog: MatDialog
   ) {} 
 
   ngOnInit(): void {
     this.startVideo();
-    const userId = localStorage.getItem('userId') || '';
-    this.username = userId.slice(-4).padStart(4, '0');
+    const user = this.userDataService.getCurrentUserData();
+    this.username = user?.firstName + ' ' + user?.lastName || 'User';
     this.meetingId = this.route.snapshot.paramMap.get('id') || '';
-    //  this.websocketService.connect(this.meetingId); // ✅ Connect WebSocket
-    // this.websocketService.onSignal().subscribe((signal: any) => {
-    //   this.handleIncomingSignal(signal); // ✅ Handle remote screen share (future)
-    // });
+    
+    // Connect to WebSocket for real-time communication
+    this.websocketService.connect(this.meetingId);
+    
+    // Subscribe to participant updates
+    this.websocketService.onParticipantUpdate().subscribe((update: any) => {
+      console.log('Participant update:', update);
+    });
+    
+    // Subscribe to WebRTC signals
+    this.websocketService.onSignal().subscribe((signal: any) => {
+      this.handleIncomingSignal(signal);
+    });
+    
     console.log('Meeting ID:', this.meetingId);
     console.log('VideoCallComponent loaded');
-    const id = this.route.snapshot.paramMap.get('id');
-    console.log('Meeting ID:', id);
   }
 
 async startVideo() {
@@ -80,6 +91,14 @@ async startVideo() {
   toggleMute() {
     this.isMuted = !this.isMuted;
     this.mediaStream?.getAudioTracks().forEach(track => (track.enabled = !this.isMuted));
+    
+    // Notify other participants
+    const action = this.isMuted ? 'MUTE_AUDIO' : 'UNMUTE_AUDIO';
+    this.websocketService.sendParticipantAction(this.meetingId, {
+      userId: this.userDataService.getCurrentUserData()?.id,
+      action: action,
+      timestamp: Date.now()
+    });
   }
   
   
@@ -91,13 +110,19 @@ async toggleVideo() {
   this.isVideoStopped = !this.isVideoStopped;
 
   if (this.isVideoStopped) {
-    // Turn off camera and remove video feed
     this.mediaStream?.getVideoTracks().forEach(track => track.stop());
     this.videoElementRef.nativeElement.srcObject = null;
   } else {
-    // Restart camera and video feed
     await this.startVideo();
   }
+  
+  // Notify other participants
+  const action = this.isVideoStopped ? 'TURN_OFF_VIDEO' : 'TURN_ON_VIDEO';
+  this.websocketService.sendParticipantAction(this.meetingId, {
+    userId: this.userDataService.getCurrentUserData()?.id,
+    action: action,
+    timestamp: Date.now()
+  });
 }
 
    async shareScreen() {
@@ -114,13 +139,18 @@ async toggleVideo() {
     }
   this.isMuted = false;
   this.isVideoStopped = true;
-  // this.websocketService.disconnect(); // ✅ Clean disconnect
-  this.router.navigate(['/layout']); // or your correct landing page route
+  this.websocketService.disconnect();
+  this.router.navigate(['/layout']);
 }
 
 
-   openParticipants()
-    { alert('Participants feature coming soon'); }
+   openParticipants() {
+    this.dialog.open(ParticipantsComponent, {
+      width: '450px',
+      data: { meetingId: this.meetingId },
+      disableClose: false
+    });
+  }
 
   openChat()
    { this.showChat = !this.showChat; }
@@ -133,14 +163,23 @@ async toggleVideo() {
   
 raiseHand() {
   this.raisedHand = !this.raisedHand;
+  
+  // Notify other participants
+  const action = this.raisedHand ? 'RAISE_HAND' : 'LOWER_HAND';
+  this.websocketService.sendParticipantAction(this.meetingId, {
+    userId: this.userDataService.getCurrentUserData()?.id,
+    action: action,
+    timestamp: Date.now()
+  });
 }
 
   openSecurityOptions() 
   { alert('Security options coming soon'); }
 
   handleMessageSent(message: any) {
-    this.chatMessages.push(message);
-    this.websocketService.sendChatMessage(this.meetingId, message);
+    // Chat component handles sending messages directly via STOMP
+    // This method can be used for additional processing if needed
+    console.log('Message sent:', message);
   }
 
   // ✅ Optional: Handle remote screen signals (future use)
