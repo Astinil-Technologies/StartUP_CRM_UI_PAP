@@ -222,3 +222,9 @@ input[type=number] {
 .btn.submit:hover {
   background: #0056b3;
 }
+.locked {
+  background-color: #f2f2f2;
+  color: #888;
+  pointer-events: none;
+  border: 1px solid #ccc;
+}

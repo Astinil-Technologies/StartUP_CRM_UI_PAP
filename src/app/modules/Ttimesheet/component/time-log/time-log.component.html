@@ -45,7 +45,8 @@
           {{ day.name }}<br />
           <small>{{ day.date | date: 'MMM d' }}</small>
         </label>
-        <input type="number" min="0" max="24" [(ngModel)]="day.hours" />
+        <input type="number" min="0" max="24" [(ngModel)]="day.hours" [disabled]="!day.editable"/>
+        <div *ngIf="!day.editable" class="locked-indicator"></div>
       </div>
     </div>
 
@@ -56,7 +57,8 @@
           {{ day.date | date: 'EEE' }}<br />
           <small>{{ day.date | date: 'MMM d' }}</small>
         </label>
-        <input type="number" min="0" max="24" [(ngModel)]="day.hours" />
+        <input type="number" min="0" max="24" [(ngModel)]="day.hours" [disabled]="!day.editable"/>
+        <div *ngIf="!day.editable" class="locked-indicator"></div>
       </div>
     </div>
 
