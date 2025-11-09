@@ -96,8 +96,6 @@ export const routes: Routes = [
     canActivate: [authGuard, RoleGuard],
     data: { roles: ['ROLE_USER'] },
     children: [
-      //{ path: 'reminders',component: ReminderLayoutComponent},
-      //{ path: 'reminders',component: ReminderSidebarComponent },
       { path: 'dashboard', component: DashboardComponent },
       { path: 'dashboard', component: HomeSectionComponent },
       { path: 'navbar', component: NavbarComponent },
@@ -227,6 +225,7 @@ export const routes: Routes = [
     { path: '', redirectTo: 'list', pathMatch: 'full' }
   ]
 }
+
     ],
   },
   

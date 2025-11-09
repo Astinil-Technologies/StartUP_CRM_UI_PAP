@@ -1,33 +1,66 @@
-.form-container {
+/* 🔹 Layout wrapper with sidebar + form */
+.layout {
   display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 40px 15px; ;
-  margin-left: 600px; /* match sidebar width */
-  width: calc(100% - 250px);
+  min-height: 100vh;
   background: #f6f8fc;
   box-sizing: border-box;
 }
 
-.reminder-card {
-//  position: fixed;
-//  width: 100%;
-  //max-width: 800px; /* narrower for better readability */
-padding: 16px 20px;
- border-radius: 10px;
- background: white;
- box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  
-position: fixed;
-  top: 80px;               /* adjust this if your navbar height differs */
-  left: 600px;             /* match your sidebar width */
-  right: 500px;             /* some right margin */
-  bottom: 40px;            /* space from bottom */
+/* 🔹 Sidebar styling */
+.sidebar {
+  width: 250px;
+  background-color: #2d3648;
+  color: white;
+  padding: 20px;
   box-sizing: border-box;
-  overflow-y: auto;        
-
 }
 
+.sidebar h2 {
+  font-size: 20px;
+  margin-bottom: 20px;
+}
+
+.sidebar-btn {
+  width: 100%;
+  padding: 10px;
+  background-color: #007bff;
+  border: none;
+  color: white;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.3s ease;
+}
+
+.sidebar-btn:hover {
+  background-color: #0056b3;
+}
+/* 🔹 Center the form */
+.form-container {
+  margin-top: 50px;
+  flex: 1;
+  display: flex;
+  justify-content: center;   /* centers horizontally */
+  align-items: center;       /* centers vertically */
+  
+  background: hsl(220, 50%, 98%);
+  padding: 40px;
+  box-sizing: border-box;
+}
+
+/* 🔹 Form Card */
+.reminder-card {
+  width: 1000px;
+  margin-left: 600px;
+  max-width: 600px;
+  padding: 24px 32px;
+  border-radius: 12px;
+  background: white;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
+  box-sizing: border-box;
+}
+
+/* 🔹 Title */
 .form-title {
   text-align: left;
   font-size: 22px;
@@ -35,26 +68,19 @@ position: fixed;
   margin-bottom: 16px;
 }
 
+/* 🔹 Form layout */
 .reminder-form {
   display: flex;
   flex-direction: column;
   gap: 20px;
 }
 
-/* 🔹 Make each row vertical instead of side-by-side */
-.row {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-
-/* Make all mat-form-fields fill the width */
-.full-width,
-.half-width,
+/* Make all mat-form-fields full width */
 mat-form-field {
   width: 100% !important;
 }
 
+/* 🔹 File upload styling */
 .attachment {
   display: flex;
   flex-direction: column;
@@ -62,15 +88,13 @@ mat-form-field {
   font-size: 14px;
 }
 
-/* Hide the default ugly file input */
 .attachment input[type="file"] {
   display: none;
 }
 
-/* Create a custom upload button */
 .attachment label[for="fileInput"] {
   display: inline-block;
-  background-color: #007bff; /* 🔹 Button color (blue) */
+  background-color: #007bff;
   color: white;
   padding: 10px 16px;
   border-radius: 6px;
@@ -80,23 +104,16 @@ mat-form-field {
   transition: background-color 0.3s ease;
 }
 
-/* Hover effect */
 .attachment label[for="fileInput"]:hover {
   background-color: #0056b3;
 }
 
-/* Show selected file name */
 .attachment div {
   font-size: 13px;
   color: #555;
 }
 
-/* Remove button styling */
-.attachment button {
-  width: fit-content;
-  margin-top: 5px;
-}
-
+/* 🔹 Submit button */
 .submit-btn {
   width: 100%;
   padding: 12px;

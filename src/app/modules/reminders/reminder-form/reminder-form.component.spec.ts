@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ReminderFormComponent } from './reminder-form.component';
 
 describe('ReminderFormComponent', () => {
@@ -8,10 +8,12 @@ describe('ReminderFormComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ReminderFormComponent]
-    })
-    .compileComponents();
-    
+      imports: [
+        ReminderFormComponent,
+        BrowserAnimationsModule  // ✅ Required for Angular Material
+      ]
+    }).compileComponents();
+
     fixture = TestBed.createComponent(ReminderFormComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
