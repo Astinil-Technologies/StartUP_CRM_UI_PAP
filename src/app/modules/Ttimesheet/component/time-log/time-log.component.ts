@@ -9,6 +9,7 @@ interface DayEntry {
   name: string;
   date: Date;
   hours: number;
+  editable: boolean;
 }
 
 @Component({
@@ -45,6 +46,8 @@ export class TimeLogComponent implements OnInit {
 
   ngOnInit(): void {
     this.generateWeek();
+    this.loadExistingData();
+    
   }
 
   setView(view: 'weekly' | 'monthly'): void {
@@ -54,6 +57,7 @@ export class TimeLogComponent implements OnInit {
 
     if (view === 'weekly') this.generateWeek();
     else this.generateMonth();
+    this.loadExistingData();
   }
 
   changeOffset(delta: number): void {
@@ -64,21 +68,25 @@ export class TimeLogComponent implements OnInit {
       this.monthOffset += delta;
       this.generateMonth();
     }
+    this.loadExistingData();
   }
 
   generateWeek(): void {
     const today = new Date();
+    const dayOfWeek = today.getDay();
+    const diffToMonday = (dayOfWeek === 0 ? -6 : 1) - dayOfWeek;
+
     const startOfWeek = new Date(today);
-    const day = startOfWeek.getDay();
-    const diff = day === 0 ? -6 : 1 - day; // Monday start
-    startOfWeek.setDate(today.getDate() + diff + this.weekOffset * 7);
+    startOfWeek.setDate(today.getDate() + diffToMonday + this.weekOffset * 7);
 
-    const dayNames = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
-
+    const dayNames = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
     this.weekDays = Array.from({ length: 7 }, (_, i) => {
       const date = new Date(startOfWeek);
       date.setDate(startOfWeek.getDate() + i);
-      return { date, hours: 0, name: dayNames[i] };
+
+      const normalized = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
+
+      return { name: dayNames[i], date: normalized, hours: 0, editable: true };
     });
   }
 
@@ -88,11 +96,15 @@ export class TimeLogComponent implements OnInit {
     const month = today.getMonth() + this.monthOffset;
     const totalDays = new Date(year, month + 1, 0).getDate();
 
-    this.monthDays = Array.from({ length: totalDays }, (_, i) => ({
-      date: new Date(year, month, i + 1),
-      hours: 0,
-      name: new Date(year, month, i + 1).toLocaleDateString(undefined, { weekday: 'long' })
-    }));
+    this.monthDays = Array.from({ length: totalDays }, (_, i) => {
+      const d = new Date(Date.UTC(year, month, i + 1)); // UTC-safe
+      return {
+        date : d,
+        hours: 0,
+        name: d.toLocaleDateString(undefined, { weekday: 'long' }),
+        editable: true,
+      };
+    });
   }
 
   getCurrentRange(): string {
@@ -127,13 +139,19 @@ export class TimeLogComponent implements OnInit {
       return;
     }
 
-    const isWeekly = this.view === 'weekly';
-    const entries = (isWeekly ? this.weekDays : this.monthDays)
+    const entries = (this.view === 'weekly' ? this.weekDays : this.monthDays)
       .filter(day => day.hours > 0)
       .map(day => ({
         workDate: day.date.toISOString().split('T')[0],
         hoursWorked: day.hours
       }));
+
+    // ✅ Validation: No entry should exceed 12 hours
+    const invalid = entries.find(e => e.hoursWorked > 12);
+    if (invalid) {
+      alert(`Enter correct timing — maximum 12 hours per day.`);
+      return;
+    }
 
     if (entries.length === 0) {
       alert('No hours entered for submission!');
@@ -141,33 +159,75 @@ export class TimeLogComponent implements OnInit {
     }
 
     const payload = {
-      startDate: (isWeekly ? this.weekDays[0] : this.monthDays[0]).date.toISOString().split('T')[0],
-      endDate: (isWeekly
+      startDate: (this.view === 'weekly' ? this.weekDays[0] : this.monthDays[0]).date.toISOString().split('T')[0],
+      endDate: (this.view === 'weekly'
         ? this.weekDays[this.weekDays.length - 1]
         : this.monthDays[this.monthDays.length - 1]).date.toISOString().split('T')[0],
-      timesheetType: isWeekly ? 'WEEKLY' : 'MONTHLY',
+      timesheetType: this.view === 'weekly' ? 'WEEKLY' : 'MONTHLY',
       job: this.selectedJob.toUpperCase(),
       projectId: this.selectedProject,
       entries
     };
 
-    const token: string = this.authService.getAccessToken() as string;
-    if (!token) {
-      alert('You are not authenticated!');
-      return;
-    }
-
+    const token = this.authService.getAccessToken();
     this.http.post('http://localhost:8888/timesheet/log', payload, {
       headers: { Authorization: `Bearer ${token}` },
     }).subscribe({
-      next: (data) => {
-        console.log('✅ Response:', data);
+      next: () => {
         alert('Timesheet submitted successfully!');
+        const submittedIsoDates = entries.map(e => e.workDate);
+        const days = this.view === 'weekly' ? this.weekDays : this.monthDays;
+        days.forEach(d => {
+          const iso = d.date.toISOString().split('T')[0];
+          if (submittedIsoDates.includes(iso)) d.editable = false;
+        });
+        this.loadExistingData();
       },
       error: (err) => {
-        console.error('❌ Error submitting timesheet:', err);
-        alert('Submission failed. Check console.');
-      }
+        console.error(err);
+        const msg = err?.error?.message || 'Submission failed!';
+        alert(msg);
+      },
     });
   }
+    // ---------------------------
+  // ✅ Load data & lock exact days
+  // ---------------------------
+ loadExistingData(): void {
+  const daysArray = this.view === 'weekly' ? this.weekDays : this.monthDays;
+  if (!daysArray || daysArray.length === 0) return;
+
+  const start = daysArray[0].date.toISOString().split('T')[0];
+  const end = daysArray[daysArray.length - 1].date.toISOString().split('T')[0];
+
+  const token = this.authService.getAccessToken();
+  this.http.get<any>(`http://localhost:8888/timesheet/view?startDate=${start}&endDate=${end}`, {
+    headers: { Authorization: `Bearer ${token}` },
+  }).subscribe({
+    next: (res) => {
+      const entries = res?.data?.entries || [];
+      const lockedDays: string[] = res?.data?.lockedDays || [];
+      const isTimesheetEditable: boolean = res?.data?.editable ?? true;  // ✅ fixed
+
+      const days = this.view === 'weekly' ? this.weekDays : this.monthDays;
+
+      days.forEach(day => {
+        const iso = day.date.toISOString().split('T')[0];
+        const entry = entries.find((e: any) => e.workDate === iso);
+        
+        if (entry) {
+          day.hours = entry.hoursWorked;
+        } else {
+          day.hours = day.hours || 0; // ✅ clear ghost data
+        }
+
+        day.editable = !lockedDays.includes(iso) && isTimesheetEditable;
+      });
+
+      console.log(`📅 Loaded ${entries.length} entries for ${this.view} view (${start} → ${end})`); // ✅ debug info
+    },
+    error: (err) => console.error('❌ Load failed', err),
+  });
+}
+
 }

@@ -49,7 +49,10 @@ import { CreateLessonsComponent } from './modules/instructor/component/create-le
 import { TimesheetNavbarComponent } from './modules/Ttimesheet/component/timesheet-navbar/timesheet-navbar.component';
 import { HomepageComponent } from './modules/Ttimesheet/component/homepage/homepage.component';
 import { AttendanceComponent } from './modules/Ttimesheet/component/attendance/attendance.component';
-
+import { ApproveTimesheetComponent } from './modules/Ttimesheet/component/approve-timesheet/approve-timesheet.component';
+import { TimeComponent } from './modules/Ttimesheet/component/time/time.component';
+import { TimeLogComponent } from './modules/Ttimesheet/component/time-log/time-log.component';
+import { TimesheetComponent } from './modules/Ttimesheet/component/timesheet/timesheet.component';
 // Ticketing Module
 import { SideNavbarComponent } from './modules/Ticket/components/sideNavbar/sideNavbar.component';
 import { RaiseTicketComponent } from './modules/Ticket/components/raise-ticket/raise-ticket.component';
@@ -72,6 +75,12 @@ import { ChatSidebarComponent } from './modules/chat/components/chat-sidebar/cha
 import { DirectmessagesComponent } from './modules/chat/components/directmessages/directmessages.component';
 import { ReminderSidebarComponent } from './modules/reminders/reminder-sidebar/reminder-sidebar.component';
 
+//Leave-Management Module
+import { NavbarComponentLeaveManagement } from './modules/leave-management/component/navbar-leave-management/navbar-leave-management.component'; 
+import { EmployeeDashboardComponent } from './modules/leave-management/component/employee-dashboard/employee-dashboard.component';
+import { ApplyLeaveComponent } from './modules/leave-management/component/apply-leave/apply-leave.component';
+import {MyRequestsComponent} from './modules/leave-management/component/my-requests/my-requests.component';
+import { ReportsComponent } from './modules/leave-management/component/reports/reports.component';
 export const routes: Routes = [
   { path: '', redirectTo: '/login-main', pathMatch: 'full' },
 
@@ -133,6 +142,16 @@ export const routes: Routes = [
           { path: 'attendance', component: AttendanceComponent },
           { path: 'myticket', component: MyticketComponent },
           { path: 'homepage', component: HomepageComponent },
+          {path: 'approve-timesheet', component: ApproveTimesheetComponent },
+          {
+            path: 'time',
+            component: TimeComponent,
+            children: [
+              { path: '', redirectTo: 'logtime', pathMatch: 'full' },
+              { path: 'logtime', component: TimeLogComponent },
+              { path: 'sheet', component: TimesheetComponent }
+            ]
+            }
         ],
       },
 
@@ -195,6 +214,17 @@ export const routes: Routes = [
       },
 
       { path: 'messages', component: MessagesComponent },
+
+      {path: 'leave-management', component: NavbarComponentLeaveManagement,
+      children: [
+            {path: 'employee-dashboard', component: EmployeeDashboardComponent },
+            {path: 'apply-leave', component: ApplyLeaveComponent },
+            {path: 'my-requests', component: MyRequestsComponent },
+            {path: 'reports', component: ReportsComponent },
+            { path: '', redirectTo: 'employee-dashboard', pathMatch: 'full' }
+          ]
+      },
+
  {
   path: 'reminders',
   component: ReminderSidebarComponent, // Layout with sidebar
