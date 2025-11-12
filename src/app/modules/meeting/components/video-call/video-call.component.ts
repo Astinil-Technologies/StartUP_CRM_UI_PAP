@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, ViewEncapsulation } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDialog } from '@angular/material/dialog';
@@ -12,9 +12,10 @@ import { WebSocketService } from 'src/app/core/services/websocket.service';
 @Component({
   selector: 'app-video-call',
   standalone: true,
-  imports: [CommonModule, MatIconModule,ChatComponent],
-  templateUrl: './video-call.component.html',
-  styleUrls: ['./video-call.component.scss']
+  imports: [CommonModule, MatIconModule, ChatComponent, ParticipantsComponent],
+  templateUrl:'./video-call.component.html',
+  styleUrls: ['./video-call.component.scss'],
+  encapsulation: ViewEncapsulation.None   // ✅ Add this line
 })
 export class VideoCallComponent implements OnInit {
   isMuted = false;
@@ -34,9 +35,8 @@ export class VideoCallComponent implements OnInit {
   @ViewChild('videoElement', { static: true }) videoElementRef!: ElementRef<HTMLVideoElement>;
   @ViewChild('screenVideoElement', { static: true }) screenVideoElementRef!: ElementRef<HTMLVideoElement>;
   screenStream: any;
-screenSharing: any;
+  screenSharing: any;
   peerConnection: any;
-
 
   constructor(private route: ActivatedRoute,
     private router: Router,
@@ -86,8 +86,6 @@ async startVideo() {
     alert('Unable to access camera.');
   }
 }
-
-
   toggleMute() {
     this.isMuted = !this.isMuted;
     this.mediaStream?.getAudioTracks().forEach(track => (track.enabled = !this.isMuted));
@@ -100,8 +98,6 @@ async startVideo() {
       timestamp: Date.now()
     });
   }
-  
-  
   toggleReactions() {
     this.showEmojiPicker = !this.showEmojiPicker;
   }
@@ -124,12 +120,9 @@ async toggleVideo() {
     timestamp: Date.now()
   });
 }
-
    async shareScreen() {
   console.log('Its in development phase');
 }
-
-
   leaveCall() {
   if (this.mediaStream) {
     this.mediaStream.getTracks().forEach(track => track.stop());
@@ -143,15 +136,19 @@ async toggleVideo() {
   this.router.navigate(['/layout']);
 }
 
+  //  openParticipants() {
+  //   this.dialog.open(ParticipantsComponent, {
+  //     width: '450px',
+  //     data: { meetingId: this.meetingId },
+  //     disableClose: false
+  //   });
+  // }
+  
+  showParticipants = false; // add this at the top of your class
 
-   openParticipants() {
-    this.dialog.open(ParticipantsComponent, {
-      width: '450px',
-      data: { meetingId: this.meetingId },
-      disableClose: false
-    });
-  }
-
+openParticipants() {
+  this.showParticipants = !this.showParticipants;
+}
   openChat()
    { this.showChat = !this.showChat; }
    
@@ -159,8 +156,6 @@ async toggleVideo() {
     alert(`You reacted with ${emoji}`);
     this.showEmojiPicker = false;
   }
-  
-  
 raiseHand() {
   this.raisedHand = !this.raisedHand;
   

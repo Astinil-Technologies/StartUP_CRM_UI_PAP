@@ -1,7 +1,7 @@
-import { Component, Input, OnInit, OnDestroy, Inject } from '@angular/core';
+import { Component, Input, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
-import { MatDialogModule, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { MatDialogModule } from '@angular/material/dialog';
 import { MeetingService } from 'src/app/core/services/meeting.service';
 import { Client, IMessage } from '@stomp/stompjs';
 import { Subscription } from 'rxjs';
@@ -22,36 +22,47 @@ export interface Participant {
   standalone: true,
   imports: [CommonModule, MatIconModule, MatDialogModule],
   template: `
-    <div class="participants-dialog">
-      <div class="dialog-header">
-        <h2>Participants ({{ participants.length }})</h2>
-        <button mat-icon-button (click)="close()">
-          <mat-icon>close</mat-icon>
+    <div class="meet-sidebar">
+      <!-- 🔹 Header -->
+      <div class="header">
+        <h3>People</h3>
+        <button class="close-btn" (click)="close()">✕</button>
+      </div>
+
+      <!-- 🔹 Add People button -->
+      <div class="add-people">
+        <button>
+          <mat-icon>person_add</mat-icon>
+          Add people
         </button>
       </div>
-      
+
+      <!-- 🔹 Search box -->
+      <div class="search-box">
+        <input type="text" placeholder="Search for people" />
+      </div>
+
+      <!-- 🔹 Section title -->
+      <div class="section-title">In the meeting</div>
+
+      <!-- 🔹 Participants list -->
       <div class="participants-list">
-        <div *ngFor="let participant of participants" class="participant-item" [ngClass]="participant.role.toLowerCase()">
-          <div class="participant-info">
-            <div class="participant-name">
-              <span class="role-icon">{{ getRoleIcon(participant.role) }}</span>
-              {{ participant.username }}
-            </div>
-            <div class="participant-status">
-              <span class="status-badge" [ngClass]="participant.status.toLowerCase()">
-                {{ participant.status }}
-              </span>
+        <div class="participant-card" *ngFor="let participant of participants">
+          <div class="avatar">{{ participant.username[0] | uppercase }}</div>
+
+          <div class="info">
+            <div class="name">{{ participant.username }}</div>
+            <div class="role" *ngIf="participant.role">
+              {{ participant.role === 'HOST' ? 'Meeting host' : participant.role }}
             </div>
           </div>
-          
-          <div class="participant-controls">
-            <mat-icon *ngIf="participant.audioMuted" class="muted">mic_off</mat-icon>
-            <mat-icon *ngIf="participant.videoOff" class="video-off">videocam_off</mat-icon>
-            <mat-icon *ngIf="participant.handRaised" class="hand-raised">back_hand</mat-icon>
-            <mat-icon *ngIf="participant.inWaitingRoom" class="waiting">schedule</mat-icon>
+
+          <div class="actions">
+            <mat-icon *ngIf="participant.audioMuted">mic_off</mat-icon>
+            <mat-icon>more_vert</mat-icon>
           </div>
         </div>
-        
+
         <div *ngIf="participants.length === 0" class="no-participants">
           <mat-icon>groups</mat-icon>
           <p>No participants yet</p>
@@ -60,159 +71,214 @@ export interface Participant {
     </div>
   `,
   styles: [`
-    .participants-dialog {
-      width: 400px;
-      max-height: 500px;
-      background: white;
-      border-radius: 12px;
+    .meet-sidebar {
+      background: #ffffff;
+      width: 100%;
+      height: 100%;
+      border-radius: 16px; /* ✅ Rounded all 4 corners */
+      display: flex;
+      flex-direction: column;
+      font-family: 'Roboto', sans-serif;
       overflow: hidden;
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
+      padding: 0;
+      position: relative;
     }
 
-    .dialog-header {
+    /* Header */
+    .header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 20px 24px;
+      padding: 18px 20px;
       border-bottom: 1px solid #e0e0e0;
-      background-color: #f5f5f5;
-
-      h2 {
-        margin: 0;
-        font-size: 18px;
-        font-weight: 600;
-        color: #333;
-      }
+      font-size: 18px;
+      font-weight: 500;
+      background-color: #fff;
+      border-top-left-radius: 16px;
+      border-top-right-radius: 16px;
     }
 
-    .participants-list {
-      max-height: 400px;
-      overflow-y: auto;
-      padding: 16px;
+    .close-btn {
+      background: transparent;
+      border: none;
+      font-size: 20px;
+      cursor: pointer;
+      color: #444;
+      transition: 0.2s;
     }
 
-    .participant-item {
+    .close-btn:hover {
+      color: #000;
+    }
+
+    /* Add people */
+    .add-people {
+      padding: 12px 20px;
+      border-bottom: 1px solid #f0f0f0;
+    }
+
+    .add-people button {
       display: flex;
-      justify-content: space-between;
       align-items: center;
-      padding: 12px 16px;
-      margin-bottom: 8px;
+      gap: 6px;
+      background: #e8f0fe;
+      border: none;
+      padding: 8px 14px;
+      border-radius: 24px;
+      font-size: 14px;
+      color: #1a73e8;
+      cursor: pointer;
+      font-weight: 500;
+      transition: background 0.2s ease;
+    }
+
+    .add-people button:hover {
+      background: #d2e3fc;
+    }
+
+    /* Search box */
+    .search-box {
+      padding: 10px 20px;
+    }
+
+    .search-box input {
+      width: 100%;
+      padding: 8px 12px;
       border-radius: 8px;
-      border: 1px solid #e0e0e0;
-      transition: background-color 0.2s;
-
-      &.host {
-        border-color: #ff9800;
-        background-color: #fff3e0;
-      }
-
-      &.co_host {
-        border-color: #2196f3;
-        background-color: #e3f2fd;
-      }
-
-      &:hover {
-        background-color: #f5f5f5;
-      }
+      border: 1px solid #ccc;
+      font-size: 14px;
+      outline: none;
     }
 
-    .participant-info {
-      flex: 1;
-
-      .participant-name {
-        font-weight: 500;
-        color: #333;
-        margin-bottom: 4px;
-
-        .role-icon {
-          margin-right: 8px;
-          font-size: 16px;
-        }
-      }
-
-      .participant-status {
-        .status-badge {
-          font-size: 12px;
-          padding: 2px 8px;
-          border-radius: 12px;
-          font-weight: 500;
-
-          &.joined {
-            background-color: #e8f5e8;
-            color: #4caf50;
-          }
-
-          &.waiting {
-            background-color: #fff3e0;
-            color: #ff9800;
-          }
-
-          &.removed {
-            background-color: #ffebee;
-            color: #f44336;
-          }
-        }
-      }
+    .search-box input:focus {
+      border-color: #1a73e8;
     }
 
-    .participant-controls {
+    /* Section title */
+    .section-title {
+      font-size: 12px;
+      font-weight: 600;
+      color: #555;
+      text-transform: uppercase;
+      margin: 8px 20px 4px;
+    }
+
+    /* Participant list */
+    .participants-list {
+      flex-grow: 1;
+      overflow-y: auto;
+      padding: 0 10px 16px;
+      background: #fff;
+    }
+
+    /* Each participant card */
+    .participant-card {
       display: flex;
-      gap: 8px;
+      align-items: center;
+      justify-content: space-between;
+      background: #f8f9fa;
+      padding: 8px 10px;
+      border-radius: 12px;
+      margin: 6px 10px;
+      transition: background 0.2s ease, transform 0.1s ease;
+    }
 
-      mat-icon {
-        font-size: 18px;
-        color: #666;
+    .participant-card:hover {
+      background: #f1f3f4;
+      transform: scale(1.01);
+    }
 
-        &.muted {
-          color: #f44336;
-        }
+    .avatar {
+      background-color: #1a73e8;
+      color: white;
+      font-weight: 600;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
 
-        &.video-off {
-          color: #f44336;
-        }
+    .info {
+      flex-grow: 1;
+      margin-left: 10px;
+    }
 
-        &.hand-raised {
-          color: #ff9800;
-        }
+    .name {
+      font-size: 14px;
+      font-weight: 500;
+    }
 
-        &.waiting {
-          color: #ff9800;
-        }
-      }
+    .role {
+      font-size: 12px;
+      color: #666;
+    }
+
+    .actions {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .actions mat-icon {
+      font-size: 20px;
+      color: #666;
+      cursor: pointer;
+      transition: color 0.2s;
+    }
+
+    .actions mat-icon:hover {
+      color: #000;
+    }
+
+    /* Scrollbar */
+    .participants-list::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .participants-list::-webkit-scrollbar-thumb {
+      background-color: #ccc;
+      border-radius: 4px;
+    }
+
+    .participants-list::-webkit-scrollbar-thumb:hover {
+      background-color: #999;
     }
 
     .no-participants {
       text-align: center;
-      padding: 40px 20px;
       color: #999;
+      margin-top: 40px;
+    }
 
-      mat-icon {
-        font-size: 48px;
-        margin-bottom: 16px;
-        color: #ddd;
-      }
-
-      p {
-        margin: 0;
-        font-size: 16px;
-      }
+    /* ✅ Bottom rounded edges ensured */
+    .meet-sidebar::after {
+      content: "";
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 16px;
+      background: #fff;
+      border-bottom-left-radius: 16px;
+      border-bottom-right-radius: 16px;
     }
   `]
 })
 export class ParticipantsComponent implements OnInit, OnDestroy {
-  meetingId: string;
+  @Input() data!: { meetingId: string };
+
+  meetingId: string = '';
   participants: Participant[] = [];
   private stompClient!: Client;
   private subscription?: Subscription;
 
-  constructor(
-    private meetingService: MeetingService,
-    private dialogRef: MatDialogRef<ParticipantsComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: { meetingId: string }
-  ) {
-    this.meetingId = data.meetingId;
-  }
+  constructor(private meetingService: MeetingService) {}
 
   ngOnInit(): void {
+    this.meetingId = this.data?.meetingId || '';
     this.loadParticipants();
     this.setupWebSocketConnection();
   }
@@ -233,7 +299,6 @@ export class ParticipantsComponent implements OnInit, OnDestroy {
       debug: (str) => console.log('[PARTICIPANTS STOMP]:', str),
       onConnect: () => {
         console.log('✅ STOMP connected for participants');
-
         this.stompClient.subscribe(`/topic/meeting/${this.meetingId}/participants`, (message: IMessage) => {
           try {
             const update = JSON.parse(message.body);
@@ -252,25 +317,11 @@ export class ParticipantsComponent implements OnInit, OnDestroy {
   }
 
   private handleParticipantUpdate(update: any): void {
-    // Refresh participants list when updates are received
     this.loadParticipants();
   }
 
-  getRoleIcon(role: string): string {
-    switch (role.toUpperCase()) {
-      case 'HOST':
-        return '👑';
-      case 'CO_HOST':
-        return '🤝';
-      case 'PARTICIPANT':
-        return '🧑';
-      default:
-        return '👤';
-    }
-  }
-
   close(): void {
-    this.dialogRef.close();
+    this.participants = [];
   }
 
   ngOnDestroy(): void {
