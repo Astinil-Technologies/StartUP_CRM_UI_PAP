@@ -58,8 +58,9 @@ export interface Participant {
           </div>
 
           <div class="actions">
-            <mat-icon *ngIf="participant.audioMuted">mic_off</mat-icon>
-            <mat-icon>more_vert</mat-icon>
+             <mat-icon *ngIf="participant.handRaised" style="color: #f4b400;">back_hand</mat-icon>
+             <mat-icon *ngIf="participant.audioMuted">mic_off</mat-icon>
+             <mat-icon>more_vert</mat-icon>
           </div>
         </div>
 
@@ -317,7 +318,39 @@ export class ParticipantsComponent implements OnInit, OnDestroy {
   }
 
   private handleParticipantUpdate(update: any): void {
-    this.loadParticipants();
+  const userId = update.userId;
+
+  const index = this.participants.findIndex(p => p.userId === userId);
+
+  if (index !== -1) {
+    // Update existing participant
+    this.participants[index] = {
+      ...this.participants[index],
+      audioMuted: update.action === 'MUTE_AUDIO' ? true :
+                  update.action === 'UNMUTE_AUDIO' ? false :
+                  this.participants[index].audioMuted,
+
+      videoOff: update.action === 'TURN_OFF_VIDEO' ? true :
+                update.action === 'TURN_ON_VIDEO' ? false :
+                this.participants[index].videoOff,
+
+      handRaised: update.action === 'RAISE_HAND' ? true :
+                  update.action === 'LOWER_HAND' ? false :
+                  this.participants[index].handRaised
+    };
+
+  } else {
+    // New participant
+    this.participants.push({
+      userId: update.userId,
+      username: update.username,
+      role: update.role || 'USER',
+      status: 'ACTIVE',
+      audioMuted: false,
+      videoOff: false,
+      handRaised: update.action === 'RAISE_HAND'
+    });
+  }
   }
 
   close(): void {
