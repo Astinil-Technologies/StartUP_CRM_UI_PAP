@@ -89,25 +89,19 @@ export class TokenService {
    * @returns The user role if it exists in the token or null if not found.
    */
   getUserRole(): Role | null {
-    const token = this.getAccessToken();
-    if (token) {
-      const decodedToken = this.decodeToken(token);
-      if (decodedToken) {
-        const serverRoles: string[] = decodedToken.roles;
-        if (serverRoles && serverRoles.length > 0) {
-          const serverRole = serverRoles[0]; // Adjust if multiple roles are used
-          return this.mapServerRoleToClientRole(serverRole);
-        } else {
-          console.error('No roles found in token');
-          return null;
-        }
-      } else {
-        console.error('Decoded token is null');
-        return null;
-      }
-    }
-    return null;
-  }
+  // Prefer the saved role
+  const storedRole = localStorage.getItem('role');
+  if (storedRole) return storedRole as Role;
+
+  // Fallback to token decode
+  const token = this.getAccessToken();
+  if (!token) return null;
+  const decoded = this.decodeToken(token);
+  const roles = decoded?.roles || [decoded?.role];
+  if (roles?.length) return this.mapServerRoleToClientRole(roles[0]);
+  return null;
+}
+
 
   /**
    * Checks if the access token has expired.
@@ -153,6 +147,8 @@ export class TokenService {
         return Role.Instructor;
       case 'ROLE_USER':
         return Role.User;
+      case 'ROLE_MGR':
+        return Role.Manager;
       default:
         return null;
     }

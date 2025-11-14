@@ -2,9 +2,8 @@ import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
-import { AuthService } from 'src/app/core/services/authservice/auth.service'; // make sure path is correct
+import { AuthService } from 'src/app/core/services/authservice/auth.service';
 
-// Updated interface with name
 interface DayEntry {
   name: string;
   date: Date;
@@ -23,31 +22,30 @@ export class TimeLogComponent implements OnInit {
   private http = inject(HttpClient);
   private authService = inject(AuthService);
 
-  // Dropdown selections
   selectedClient: string = '';
   selectedProject: string = '';
   selectedJob: string = '';
   selectedWorkItem: string = '';
 
-  // Dropdown options
   clients: string[] = ['Client A', 'Client B', 'Client C'];
   projects: string[] = ['SWON123', 'Project Y', 'Project Z'];
   jobs: string[] = ['DEVELOPMENT', 'DESIGN', 'TESTING'];
   workItems: string[] = ['WorkItem 1', 'WorkItem 2', 'WorkItem 3'];
 
-  // View and offsets
   view: 'weekly' | 'monthly' = 'weekly';
   weekOffset = 0;
   monthOffset = 0;
 
-  // Entries
   weekDays: DayEntry[] = [];
   monthDays: DayEntry[] = [];
+
+  // ✅ Shared global state for sync
+  lockedDates: string[] = [];
+  allEntries: Record<string, number> = {}; // { "2025-11-10": 8, "2025-11-11": 6 }
 
   ngOnInit(): void {
     this.generateWeek();
     this.loadExistingData();
-    
   }
 
   setView(view: 'weekly' | 'monthly'): void {
@@ -57,6 +55,10 @@ export class TimeLogComponent implements OnInit {
 
     if (view === 'weekly') this.generateWeek();
     else this.generateMonth();
+
+    // ✅ sync hours + locking between both views
+    this.syncEntriesBetweenViews();
+
     this.loadExistingData();
   }
 
@@ -68,6 +70,10 @@ export class TimeLogComponent implements OnInit {
       this.monthOffset += delta;
       this.generateMonth();
     }
+
+    // ✅ Keep synced
+    this.syncEntriesBetweenViews();
+
     this.loadExistingData();
   }
 
@@ -75,7 +81,6 @@ export class TimeLogComponent implements OnInit {
     const today = new Date();
     const dayOfWeek = today.getDay();
     const diffToMonday = (dayOfWeek === 0 ? -6 : 1) - dayOfWeek;
-
     const startOfWeek = new Date(today);
     startOfWeek.setDate(today.getDate() + diffToMonday + this.weekOffset * 7);
 
@@ -83,10 +88,14 @@ export class TimeLogComponent implements OnInit {
     this.weekDays = Array.from({ length: 7 }, (_, i) => {
       const date = new Date(startOfWeek);
       date.setDate(startOfWeek.getDate() + i);
-
       const normalized = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
-
-      return { name: dayNames[i], date: normalized, hours: 0, editable: true };
+      const iso = normalized.toISOString().split('T')[0];
+      return {
+        name: dayNames[i],
+        date: normalized,
+        hours: this.allEntries[iso] || 0, // ✅ sync from global
+        editable: !this.lockedDates.includes(iso)
+      };
     });
   }
 
@@ -97,12 +106,13 @@ export class TimeLogComponent implements OnInit {
     const totalDays = new Date(year, month + 1, 0).getDate();
 
     this.monthDays = Array.from({ length: totalDays }, (_, i) => {
-      const d = new Date(Date.UTC(year, month, i + 1)); // UTC-safe
+      const d = new Date(Date.UTC(year, month, i + 1));
+      const iso = d.toISOString().split('T')[0];
       return {
-        date : d,
-        hours: 0,
+        date: d,
+        hours: this.allEntries[iso] || 0, // ✅ sync from global
         name: d.toLocaleDateString(undefined, { weekday: 'long' }),
-        editable: true,
+        editable: !this.lockedDates.includes(iso)
       };
     });
   }
@@ -146,7 +156,6 @@ export class TimeLogComponent implements OnInit {
         hoursWorked: day.hours
       }));
 
-    // ✅ Validation: No entry should exceed 12 hours
     const invalid = entries.find(e => e.hoursWorked > 12);
     if (invalid) {
       alert(`Enter correct timing — maximum 12 hours per day.`);
@@ -175,12 +184,18 @@ export class TimeLogComponent implements OnInit {
     }).subscribe({
       next: () => {
         alert('Timesheet submitted successfully!');
-        const submittedIsoDates = entries.map(e => e.workDate);
-        const days = this.view === 'weekly' ? this.weekDays : this.monthDays;
-        days.forEach(d => {
-          const iso = d.date.toISOString().split('T')[0];
-          if (submittedIsoDates.includes(iso)) d.editable = false;
+
+        // ✅ Update global state
+        entries.forEach(e => {
+          this.allEntries[e.workDate] = e.hoursWorked;
         });
+
+        const submittedIsoDates = entries.map(e => e.workDate);
+        this.lockedDates = Array.from(new Set([...this.lockedDates, ...submittedIsoDates]));
+
+        // ✅ Apply globally to both views
+        this.syncEntriesBetweenViews();
+
         this.loadExistingData();
       },
       error: (err) => {
@@ -190,44 +205,47 @@ export class TimeLogComponent implements OnInit {
       },
     });
   }
-    // ---------------------------
-  // ✅ Load data & lock exact days
-  // ---------------------------
- loadExistingData(): void {
-  const daysArray = this.view === 'weekly' ? this.weekDays : this.monthDays;
-  if (!daysArray || daysArray.length === 0) return;
 
-  const start = daysArray[0].date.toISOString().split('T')[0];
-  const end = daysArray[daysArray.length - 1].date.toISOString().split('T')[0];
-
-  const token = this.authService.getAccessToken();
-  this.http.get<any>(`http://localhost:8888/timesheet/view?startDate=${start}&endDate=${end}`, {
-    headers: { Authorization: `Bearer ${token}` },
-  }).subscribe({
-    next: (res) => {
-      const entries = res?.data?.entries || [];
-      const lockedDays: string[] = res?.data?.lockedDays || [];
-      const isTimesheetEditable: boolean = res?.data?.editable ?? true;  // ✅ fixed
-
-      const days = this.view === 'weekly' ? this.weekDays : this.monthDays;
-
+  // ✅ Core sync function (NEW)
+  private syncEntriesBetweenViews(): void {
+    const applySync = (days: DayEntry[]) => {
       days.forEach(day => {
         const iso = day.date.toISOString().split('T')[0];
-        const entry = entries.find((e: any) => e.workDate === iso);
-        
-        if (entry) {
-          day.hours = entry.hoursWorked;
-        } else {
-          day.hours = day.hours || 0; // ✅ clear ghost data
-        }
-
-        day.editable = !lockedDays.includes(iso) && isTimesheetEditable;
+        if (this.allEntries[iso] !== undefined) day.hours = this.allEntries[iso];
+        day.editable = !this.lockedDates.includes(iso);
       });
+    };
+    applySync(this.weekDays);
+    applySync(this.monthDays);
+  }
 
-      console.log(`📅 Loaded ${entries.length} entries for ${this.view} view (${start} → ${end})`); // ✅ debug info
-    },
-    error: (err) => console.error('❌ Load failed', err),
-  });
-}
+  // ✅ Load & lock from backend (unchanged, just merged into global state)
+  loadExistingData(): void {
+    const daysArray = this.view === 'weekly' ? this.weekDays : this.monthDays;
+    if (!daysArray || daysArray.length === 0) return;
 
+    const start = daysArray[0].date.toISOString().split('T')[0];
+    const end = daysArray[daysArray.length - 1].date.toISOString().split('T')[0];
+
+    const token = this.authService.getAccessToken();
+    this.http.get<any>(`http://localhost:8888/timesheet/view?startDate=${start}&endDate=${end}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    }).subscribe({
+      next: (res) => {
+        const entries = res?.data?.entries || [];
+        const lockedDays: string[] = res?.data?.lockedDays || [];
+        const isTimesheetEditable: boolean = res?.data?.editable ?? true;
+
+        // ✅ Merge backend data globally
+        entries.forEach((e: any) => this.allEntries[e.workDate] = e.hoursWorked);
+        this.lockedDates = Array.from(new Set([...this.lockedDates, ...lockedDays]));
+
+        // ✅ Sync everything
+        this.syncEntriesBetweenViews();
+
+        console.log(`📅 Loaded ${entries.length} entries (${start} → ${end}), locked ${this.lockedDates.length} days`);
+      },
+      error: (err) => console.error('❌ Load failed', err),
+    });
+  }
 }

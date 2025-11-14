@@ -79,9 +79,32 @@ export class AuthService {
   }
 
   login(credentials: { username: string; password: string }): Observable<any> {
-    return this.http.post(`${this.apiUrl}/login`, credentials);
-  }
+    return this.http.post(`${this.apiUrl}/login`, credentials).pipe(
+    map((response: any) => {
+      // Handle different response structures safely
+      const data = response?.data || response;
+      const accessToken = data?.accessToken;
+      const refreshToken = data?.refreshToken;
+      const role = data?.role;
 
+      // ✅ Store tokens
+      if (accessToken && refreshToken) {
+        this.tokenService.storeTokens(accessToken, refreshToken);
+      }
+
+      // ✅ Store role in localStorage for RoleGuard
+      if (role) {
+        localStorage.setItem('role', role);
+      }
+
+      // ✅ Optional: set current user observable
+      this.setCurrentUser({ username: credentials.username, role });
+
+      return response;
+    }),
+    catchError(this.handleError)
+  );
+}
   refreshAccessToken(): Observable<any> {
     const refreshToken = this.tokenService.getRefreshToken();
     if (!refreshToken) {

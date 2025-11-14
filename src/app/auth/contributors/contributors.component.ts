@@ -24,7 +24,7 @@ export class ContributorsComponent implements OnInit {
     { name: 'Sourabh Patil ', role: 'Team Lead', designation: 'Project Lead', imageSrc: '../../../assets/blank-profile.jpg' },
     { name: 'Shivasagar Reddy', role: 'Team Lead', designation: 'Senior Developer', imageSrc: '../../../assets/blank-profile.jpg' },   
     { name: 'Shankar kumar Saw', role: 'Team Lead', designation: 'Senior Developer', imageSrc: '../../../assets/Shankar.jpg' },
-    { name: 'Hemanta Ku.', role: 'Team Lead', designation: 'Senior Developer', imageSrc: '../../../assets/blank-profile.jpg' },
+    { name: 'Hemanth V', role: 'Team Lead', designation: 'Senior Developer', imageSrc: '../../../assets/blank-profile.jpg' },
     { name: 'Dayanidhi Tripathi', role: 'Team Lead', designation: 'Senior Developer', imageSrc: '../../../assets/blank-profile.jpg' },
     { name: 'Tavva Tejeswara Rao', role: 'Team Lead', designation: 'Senior Developer', imageSrc: '../../../assets/Teja.jpg' },
     // Developers (10)

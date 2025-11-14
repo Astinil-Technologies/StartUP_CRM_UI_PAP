@@ -25,7 +25,7 @@
             </a>
           </li>
 
-          <li>
+          <li *ngIf="isAdmin()">
              <a routerLink="/layout/timesheet/approve-timesheet" routerLinkActive="active" title="Approve Timesheet">
               <i class="fas fa-check-circle"></i>
             </a>

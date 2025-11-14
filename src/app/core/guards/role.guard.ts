@@ -3,6 +3,7 @@ import { CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot, Router } from
 import { TokenService } from 'src/app/core/services/tokenservice/token.service';
 import { Role } from 'src/app/role/role.enum';
 
+
 @Injectable({
   providedIn: 'root'
 })
@@ -21,7 +22,9 @@ export class RoleGuard implements CanActivate {
 
     if (!userRole || !requiredRoles.includes(userRole)) {
       console.error('RoleGuard: Access denied. User role:', userRole, 'Required roles:', requiredRoles);
-      this.router.navigate(['/access-denied']);
+    
+
+      this.router.navigate(['/layout/timesheet/homepage']); // redirect to home
       return false;
     }
     console.log('RoleGuard: Access granted');
