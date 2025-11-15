@@ -179,7 +179,7 @@ export class TimeLogComponent implements OnInit {
     };
 
     const token = this.authService.getAccessToken();
-    this.http.post('http://localhost:8888/timesheet/log', payload, {
+    this.http.post(`${environment.apiUrl}/timesheet/log', payload, {
       headers: { Authorization: `Bearer ${token}` },
     }).subscribe({
       next: () => {
@@ -228,7 +228,7 @@ export class TimeLogComponent implements OnInit {
     const end = daysArray[daysArray.length - 1].date.toISOString().split('T')[0];
 
     const token = this.authService.getAccessToken();
-    this.http.get<any>(`http://localhost:8888/timesheet/view?startDate=${start}&endDate=${end}`, {
+    this.http.get<any>(`${environment.apiUrl}/timesheet/view?startDate=${start}&endDate=${end}`, {
       headers: { Authorization: `Bearer ${token}` },
     }).subscribe({
       next: (res) => {
