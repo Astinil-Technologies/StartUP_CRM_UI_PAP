@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { AuthService } from 'src/app/core/services/authservice/auth.service';
-
+import { environment } from 'src/environments/environment';
 interface DayEntry {
   name: string;
   date: Date;
@@ -179,7 +179,7 @@ export class TimeLogComponent implements OnInit {
     };
 
     const token = this.authService.getAccessToken();
-    this.http.post(`${environment.apiUrl}/timesheet/log', payload, {
+    this.http.post(`${environment.apiUrl}/timesheet/log`, payload, {
       headers: { Authorization: `Bearer ${token}` },
     }).subscribe({
       next: () => {
