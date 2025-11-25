@@ -134,6 +134,37 @@ export class TokenService {
     }
   }
 
+/** Check if user has Admin role */
+isAdmin(): boolean {
+  const role = this.getUserRole();
+  return role === Role.Admin;
+}
+
+/** Check if user has Manager role */
+isManager(): boolean {
+  const role = this.getUserRole();
+  return role === Role.Manager;
+}
+
+/** Check if user is normal employee */
+isEmployee(): boolean {
+  const role = this.getUserRole();
+  return role === Role.User;
+}
+isorganizer(): boolean {
+  const role = this.getUserRole();
+  return role === Role.Organizer;
+}
+
+/** Decode roles fully */
+getRoles(): string[] {
+  const token = this.getAccessToken();
+  if (!token) return [];
+  const decoded = this.decodeToken(token);
+  return decoded.roles || [decoded.role];
+}
+
+
   /**
    * Maps server role strings to client Role enum.
    * @param serverRole - The role string from the server.
@@ -149,6 +180,8 @@ export class TokenService {
         return Role.User;
       case 'ROLE_MGR':
         return Role.Manager;
+      case 'ROLE_ORG':
+        return Role.Organizer;
       default:
         return null;
     }

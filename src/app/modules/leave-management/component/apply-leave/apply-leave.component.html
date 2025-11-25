@@ -1,40 +1,47 @@
-<div class="apply-leave-container">
-  <div class="leave-form-container">
+<div class="apply-layout">
+
+  <div class="apply-card">
     <h2>Apply for Leave</h2>
-    <form (ngSubmit)="submitLeave()" class="form-content" >
+
+    <form [formGroup]="leaveForm" (ngSubmit)="submitLeave()">
 
       <!-- Leave Type -->
-      <label for="leaveType">Leave Type *</label>
-      <select id="leaveType" formControlName="leaveType">
+      <label>Leave Type *</label>
+      <select formControlName="leaveType">
         <option value="">Select leave type</option>
-        <option *ngFor="let type of leaveTypes" [value]="type">{{ type }}</option>
+        <option *ngFor="let type of leaveTypes" [value]="type">
+          {{ type }}
+        </option>
       </select>
 
-      <!-- Start and End Dates -->
-      <div class="date-container">
+      <!-- Dates -->
+      <div class="date-row">
         <div>
-          <label for="startDate">Start Date *</label>
-          <input type="date" id="startDate" formControlName="startDate">
+          <label>Start Date *</label>
+          <input type="date" formControlName="startDate">
         </div>
+
         <div>
-          <label for="endDate">End Date *</label>
-          <input type="date" id="endDate" formControlName="endDate">
+          <label>End Date *</label>
+          <input type="date" formControlName="endDate">
         </div>
       </div>
 
       <!-- Reason -->
-      <label for="reason">Reason for Leave *</label>
-      <textarea id="reason" formControlName="reason" placeholder="Please provide a reason for your leave request..."></textarea>
+      <label>Reason for Leave *</label>
+      <textarea formControlName="reason"></textarea>
 
-      <!-- Attachment -->
-      <label for="attachment">Attachment (Optional)</label>
-      <input type="file" id="attachment" (change)="onFileChange($event)">
+      <!-- File -->
+      <label>Attachment (Optional)</label>
+      <input type="file" (change)="onFileChange($event)">
 
       <!-- Buttons -->
-      <div class="button-container">
-        <button type="submit" [disabled]="leaveForm.invalid" class="submit-btn">Submit Request</button>
-        <button type="button" (click)="cancelLeave()" class="cancel-btn">Cancel</button>
+      <div class="btn-row">
+        <button class="submit" [disabled]="leaveForm.invalid">Submit Request</button>
+        <button type="button" class="cancel" (click)="cancelLeave()">Cancel</button>
       </div>
+
     </form>
   </div>
+
 </div>

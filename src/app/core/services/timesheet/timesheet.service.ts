@@ -10,7 +10,7 @@ import { environment } from 'src/environments/environment';
 })
 export class TimesheetService {
   private http = inject(HttpClient);
-  private baseUrl = (environment.baseUrl ?? 'http://localhost:8888') + '/timesheet';
+ private baseUrl = (environment.baseUrl ?? 'http://localhost:8888') + '/timesheet';
 
   private authHeaders(token?: string | null) {
     return token ? { headers: { Authorization: `Bearer ${token}` } as any } : {};
@@ -24,9 +24,10 @@ export class TimesheetService {
 
   /** GET /timesheet?startDate=YYYY-MM-DD&endDate=YYYY-MM-DD */
   getTimesheetEntries(startDate: string, endDate: string, token?: string | null): Observable<any> {
-    const url = `${this.baseUrl}`;
-    const opts: any = { params: { startDate, endDate }, ...this.authHeaders(token) };
-    return this.http.get<any>(url, opts);
+    return this.http.get<any>(`${this.baseUrl}/view`, {
+      params: { startDate, endDate },
+      ...this.authHeaders(token)
+    });
   }
 
   /** GET /timesheet/history/all */
