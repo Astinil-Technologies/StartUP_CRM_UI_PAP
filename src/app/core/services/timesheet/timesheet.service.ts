@@ -24,9 +24,10 @@ export class TimesheetService {
 
   /** GET /timesheet?startDate=YYYY-MM-DD&endDate=YYYY-MM-DD */
   getTimesheetEntries(startDate: string, endDate: string, token?: string | null): Observable<any> {
-    const url = `${this.baseUrl}`;
-    const opts: any = { params: { startDate, endDate }, ...this.authHeaders(token) };
-    return this.http.get<any>(url, opts);
+    return this.http.get<any>(`${this.baseUrl}/view`, {
+      params: { startDate, endDate },
+      ...this.authHeaders(token)
+    });
   }
 
   /** GET /timesheet/history/all */
