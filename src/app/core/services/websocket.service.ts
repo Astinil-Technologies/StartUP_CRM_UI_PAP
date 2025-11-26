@@ -19,9 +19,7 @@ export class WebSocketService {
 
     this.disconnect();
     this.currentMeetingId = meetingId;
-
-    // const wsUrl = environment.baseUrl.replace('http', 'ws') + '/ws';
-    // this.socket = new WebSocket(wsUrl);
+    
     const token = localStorage.getItem('token');
     const wsUrl =
       environment.baseUrl.replace('http', 'ws') + `/ws?token=${token}`;
