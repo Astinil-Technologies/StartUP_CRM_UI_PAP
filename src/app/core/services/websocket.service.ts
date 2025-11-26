@@ -20,7 +20,11 @@ export class WebSocketService {
     this.disconnect();
     this.currentMeetingId = meetingId;
 
-    const wsUrl = environment.baseUrl.replace('http', 'ws') + '/ws';
+    // const wsUrl = environment.baseUrl.replace('http', 'ws') + '/ws';
+    // this.socket = new WebSocket(wsUrl);
+    const token = localStorage.getItem('token');
+    const wsUrl =
+      environment.baseUrl.replace('http', 'ws') + `/ws?token=${token}`;
     this.socket = new WebSocket(wsUrl);
 
     this.socket.onopen = () => {
@@ -77,7 +81,7 @@ export class WebSocketService {
       const message = {
         command: 'SEND',
         destination: destination,
-        body: JSON.stringify(body)
+        body: JSON.stringify(body),
       };
       this.socket.send(JSON.stringify(message));
     } else {

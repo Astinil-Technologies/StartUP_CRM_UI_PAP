@@ -11,7 +11,8 @@ import {
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Client, IMessage } from '@stomp/stompjs';
+import { WebSocketService } from 'src/app/core/services/websocket.service';
+import { Subscription } from 'rxjs';
 import { UserDataService } from 'src/app/core/services/user-data.service';
 
 @Component({
@@ -25,14 +26,15 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
   @Input() roomId!: string;
   @Input() username: string = 'Guest';
   @Input() messages: { sender: string; content: string; timestamp?: Date }[] = [];
-  @Output() messageSent = new EventEmitter<string>();
+  @Output() messageSent = new EventEmitter<any>();
 
   @ViewChild('chatMessagesContainer') private chatContainer!: ElementRef;
 
-  private stompClient!: Client;
+  // Use centralized WebSocket service instead of using a separate STOMP client
   newMessage: string = '';
+  private chatSubscription?: Subscription;
 
-  constructor(private userDataService: UserDataService) {}
+  constructor(private userDataService: UserDataService, private websocketService: WebSocketService) {}
 
   ngOnInit(): void {
     const userData = this.userDataService.getCurrentUserData();
@@ -45,41 +47,31 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
       this.messages = JSON.parse(storedMessages);
     }
 
-    this.stompClient = new Client({
-      brokerURL: `ws://localhost:8888/ws`,
-      reconnectDelay: 5000,
-      debug: (str) => console.log('[STOMP DEBUG]:', str),
-      onConnect: () => {
-        console.log('✅ STOMP connected for chat');
-
-        // Subscribe to meeting chat topic
-        this.stompClient.subscribe(`/topic/meeting/${this.roomId}/chat`, (message: IMessage) => {
-          try {
-            const body = JSON.parse(message.body);
-            if (body && body.sender && body.message) {
-              const msg = {
-                sender: body.sender,
-                content: body.message,
-                timestamp: new Date(body.timestamp || Date.now())
-              };
-              this.messages.push(msg);
-
-              localStorage.setItem(`chat_${this.roomId}`, JSON.stringify(this.messages));
-              this.scrollToBottom();
-            } else {
-              console.warn('Malformed chat message received:', body);
-            }
-          } catch (err) {
-            console.error('Failed to parse message body', err);
+    // Connect via WebSocketService and listen for chat messages
+    this.websocketService.connect(this.roomId);
+    this.chatSubscription = this.websocketService.onChatMessage().subscribe((msg: any) => {
+      try {
+        const body = typeof msg === 'string' ? JSON.parse(msg) : msg;
+        if (body && body.sender && body.message) {
+          const chatMsg = {
+            sender: body.sender,
+            content: body.message,
+            timestamp: new Date(body.timestamp || Date.now())
+          };
+          // Avoid duplicates if message already present (optimistic local echo)
+          const duplicate = this.messages.some(m => m.sender === chatMsg.sender && m.content === chatMsg.content && Math.abs(new Date(m.timestamp || 0).getTime() - chatMsg.timestamp.getTime()) < 2000);
+          if (!duplicate) {
+            this.messages.push(chatMsg);
           }
-        });
-      },
-      onStompError: (frame) => {
-        console.error('STOMP error', frame);
+          localStorage.setItem(`chat_${this.roomId}`, JSON.stringify(this.messages));
+          this.scrollToBottom();
+        } else {
+          console.warn('Malformed chat message received:', body);
+        }
+      } catch (err) {
+        console.error('Failed to parse chat message', err);
       }
     });
-
-    this.stompClient.activate();
   }
 
   ngAfterViewInit(): void {
@@ -96,13 +88,29 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
       timestamp: new Date().toISOString()
     };
 
-    this.stompClient.publish({
-      destination: `/app/meeting/${this.roomId}/chat`,
-      body: JSON.stringify(msg)
-    });
+    // Optimistically add message to UI to give instant feedback, then send
+    const optimistic = { sender: msg.sender, content: msg.message, timestamp: new Date(msg.timestamp) };
+    this.messages.push(optimistic);
+    localStorage.setItem(`chat_${this.roomId}`, JSON.stringify(this.messages));
+    this.scrollToBottom();
+
+    if (!this.websocketService.isConnected()) {
+      console.warn('WebSocket not connected. Attempting to reconnect and send.');
+      this.websocketService.connect(this.roomId);
+      // Try to send after a short delay to let the connection establish
+      setTimeout(() => {
+        console.log('[Chat] Sending message after reconnect attempt', msg);
+        this.websocketService.sendChatMessage(this.roomId, msg);
+      }, 500);
+    } else {
+      console.log('[Chat] Sending message', msg);
+      this.websocketService.sendChatMessage(this.roomId, msg);
+    }
+
+    // Emit event for parent (optional)
+    this.messageSent.emit({ ...msg });
 
     this.newMessage = '';
-    this.scrollToBottom();
   }
 
   scrollToBottom(): void {
@@ -118,8 +126,11 @@ export class ChatComponent implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngOnDestroy(): void {
-    if (this.stompClient && this.stompClient.active) {
-      this.stompClient.deactivate();
+    // Don't disconnect the shared WebSocket from here; the meeting-level
+    // component handles connection lifecycle so it stays consistent.
+
+    if (this.chatSubscription) {
+      this.chatSubscription.unsubscribe();
     }
 
     localStorage.setItem(`chat_${this.roomId}`, JSON.stringify(this.messages));

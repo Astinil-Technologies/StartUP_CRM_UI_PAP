@@ -3,8 +3,8 @@ import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MeetingService } from 'src/app/core/services/meeting.service';
-import { Client, IMessage } from '@stomp/stompjs';
 import { Subscription } from 'rxjs';
+import { WebSocketService } from 'src/app/core/services/websocket.service';
 
 export interface Participant {
   userId: number;
@@ -29,15 +29,18 @@ export class ParticipantsComponent implements OnInit, OnDestroy {
 
   meetingId: string = '';
   participants: Participant[] = [];
-  private stompClient!: Client;
   private subscription?: Subscription;
+  private wsSubscription?: Subscription;
 
-  constructor(private meetingService: MeetingService) {}
+  constructor(private meetingService: MeetingService, private websocketService: WebSocketService) {}
 
   ngOnInit(): void {
     this.meetingId = this.data?.meetingId || '';
     this.loadParticipants();
-    this.setupWebSocketConnection();
+    this.websocketService.connect(this.meetingId);
+    this.wsSubscription = this.websocketService.onParticipantUpdate().subscribe((update: any) => {
+      this.handleParticipantUpdate(update);
+    });
   }
 
   private loadParticipants(): void {
@@ -49,29 +52,7 @@ export class ParticipantsComponent implements OnInit, OnDestroy {
     });
   }
 
-  private setupWebSocketConnection(): void {
-    this.stompClient = new Client({
-      brokerURL: `ws://localhost:8888/ws`,
-      reconnectDelay: 5000,
-      debug: (str) => console.log('[PARTICIPANTS STOMP]:', str),
-      onConnect: () => {
-        console.log('✅ STOMP connected for participants');
-        this.stompClient.subscribe(`/topic/meeting/${this.meetingId}/participants`, (message: IMessage) => {
-          try {
-            const update = JSON.parse(message.body);
-            this.handleParticipantUpdate(update);
-          } catch (err) {
-            console.error('Failed to parse participant update', err);
-          }
-        });
-      },
-      onStompError: (frame) => {
-        console.error('STOMP error', frame);
-      }
-    });
-
-    this.stompClient.activate();
-  }
+  // WebSocket updated subscription handled through WebSocketService
 
   private handleParticipantUpdate(update: any): void {
     const userId = update.userId;
@@ -111,8 +92,8 @@ export class ParticipantsComponent implements OnInit, OnDestroy {
 
   
   ngOnDestroy(): void {
-    if (this.stompClient && this.stompClient.active) {
-      this.stompClient.deactivate();
+    if (this.wsSubscription) {
+      this.wsSubscription.unsubscribe();
     }
     if (this.subscription) {
       this.subscription.unsubscribe();

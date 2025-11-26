@@ -28,7 +28,7 @@
     "@fullcalendar/core": "^6.1.18",
     "@fullcalendar/daygrid": "^6.1.18",
     "@fullcalendar/interaction": "^6.1.18",
-    "@stomp/stompjs": "^7.1.1",
+    "@stomp/stompjs": "^7.2.1",
     "@tailwindcss/postcss": "^4.1.11",
     "bootstrap": "^5.3.3",
     "buffer": "^6.0.3",

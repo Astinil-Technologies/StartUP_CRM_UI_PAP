@@ -31,7 +31,14 @@ export class WebRTCService {
   // ✅ Initialize media devices
   async initializeMedia(): Promise<MediaStream> {
     try {
-      this.localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+      this.localStream = await navigator.mediaDevices.getUserMedia({
+        video: true,
+        audio: {
+          echoCancellation: true,
+          noiseSuppression: true,
+          autoGainControl: true
+        }
+      });
       this.localStream.getTracks().forEach(track => this.peerConnection.addTrack(track, this.localStream));
       return this.localStream;
     } catch (error) {
@@ -58,7 +65,13 @@ export class WebRTCService {
   // ✅ Receive and Add Remote Stream
   onTrack(callback: (stream: MediaStream) => void) {
     this.peerConnection.ontrack = (event) => {
-      event.streams[0].getTracks().forEach(track => this.remoteStream.addTrack(track));
+      event.streams[0].getTracks().forEach(track => {
+        // Avoid duplicates and ensure we do not re-add existing tracks
+        const alreadyAdded = this.remoteStream.getTracks().some(t => t.id === track.id);
+        if (!alreadyAdded) {
+          this.remoteStream.addTrack(track);
+        }
+      });
       callback(this.remoteStream);
     };
   }

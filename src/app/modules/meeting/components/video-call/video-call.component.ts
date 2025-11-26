@@ -1,4 +1,4 @@
-import {Component,OnInit,ViewChild,ElementRef,ViewEncapsulation,HostListener } from '@angular/core';
+import {Component,OnInit,ViewChild,ElementRef,ViewEncapsulation,HostListener,OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatIconModule } from '@angular/material/icon';
 import { MatDialog } from '@angular/material/dialog';
@@ -7,6 +7,7 @@ import { ChatComponent } from '../chat/chat.component';
 import { ParticipantsComponent } from '../participants/participants.component';
 import { UserDataService } from 'src/app/core/services/user-data.service';
 import { WebSocketService } from 'src/app/core/services/websocket.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-video-call',
@@ -39,6 +40,8 @@ export class VideoCallComponent implements OnInit {
 
   // ✅ Floating Reactions
   floatingEmojis: { id: number; emoji: string }[] = [];
+  private participantSubscription?: Subscription;
+  private signalSubscription?: Subscription;
 
   @ViewChild('videoElement', { static: true })
   videoElementRef!: ElementRef<HTMLVideoElement>;
@@ -66,12 +69,12 @@ export class VideoCallComponent implements OnInit {
     this.websocketService.connect(this.meetingId);
 
     // Listen to participant updates
-    this.websocketService.onParticipantUpdate().subscribe((update: any) => {
+    this.participantSubscription = this.websocketService.onParticipantUpdate().subscribe((update: any) => {
       console.log('Participant update:', update);
     });
 
     // Listen to incoming WebRTC signals
-    this.websocketService.onSignal().subscribe((signal: any) => {
+    this.signalSubscription = this.websocketService.onSignal().subscribe((signal: any) => {
       this.handleIncomingSignal(signal);
     });
 
@@ -86,7 +89,11 @@ export class VideoCallComponent implements OnInit {
 
       this.mediaStream = await navigator.mediaDevices.getUserMedia({
         video: true,
-        audio: true
+        audio: {
+          echoCancellation: true,
+          noiseSuppression: true,
+          autoGainControl: true
+        }
       });
 
       this.mediaStream.getAudioTracks().forEach(track => {
@@ -94,8 +101,11 @@ export class VideoCallComponent implements OnInit {
       });
 
       const video = this.videoElementRef.nativeElement;
+      // Ensure local preview is muted so you won't hear your mic locally
+      // (the template already sets 'muted', but we set it here for extra safety)
+      video.muted = true;
       video.srcObject = this.mediaStream;
-      video.play();
+      await video.play();
     } catch (error) {
       console.error('Camera access failed', error);
       alert('Unable to access camera.');
@@ -122,19 +132,17 @@ export class VideoCallComponent implements OnInit {
   // ✅ Toggle video
   async toggleVideo() {
     this.isVideoStopped = !this.isVideoStopped;
+  const videoTrack = this.mediaStream.getVideoTracks()[0];
 
-    if (this.isVideoStopped) {
-      this.mediaStream?.getVideoTracks().forEach(track => track.stop());
-      this.videoElementRef.nativeElement.srcObject = null;
-    } else {
-      const videoStream = await navigator.mediaDevices.getUserMedia({
-        video: true
-      });
-      const videoTrack = videoStream.getVideoTracks()[0];
-      this.mediaStream.addTrack(videoTrack);
-      this.videoElementRef.nativeElement.srcObject = this.mediaStream;
-      this.videoElementRef.nativeElement.play();
-    }
+  if (this.isVideoStopped) {
+    videoTrack.enabled = false;
+  } else {
+    videoTrack.enabled = true;
+  }
+
+  this.videoElementRef.nativeElement.srcObject = this.mediaStream;
+  this.videoElementRef.nativeElement.play();
+
 
     const action = this.isVideoStopped ? 'TURN_OFF_VIDEO' : 'TURN_ON_VIDEO';
     this.websocketService.sendParticipantAction(this.meetingId, {
@@ -199,6 +207,8 @@ export class VideoCallComponent implements OnInit {
       });
 
       const videoElem = this.screenVideoElementRef.nativeElement;
+      // Keep local screen preview muted to avoid hearing shared audio locally
+      videoElem.muted = true;
       videoElem.srcObject = this.screenStream;
       this.screenSharing = true;
 
@@ -243,6 +253,18 @@ export class VideoCallComponent implements OnInit {
   // ✅ Message Handler from Chat
   handleMessageSent(message: any) {
     console.log('Message sent:', message);
+    // Keep parent chat messages in sync whenever a message is sent from the chat component
+    try {
+      const m = typeof message === 'string' ? JSON.parse(message) : message;
+      const chatMsg = { sender: m.sender, content: m.message, timestamp: new Date(m.timestamp || Date.now()) };
+      const duplicate = this.chatMessages.some(c => c.sender === chatMsg.sender && c.content === chatMsg.content && Math.abs(new Date(c.timestamp || 0).getTime() - chatMsg.timestamp.getTime()) < 2000);
+      if (!duplicate) {
+        this.chatMessages.push(chatMsg);
+      }
+      localStorage.setItem(`chat_${this.meetingId}`, JSON.stringify(this.chatMessages));
+    } catch (err) {
+      console.warn('Failed to normalize message for parent chat display', err);
+    }
   }
 
 @HostListener('window:beforeunload')
@@ -253,6 +275,12 @@ beforeUnloadHandler() {
   ngOnDestroy(): void {
     if (this.mediaStream) {
       this.mediaStream.getTracks().forEach(track => track.stop());
+    }
+    if (this.participantSubscription) {
+      this.participantSubscription.unsubscribe();
+    }
+    if (this.signalSubscription) {
+      this.signalSubscription.unsubscribe();
     }
   }
 }
