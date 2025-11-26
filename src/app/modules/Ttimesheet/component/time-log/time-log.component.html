@@ -2,8 +2,7 @@
   <div class="time-log-box">
     <h2>Time Log</h2>
 
-    <div class="dropdown-row">
-
+     <div class="dropdown-row">
       <div class="dropdown-group">
         <label for="project">Project</label>
         <select id="project" [(ngModel)]="selectedProject">
@@ -11,6 +10,7 @@
           <option *ngFor="let project of projects">{{ project }}</option>
         </select>
       </div>
+
       <div class="dropdown-group">
         <label for="job">Job</label>
         <select id="job" [(ngModel)]="selectedJob">
@@ -18,6 +18,7 @@
           <option *ngFor="let job of jobs">{{ job }}</option>
         </select>
       </div>
+
       <div class="dropdown-group">
         <label for="workItem">Work Item</label>
         <select id="workItem" [(ngModel)]="selectedWorkItem">
@@ -45,7 +46,7 @@
           {{ day.name }}<br />
           <small>{{ day.date | date: 'MMM d' }}</small>
         </label>
-        <input type="number" min="0" max="24" [(ngModel)]="day.hours" [disabled]="!day.editable"/>
+        <input type="number" min="0" max="24" [(ngModel)]="day.hours" [disabled]="!day.editable"placeholder="Hr"/>
         <div *ngIf="!day.editable" class="locked-indicator"></div>
       </div>
     </div>
@@ -57,7 +58,14 @@
           {{ day.date | date: 'EEE' }}<br />
           <small>{{ day.date | date: 'MMM d' }}</small>
         </label>
-        <input type="number" min="0" max="24" [(ngModel)]="day.hours" [disabled]="!day.editable"/>
+        <input
+          type="number"
+          min="0"
+          max="24"
+          [(ngModel)]="day.hours"
+          [disabled]="!day.editable"
+          placeholder="Hr"
+        />
         <div *ngIf="!day.editable" class="locked-indicator"></div>
       </div>
     </div>
@@ -66,9 +74,25 @@
       <div class="total-hours">
         Total Hours: <strong>{{ getTotalHours() }} hours</strong>
       </div>
+
+      <!-- Daily summary 
+      <div class="daily-summary" *ngIf="getDailySummary().length">
+        <div *ngFor="let d of getDailySummary()">
+          <small>{{ d.date | date: 'MMM d' }}: <strong>{{ d.hours }} h</strong></small>
+        </div>
+      </div>
+-->
       <div class="buttons">
         <button class="btn draft" (click)="saveDraft()">Save Draft</button>
-        <button class="btn submit" (click)="submit()">Submit for Approval</button>
+
+        <!-- Submit only visible to employees (not manager/admin) -->
+        <button
+          class="btn submit"
+          *ngIf="!isManager && !isAdmin"
+          (click)="submit()"
+        >
+          Submit for Approval
+        </button>
       </div>
     </div>
   </div>

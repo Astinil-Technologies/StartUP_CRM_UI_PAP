@@ -12,6 +12,22 @@ import { jwtDecode } from 'jwt-decode';
   providedIn: 'root',
 })
 export class AuthService {
+  getUsername() {
+    throw new Error('Method not implemented.');
+  }
+  getUserId(): string | null {
+  const token = this.tokenService.getAccessToken();
+  if (!token) return null;
+  const decoded: any = jwtDecode(token);
+  return decoded.id;
+}
+
+getUserRole(): string | null {
+  const token = this.tokenService.getAccessToken();
+  if (!token) return null;
+  const decoded: any = jwtDecode(token);
+  return decoded.role || (decoded.roles?.length ? decoded.roles[0] : null);
+}
   private apiUrl = environment.apiUrl;
   private courseUrl = environment.courseUrl;
 
