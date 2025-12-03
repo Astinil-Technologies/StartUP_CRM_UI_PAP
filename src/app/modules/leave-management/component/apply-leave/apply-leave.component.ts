@@ -26,6 +26,7 @@ export class ApplyLeaveComponent implements OnInit {
   'MATERNITY',
   'PATERNITY'
 ];
+ leaveDurationTypes: string[] = ['HALF_TIME', 'FULL_TIME'];
 
   constructor(private fb: FormBuilder, private leaveService: LeaveService) {}
 
@@ -33,6 +34,7 @@ export class ApplyLeaveComponent implements OnInit {
     this.leaveForm = this.fb.group({
       leaveType: ['', Validators.required],
       startDate: ['', Validators.required],
+      leaveDuration: ['', Validators.required],
       endDate: ['', Validators.required],
       reason: ['', Validators.required],
       attachment: [null]
@@ -55,6 +57,7 @@ export class ApplyLeaveComponent implements OnInit {
   const payload = {
     leaveType: this.leaveForm.value.leaveType,
     startDate: this.leaveForm.value.startDate,
+    isHalfDay: this.leaveForm.value.leaveDuration === 'HALF_TIME',
     endDate: this.leaveForm.value.endDate,
     reason: this.leaveForm.value.reason
   };
