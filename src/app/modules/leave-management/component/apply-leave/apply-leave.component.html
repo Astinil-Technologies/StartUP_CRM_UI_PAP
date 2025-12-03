@@ -10,6 +10,15 @@
         <option *ngFor="let type of leaveTypes" [value]="type">{{ type }}</option>
       </select>
 
+      <!-- Leave Duration (NEW) -->
+<label for="leaveDuration">Leave Duration *</label>
+<select id="leaveDuration" formControlName="leaveDuration">
+  <option value="">Select leave duration</option>
+  <option value="HALF_TIME">Half Time</option>
+  <option value="FULL_TIME">Full Time</option>
+</select>
+
+
       <!-- Start and End Dates -->
       <div class="date-container">
         <div>
