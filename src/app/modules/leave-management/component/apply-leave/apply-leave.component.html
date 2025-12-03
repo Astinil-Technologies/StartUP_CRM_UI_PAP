@@ -1,7 +1,7 @@
 <div class="apply-leave-container">
   <div class="leave-form-container">
     <h2>Apply for Leave</h2>
-    <form (ngSubmit)="submitLeave()" class="form-content" >
+    <form [formGroup]="leaveForm" (ngSubmit)="submitLeave()" class="form-content" >
 
       <!-- Leave Type -->
       <label for="leaveType">Leave Type *</label>
