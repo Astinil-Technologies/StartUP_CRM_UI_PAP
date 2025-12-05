@@ -93,10 +93,17 @@
       </li>
     </ul>
 
-    <form class="form-inline mx-auto search-bar">
-      <input class="form-control" type="search" placeholder="Search for anything" />
+        <form class="form-inline mx-auto search-bar" (submit)="onSearch()">
+      <input
+        class="form-control"
+        type="search"
+        placeholder="Search for anything"
+        [(ngModel)]="searchText"
+        name="search"
+        (input)="onSearch()"
+      />
     </form>
-
+    <nav>
     <ul class="navbar-nav ml-auto align-items-center">
       <li class="nav-item">
         <div *ngIf="firstNameInitial && lastNameInitial" class="d-flex align-items-center user-profile-section">
@@ -113,5 +120,5 @@
         </div>
       </li>
     </ul>
-  </div>
+  
 </nav>

@@ -18,7 +18,7 @@
 //   selector: 'app-navbar',
 //   standalone: true,
 //   imports: [MatIconModule, RouterModule, CommonModule],
-//   templateUrl: './navbar.component.html',
+//   templateUrl: './tml',
 //   styleUrls: ['./navbar.component.scss'],
 // })
 // export class NavbarComponent implements OnInit, OnDestroy {
@@ -145,16 +145,18 @@ import { MatIconModule } from '@angular/material/icon';
 import { RouterModule, Router } from '@angular/router'; // Import Router
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { environment } from 'src/environments/environment';
 import { Subscription } from 'rxjs';
 import { UserDataService } from 'src/app/core/services/user-data.service';
 import { TokenService } from 'src/app/core/services/tokenservice/token.service'; // Import TokenService
 import { MatSnackBar } from '@angular/material/snack-bar'; // Import MatSnackBar
 
+
 @Component({
   selector: 'app-navbar',
   standalone: true,
-  imports: [MatIconModule, RouterModule, CommonModule], // Ensure RouterModule and CommonModule are here
+  imports: [MatIconModule, RouterModule, CommonModule, FormsModule], // Ensure RouterModule and CommonModule are here
   templateUrl: './navbar.component.html',
   styleUrls: ['./navbar.component.scss'],
 })
@@ -164,6 +166,9 @@ export class NavbarComponent implements OnInit, OnDestroy {
   userId: string | null = null;
   status: string = 'ONLINE';
   navbarVisible: boolean = false;
+  searchText: string = '';
+  overlayVisible = false;
+  searchResults: any[] = [];
 
   private userDataSubscription!: Subscription;
   private statusSubscription!: Subscription;
@@ -172,6 +177,8 @@ export class NavbarComponent implements OnInit, OnDestroy {
 
   @Output() profileClicked = new EventEmitter<void>();
   isProfileBoxVisible: boolean = false; // This seems related to a profile dropdown, not directly logout
+
+  @Output() searchEvent = new EventEmitter<any>();
 
   constructor(
     private authService: AuthService,
@@ -289,6 +296,12 @@ export class NavbarComponent implements OnInit, OnDestroy {
     this.firstNameInitial = first ? first.charAt(0).toUpperCase() : null;
     this.lastNameInitial = last ? last.charAt(0).toUpperCase() : null;
   }
+
+   onSearch(){
+    
+   }
+
+
 
   /**
    * Handles the logout functionality.

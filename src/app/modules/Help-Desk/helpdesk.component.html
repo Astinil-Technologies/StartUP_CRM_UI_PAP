@@ -1,163 +1,182 @@
-
-
 <div class="container">
 
-  <!-- LEFT PANEL: Buttons + Form + Success Msg -->
+  <!-- 🔹 LEFT PANEL: Action Buttons -->
   <div class="left-panel">
+
     <h2 class="title">Help-Desk Actions</h2>
 
+    <!-- Action Buttons -->
     <div class="button-row">
-      <div class="button-row">
-  <button class="btn btn-create" (click)="toggleCreateTicket()">Create Ticket</button>
-  <button
-  class="btn btn-get"
-  [class.btn-active]="showTickets"
-  (click)="getAllTickets()"
->
-  Get Tickets
-</button>
+      <button class="btn btn-create" (click)="toggleCreateTicket()">Create Ticket</button>
+      <button class="btn btn-get" [class.btn-active]="showTickets" (click)="getAllTickets()">Get Tickets</button>
+    </div>
 
+  </div>
+
+<!-- 🔹 RIGHT PANEL: Tickets List + Create Form -->
+<div class="right-panel">
+
+  <!-- Welcome Message -->
+  <div *ngIf="!showTickets && !showForm && !successBlast" class="welcome-message">
+    <h2>Welcome to StartAhb Helpdesk 👋</h2>
+    <p class="subtitle">Your one-stop destination for support</p>
+  </div>
+
+  <!-- Create Ticket Form -->
+  <form #ticketForm="ngForm" *ngIf="showForm" (ngSubmit)="submitTicket(ticketForm)" class="form-container" novalidate>
+    
+    <!-- Close Button -->
+    <div class="back-button-row">
+      <button type="button" class="back-icon" (click)="showForm = false">Close</button>
+    </div>
+
+    <h3 class="form-title">Raise a Ticket</h3>
+
+    <!-- Title -->
+    <div class="form-group">
+      <label>Title:<span class="required">*</span></label>
+      <input type="text" name="title" [(ngModel)]="ticket.title" class="input-field" required
+             [class.invalid]="ticketForm.submitted && !ticket.title" />
+      <div *ngIf="ticketForm.submitted && !ticket.title" class="text-danger">Title is required.</div>
+    </div>
+
+    <!-- Subject -->
+    <div class="form-group">
+      <label>Subject:<span class="required">*</span></label>
+      <select name="subject" [(ngModel)]="ticket.subject" class="input-field" (change)="onSubjectChange()" required
+              [class.invalid]="ticketForm.submitted && !ticket.subject">
+        <option value="" disabled>Select Subject</option>
+        <option value="Code Issue">Code Issue</option>
+        <option value="Hardware Issue">Hardware Issue</option>
+        <option value="Software Issue">Software Issue</option>
+        <option value="Timesheet Issue">Timesheet Issue</option>
+        <option value="Network Issue">Network Issue</option>
+        <option value="Other">Other</option>
+      </select>
+      <div *ngIf="ticketForm.submitted && !ticket.subject" class="text-danger">Subject is required.</div>
+    </div>
+
+    <!--  Added Priority dropdown -->
+<div class="form-group">
+  <label for="priority"><strong>Priority:</strong></label>
+  <select
+    id="priority"
+    name="priority"
+    [(ngModel)]="ticket.priority"
+    required
+  >
+    <option value="" disabled selected>Select priority</option>
+    <option value="High">High</option>
+    <option value="Medium">Medium</option>
+    <option value="Low">Low</option>
+  </select>
 </div>
 
 
+    <!-- Description -->
+    <div class="form-group">
+      <label>Description:<span class="required">*</span></label>
+      <textarea name="description" [(ngModel)]="ticket.description" class="input-field" rows="4" required
+                [class.invalid]="ticketForm.submitted && !ticket.description"></textarea>
+      <div *ngIf="ticketForm.submitted && !ticket.description" class="text-danger">Description is required.</div>
     </div>
 
-    <!-- Create Ticket Form - show only if showForm -->
-    <form
-      #ticketForm="ngForm"
-      *ngIf="showForm"
-      (ngSubmit)="submitTicket(ticketForm)"
-      class="form-container"
-      novalidate
-    >
-      <h3 class="form-title">Raise a Ticket</h3>
-
-      <div class="form-group">
-       <label>Title:<span class="required">*</span></label>
-
-        <input
-          type="text"
-          name="title"
-          [(ngModel)]="ticket.title"
-          class="input-field"
-          required
-          [class.invalid]="ticketForm.submitted && !ticket.title"
-        />
-        <div *ngIf="ticketForm.submitted && !ticket.title" class="text-danger">
-          Title is required.
-        </div>
-      </div>
-
-      <div class="form-group">
-       <label>Subject:<span class="required">*</span></label>
-
-        <select
-          name="subject"
-          [(ngModel)]="ticket.subject"
-          class="input-field"
-          (change)="onSubjectChange()"
-          required
-          [class.invalid]="ticketForm.submitted && !ticket.subject"
-        >
-          <option value="" disabled selected>Select Subject</option>
-          <option value="Code Issue">Code Issue</option>
-          <option value="Hardware Issue">Hardware Issue</option>
-          <option value="Software Issue">Software Issue</option>
-          <option value="Timesheet Issue">Timesheet Issue</option>
-          <option value="Network Issue">Network Issue</option>
-          <option value="Other">Other</option>
-        </select>
-        <div *ngIf="ticketForm.submitted && !ticket.subject" class="text-danger">
-          Subject is required.
-        </div>
-      </div>
-
-      <div class="form-group">
-        <label>Description:<span class="required">*</span></label>
-
-        <textarea
-          name="description"
-          [(ngModel)]="ticket.description"
-          class="input-field"
-          rows="4"
-          required
-          [class.invalid]="ticketForm.submitted && !ticket.description"
-        ></textarea>
-        <div *ngIf="ticketForm.submitted && !ticket.description" class="text-danger">
-          Description is required.
-        </div>
-      </div>
-
-      <!-- Image Upload -->
-      <div class="form-group">
-        <label>Image Upload (max 5MB):</label>
-        <input type="file" accept="image/*" (change)="onImageChange($event)" />
-        <div *ngIf="imageError" class="text-danger">{{ imageError }}</div>
-      </div>
-
-      <!-- Video Upload -->
-      <div class="form-group">
-        <label>Video Upload (max 10MB):</label>
-        <input type="file" accept="video/*" (change)="onVideoChange($event)" />
-        <div *ngIf="videoError" class="text-danger">{{ videoError }}</div>
-      </div>
-
-      <!-- Other File Upload -->
-      <div class="form-group">
-        <label>File Upload (max 5MB):</label>
-        <input type="file" (change)="onFileChange($event)" />
-        <div *ngIf="fileError" class="text-danger">{{ fileError }}</div>
-      </div>
-
-      <div class="form-actions">
-        <button type="submit" class="btn btn-submit">Submit</button>
-        <button
-          type="button"
-          class="btn btn-cancel"
-          (click)="resetForm(ticketForm, true)"
-        >
-          Cancel
-        </button>
-      </div>
-    </form>
-
-    <!-- Success message below form -->
-    <div *ngIf="successBlast" class="confirmation-box">
-      <h3>🎉 Ticket Raised Successfully!</h3>
-      <p><strong>👤 Username:</strong> {{ ticketResponse.username }}</p>
-      <p><strong>🎫 Ticket ID:</strong> {{ ticketResponse.ticketId }}</p>
-      <p><strong>📌 Status:</strong> {{ ticketResponse.status }}</p>
-      <p><strong>📅 Date:</strong> {{ ticketResponse.fullDateTime | date: 'dd/MM/yyyy' }}</p>
-      <p><strong>⏰ Time:</strong> {{ ticketResponse.fullDateTime | date: 'HH:mm:ss' }}</p>
-      <p><strong>📝 Subject:</strong> {{ ticketResponse.description }}</p>
+    <!-- File Uploads -->
+    <div class="form-group">
+      <label>Image Upload (max 5MB):</label>
+      <input type="file" accept="image/*" (change)="onImageChange($event)" />
+      <div *ngIf="imageError" class="text-danger">{{ imageError }}</div>
     </div>
-  </div>
-  <!-- RIGHT PANEL -->
-<div class="right-panel">
 
-  <!-- Welcome message (default) -->
-  <div *ngIf="!showTickets && !showForm" class="welcome-message">
-    <h2>
-    Welcome to StartAhb Helpdesk👋
-  </h2>
-  <p class="subtitle">Your one-stop destination for support</p>
+    <div class="form-group">
+      <label>Video Upload (max 10MB):</label>
+      <input type="file" accept="video/*" (change)="onVideoChange($event)" />
+      <div *ngIf="videoError" class="text-danger">{{ videoError }}</div>
+    </div>
+
+    <div class="form-group">
+      <label>Other File Upload (max 5MB):</label>
+      <input type="file" (change)="onFileChange($event)" />
+      <div *ngIf="fileError" class="text-danger">{{ fileError }}</div>
+    </div>
+
+    <!-- Form Buttons -->
+    <div class="form-actions">
+      <button type="submit" class="btn btn-submit">Submit</button>
+      <button type="button" class="btn btn-cancel" (click)="resetForm(ticketForm, true)">Cancel</button>
+    </div>
+
+  </form>
+
+  <!-- Success Message -->
+  <div *ngIf="successBlast" class="confirmation-box">
+    <h3>🎉 Ticket Raised Successfully!</h3>
+    <p><strong>👤 Username:</strong> {{ ticketResponse.username || username }}</p>
+    <p><strong>🎫 Ticket ID:</strong> {{ ticketResponse.ticketId }}</p>
+    <p><strong>📌 Status:</strong> {{ ticketResponse.status }}</p>
+    <p><strong>📅 Date:</strong> {{ ticketResponse.fullDateTime | date:'dd/MM/yyyy' }}</p>
+    <p><strong>⏰ Time:</strong> {{ ticketResponse.fullDateTime | date:'HH:mm:ss' }}</p>
+    <p><strong>📝 Subject:</strong> {{ ticketResponse.description }}</p>
   </div>
+
+  <!-- 🔹 Feature Options Bar -->
+<div class="feature-bar" *ngIf="showTickets">
+  <input 
+    type="text" 
+    [(ngModel)]="searchTerm" 
+    (input)="filterTickets()" 
+    placeholder="🔍 Search by Title, Subject, or ID"
+  />
+
+  <select [(ngModel)]="filterStatus" (change)="filterTickets()">
+    <option value="">All Statuses</option>
+    <option value="Open">Open</option>
+    <option value="In Progress">In Progress</option>
+    <option value="Closed">Closed</option>
+  </select>
+
+  <select [(ngModel)]="sortOption" (change)="filterTickets()">
+  <option value="">Sort By</option>
+  <option value="newest">📅 Date (Newest → Oldest)</option>
+  <option value="oldest">📆 Date (Oldest → Newest)</option>
+  <option value="status-az">🔤 Status (A → Z)</option>
+  <option value="status-za">🔠 Status (Z → A)</option>
+</select>
+
+
+  <button (click)="refreshTickets()">🔄 Refresh</button>
+  <button (click)="exportToCSV()">⬇️ Export CSV</button>
+</div>
 
   <!-- Tickets List -->
-  <div *ngIf="showTickets">
-    <!-- BACK Button Row -->
+  <div *ngIf="showTickets" class="fullpage-table">
     <div class="back-button-row">
-      <button class="back-icon" (click)="showTickets = false">close</button>
+      <button class="back-icon" (click)="showTickets = false">Close</button>
     </div>
 
-    <h3>All Tickets</h3>
+    <!--  Priority Filter (place it above the table, outside it) -->
+  <div class="filter-group">
+    <label for="priorityFilter"><strong>Priority:</strong></label>
+    <select
+      id="priorityFilter"
+      [(ngModel)]="filterPriority"
+      (change)="filterTickets()"
+    >
+      <option value="">All</option>
+      <option value="High">High</option>
+      <option value="Medium">Medium</option>
+      <option value="Low">Low</option>
+    </select>
+  </div>
 
+    <h3>All Tickets</h3>
     <table>
       <thead>
         <tr>
           <th>Ticket ID</th>
           <th>Title</th>
           <th>Subject</th>
+          <th>Priority</th> <!--  Added -->
           <th>Status</th>
           <th>Date</th>
           <th>Time</th>
@@ -166,21 +185,52 @@
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let t of tickets">
+              <ng-container *ngFor="let t of tickets">
+        <tr>
           <td>{{ t.ticketId }}</td>
           <td>{{ t.title }}</td>
           <td>{{ cleanQuotes(t.subject) }}</td>
+          <td>{{ t.priority }}</td>
           <td>{{ formatStatus(t.status) }}</td>
-          <td>{{ t.fullDateTime | date: 'dd/MM/yyyy' }}</td>
-          <td>{{ t.fullDateTime | date: 'HH:mm:ss' }}</td>
+          <td>{{ t.fullDateTime | date:'dd/MM/yyyy' }}</td>
+          <td>{{ t.fullDateTime | date:'HH:mm:ss' }}</td>
           <td>{{ t.username }}</td>
           <td>
-            <button class="icon-btn delete-btn" (click)="deleteTicket(t.ticketId)" title="Delete Ticket">🗑️</button>
-            <button class="icon-btn edit-btn" (click)="editTicket(t)" title="Edit Ticket">✏️</button>
+            <button class="icon-btn delete-btn" (click)="deleteTicket(t.ticketId)">🗑️</button>
+            <button class="icon-btn edit-btn" (click)="editTicket(t)">✏️</button>
+            <button class="icon-btn comment-btn" (click)="toggleComments(t.ticketId)">💬 Comments</button>
           </td>
         </tr>
+
+        <!-- 💬 Comments row (now in same ngFor scope, so 't' exists) -->
+        <tr *ngIf="showCommentsFor === t.ticketId">
+          <td colspan="9" class="comment-section">
+            <div *ngIf="t.comments?.length; else noComments">
+              <div *ngFor="let c of t.comments" class="comment-box">
+                <strong>{{ c.user }}</strong>
+                <p>{{ c.text }}</p>
+                <small>{{ c.date | date:'short' }}</small>
+              </div>
+            </div>
+
+            <ng-template #noComments>
+              <p>No comments yet.</p>
+            </ng-template>
+
+            <div class="add-comment">
+              <input type="text" [(ngModel)]="newComment" placeholder="Add a comment..." />
+              <button type="button" (click)="addComment(t)">Post</button>
+            </div>
+          </td>
+        </tr>
+      </ng-container>
+
       </tbody>
     </table>
   </div>
+    <!-- Chatbot floating button -->
+  <button class="chatbot-toggle" (click)="toggleChatbot()">💬 Chat</button>
+
+  <app-chatbot *ngIf="isChatVisible"></app-chatbot>
 
 </div>

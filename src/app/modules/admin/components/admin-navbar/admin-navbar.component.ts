@@ -6,8 +6,9 @@ import { MatIconModule } from '@angular/material/icon';
 import { Router, RouterModule } from '@angular/router';
 import { AuthService } from 'src/app/core/services/authservice/auth.service';
 
+
 @Component({
-  selector: 'app-admin-navbar',
+  selector: 'app-admin-',
   standalone: true,
   imports: [
     MatIconModule,
@@ -16,9 +17,9 @@ import { AuthService } from 'src/app/core/services/authservice/auth.service';
     FormsModule
   ],
   templateUrl: './admin-navbar.component.html',
-  styleUrls: ['./admin-navbar.component.scss']
+  styleUrls: ['./admin-navbar.component.scss'],
 })
-export class AdminNavbarComponent implements OnInit {
+export class  AdminNavbarComponent implements OnInit {
   selectedRole: string = '';
   userId: string | null = null;
   firstNameInitial: string | null = null;

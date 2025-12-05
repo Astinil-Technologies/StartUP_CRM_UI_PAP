@@ -1,0 +1,20 @@
+<!-- Show this only when chatbot is open -->
+<div *ngIf="isOpen" class="chatbot-container">
+  <div class="chat-header">
+    <h4>💬 HelpDesk Assistant</h4>
+    <button class="close-btn" (click)="toggleChat()">×</button>
+  </div>
+
+  <div class="chat-window" #chatWindow>
+    <div *ngFor="let msg of messages" [ngClass]="msg.sender">
+      <div class="msg-text">{{ msg.text }}</div>
+    </div>
+  </div>
+
+  <div class="chat-input">
+    <input [(ngModel)]="userInput"
+           (keydown.enter)="sendMessage()"
+           placeholder="Type your message..." />
+    <button (click)="sendMessage()">Send</button>
+  </div>
+</div>
