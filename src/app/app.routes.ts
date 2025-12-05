@@ -75,6 +75,10 @@ import { ChatSidebarComponent } from './modules/chat/components/chat-sidebar/cha
 import { DirectmessagesComponent } from './modules/chat/components/directmessages/directmessages.component';
 import { HelpDeskComponent } from './modules/Help-Desk/helpdesk.component';
 
+
+import { ChatbotComponent } from './modules/Help-Desk/chatbot/chatbot.component';
+
+
 export const routes: Routes = [
   { path: '', redirectTo: '/login-main', pathMatch: 'full' },
 
@@ -297,6 +301,7 @@ export const routes: Routes = [
   children: [
     // ...existing layout children
     { path: 'help-desk', component: HelpDeskComponent },
+     { path: 'chatbot', component: ChatbotComponent }, // ✅ added chatbot here
   ]
 },
 

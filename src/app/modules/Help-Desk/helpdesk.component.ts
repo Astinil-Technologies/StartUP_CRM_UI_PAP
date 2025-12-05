@@ -4,6 +4,8 @@ import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
 import { TicketService } from 'src/app/core/services/Help-Desk/helpdesk.service';
 import { TokenService } from 'src/app/core/services/tokenservice/token.service';
+import { ChatbotComponent } from 'src/app/modules/Help-Desk/chatbot/chatbot.component';
+ 
 
 interface Ticket {
     id?: number; 
@@ -16,15 +18,20 @@ interface Ticket {
   ticketId: string;
   fullDateTime?: Date;
   username?: string;
+  priority: string;
+  comments?: { user: string; text: string; date: Date }[]; //  Add here
   [key: string]: any;
+
+  
 }
 
 @Component({
   selector: 'app-help-desk',
   standalone: true,
-  imports: [CommonModule, FormsModule, HttpClientModule],
+  imports: [CommonModule, FormsModule, HttpClientModule,ChatbotComponent],
   templateUrl: './helpdesk.component.html',
-  styleUrls: ['./helpdesk.component.css']
+  styleUrls: ['./helpdesk.component.css'],
+
 })
 
 export class  HelpDeskComponent implements OnInit {
@@ -35,7 +42,9 @@ export class  HelpDeskComponent implements OnInit {
     status: 'Open',
     description: '',
     createdDate: '',
-    createdTime: ''
+    createdTime: '',
+
+      priority: 'Medium'
   };
 
   tickets: Ticket[] = [];
@@ -58,6 +67,11 @@ export class  HelpDeskComponent implements OnInit {
   successBlast = false;
   showWelcome: boolean = true;
 
+  // 🔹 Feature Options (Search, Filter, Export)
+  searchTerm: string = '';
+  filterStatus: string = '';
+  allTickets: Ticket[] = []; // keep unfiltered master list
+
   selectedImage?: File;
   selectedFile?: File;
   selectedVideo?: File;
@@ -65,6 +79,18 @@ export class  HelpDeskComponent implements OnInit {
   imageError: string | null = null;
   fileError: string | null = null;
   videoError: string | null = null;
+
+  //  Added for Priority filter
+  filterPriority: string = '';
+  
+  sortOption: string = '';
+
+  // 💬 Comment section variables
+  newComment: string = '';
+  showCommentsFor: string | null = null;
+
+  isChatVisible = false;
+
 
 
   constructor(
@@ -120,79 +146,64 @@ getUsername(): void {
 }
 
 
-  getAllTickets(): void {
+getAllTickets(): void {
   if (this.showTickets) {
-    // If already showing, hide the ticket list
     this.showTickets = false;
     this.showWelcome = true;
-    
     return;
   }
 
-  // Otherwise, fetch and display tickets
   this.ticketService.getAllTickets().subscribe({
     next: (response) => {
       this.tickets = response.map((ticket: any) => {
         const fullDateTime = new Date(`${ticket.createdDate}T${ticket.createdTime}`);
         return { ...ticket, fullDateTime };
       });
+      this.allTickets = [...this.tickets]; // master copy for filtering
       this.showTickets = true;
       this.showForm = false;
       this.ticketCreated = false;
       this.showWelcome = false;
-      
     },
     error: (error) => console.error('Error fetching tickets:', error)
   });
 }
 
 
- submitTicket(form: NgForm): void {
+submitTicket(form: NgForm): void {
   if (form.invalid || this.imageError || this.fileError || this.videoError) {
     this.formInvalid = true;
     return;
   }
 
-  const formData = new FormData();
-  formData.append('title', this.ticket.title);
-  formData.append('subject', this.ticket.subject);
-  formData.append('status', this.ticket.status);
-  formData.append('description', this.ticket.description);
+  const payload = {
+    title: this.ticket.title,
+    subject: this.ticket.subject,
+    status: this.ticket.status,
+    description: this.ticket.description,
 
-  if (this.selectedImage) formData.append('image', this.selectedImage);
-  if (this.selectedFile) formData.append('file', this.selectedFile);
-  if (this.selectedVideo) formData.append('video', this.selectedVideo);
+    priority: this.ticket.priority
+  };
 
-  // ✅ Use TokenService to get JWT
-  const token = this.tokenService.getAccessToken();
-  if (!token) {
-    console.error('No JWT token found! Please login first.');
-    return;
-  }
-
-  // ✅ Only pass formData, token is already handled in TicketService
-  this.ticketService.createTicket(formData).subscribe({
+  // Send JSON instead of FormData
+  this.ticketService.createTicket(payload).subscribe({
     next: (response) => {
-      if (response.createdDate && response.createdTime) {
-        response.fullDateTime = new Date(`${response.createdDate}T${response.createdTime}`);
-      }
       this.ticketResponse = response;
-      this.ticketCreated = true;
       this.successBlast = true;
       this.showForm = false;
-
       form.resetForm();
+
+      // Clear local state
       this.ticket = {
-        title: '',
         ticketId: '',
+        title: '',
         subject: '',
         status: 'Open',
         description: '',
         createdDate: '',
-        createdTime: ''
+        createdTime: '',
+        priority: 'Medium' //  added default value
       };
-      this.selectedImage = this.selectedFile = this.selectedVideo = undefined;
-      this.imageError = this.fileError = this.videoError = null;
       this.formInvalid = false;
 
       setTimeout(() => this.successBlast = false, 10000);
@@ -200,6 +211,7 @@ getUsername(): void {
     error: (error) => console.error('Ticket creation failed', error)
   });
 }
+
 
 
   resetForm(form: NgForm, goBack: boolean = false): void {
@@ -211,7 +223,9 @@ getUsername(): void {
       status: 'Open',
       description: '',
       createdDate: '',
-      createdTime: ''
+      createdTime: '',
+
+      priority: 'Medium'
     };
     this.selectedImage = this.selectedFile = this.selectedVideo = undefined;
     this.imageError = this.fileError = this.videoError = null;
@@ -238,7 +252,8 @@ getUsername(): void {
     createdDate: this.selectedTicket.createdDate || '',
     createdTime: this.selectedTicket.createdTime || '',
     fullDateTime: this.selectedTicket.fullDateTime || new Date(),
-    username: this.selectedTicket.username || localStorage.getItem('username') || 'JohnDoe'
+    username: this.selectedTicket.username || localStorage.getItem('username') || 'JohnDoe',
+    priority: this.selectedTicket.priority || 'Medium', //  added here with default fallback
   };
 
   this.ticketService.updateTicket(updatedTicket).subscribe({
@@ -281,6 +296,105 @@ deleteTicket(ticketId: string) {
 }
 
 
+// 🔹 Refresh ticket list
+refreshTickets(): void {
+  this.getAllTickets();
+}
+
+// 🔹 Export visible tickets to CSV
+exportToCSV(): void {
+  if (!this.tickets || this.tickets.length === 0) {
+    alert('No tickets available to export!');
+    return;
+  }
+
+  const headers = Object.keys(this.tickets[0]);
+  const csv = [
+    headers.join(','),
+    ...this.tickets.map(t =>
+      headers.map(h => `"${(t[h] ?? '').toString().replace(/"/g, '""')}"`).join(',')
+    )
+  ].join('\n');
+
+  const blob = new Blob([csv], { type: 'text/csv' });
+  const url = window.URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'tickets.csv';
+  a.click();
+  window.URL.revokeObjectURL(url);
+}
+filterTickets(): void {
+  let filtered = [...this.allTickets];
+
+  // 🔹 Search
+  if (this.searchTerm.trim()) {
+    const term = this.searchTerm.toLowerCase();
+    filtered = filtered.filter(t =>
+      (t.title?.toLowerCase().includes(term)) ||
+      (t.subject?.toLowerCase().includes(term)) ||
+      (t.ticketId?.toString().includes(term)) ||
+      (t.username?.toLowerCase().includes(term))
+    );
+  }
+
+  // 🔹 Filter
+  if (this.filterStatus) {
+    filtered = filtered.filter(t =>
+      t.status?.toLowerCase() === this.filterStatus.toLowerCase()
+    );
+  }
+
+  //  Priority Filter
+if (this.filterPriority) {
+  filtered = filtered.filter(
+    (t) => t.priority?.toLowerCase() === this.filterPriority.toLowerCase()
+  );
+}
+
+
+  // 🔹 Sort
+  switch (this.sortOption) {
+    case 'newest':
+      filtered.sort((a, b) => (b.fullDateTime?.getTime() || 0) - (a.fullDateTime?.getTime() || 0));
+      break;
+    case 'oldest':
+      filtered.sort((a, b) => (a.fullDateTime?.getTime() || 0) - (b.fullDateTime?.getTime() || 0));
+      break;
+    case 'status-az':
+      filtered.sort((a, b) => a.status.localeCompare(b.status));
+      break;
+    case 'status-za':
+      filtered.sort((a, b) => b.status.localeCompare(a.status));
+      break;
+  }
+
+  this.tickets = filtered;
+}
+
+
+// 💬 Toggle comments section for a ticket
+toggleComments(ticketId: string): void {
+  this.showCommentsFor = this.showCommentsFor === ticketId ? null : ticketId;
+}
+
+// 💬 Add new comment
+addComment(ticket: Ticket): void {
+  if (!this.newComment.trim()) return;
+
+  const newEntry = {
+    user: this.username,
+    text: this.newComment.trim(),
+    date: new Date()
+  };
+
+  if (!ticket.comments) {
+    ticket.comments = [];
+  }
+
+  ticket.comments.push(newEntry);
+  this.newComment = '';
+}
 
 
 
@@ -337,4 +451,8 @@ deleteTicket(ticketId: string) {
     const s = status.toLowerCase();
     return s.includes('inprogress') || s.includes('in progress') ? 'In Progress' : status;
   }
+  
+toggleChatbot() {
+  this.isChatVisible = !this.isChatVisible;
+}
 }

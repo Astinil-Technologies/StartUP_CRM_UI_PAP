@@ -19,10 +19,16 @@ export class TicketService {
     return new HttpHeaders({ 'Authorization': `Bearer ${token}` });
   }
 
-  // Create Ticket
-  createTicket(formData: FormData): Observable<any> {
-    return this.http.post(this.baseUrl, formData, { headers: this.getAuthHeaders() });
-  }
+ //  Create Ticket with JSON
+  createTicket(ticket: any): Observable<any> {
+  const headers = new HttpHeaders({
+    'Content-Type': 'application/json',
+    'Username': localStorage.getItem('username') || 'guest',
+    'Authorization': `Bearer ${this.tokenService.getAccessToken()}`
+  });
+
+  return this.http.post(`${this.baseUrl}`, JSON.stringify(ticket), { headers });
+}
 
   // Get All Tickets
   getAllTickets(): Observable<Ticket[]> {

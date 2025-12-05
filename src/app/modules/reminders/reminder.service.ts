@@ -3,6 +3,8 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Reminder } from 'src/app/models/reminder.model';
 import { environment } from 'src/environments/environment';
+import { HttpHeaders } from '@angular/common/http';
+
 @Injectable({
   providedIn: 'root'
 })
@@ -13,8 +15,12 @@ export class ReminderService {
   constructor(private http: HttpClient) { }
 
   getReminders(): Observable<Reminder[]> {
-    return this.http.get<Reminder[]>(this.apiUrl);
-  }
+  const token = localStorage.getItem('token');
+  const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
+
+  return this.http.get<Reminder[]>(this.apiUrl, { headers });
+}
+
 
   createReminder(reminder: Reminder): Observable<Reminder> {
     return this.http.post<Reminder>(this.apiUrl, reminder);
