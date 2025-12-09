@@ -20,8 +20,8 @@
 /* 📊 Cards Grid - FIXED to wrap properly */
 .cards-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); /* ensures wrapping */
-  gap: 24px;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); /* ensures wrapping */
+  gap: 12px;
   margin-bottom: 35px;
   width: 100%;
   box-sizing: border-box;
@@ -44,7 +44,7 @@
 .card .icon {
   font-size: 30px;
   margin-bottom: 8px;
-  color: #777;
+  color: #1a73e8;
 }
 
 .card h3 {

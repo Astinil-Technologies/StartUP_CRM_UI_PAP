@@ -121,4 +121,9 @@ export class LeaveService {
     const url = `${this.baseUrl}/team-calendar`;
     return this.http.get<any>(url, this.authHeaders(token));
   }
+  
+//
+//   getPendingTeamApprovals(): Observable<any[]> {
+//    return this.http.get<any[]>(`${this.baseUrl}/api/leaves/team?status=PENDING`);
+//  }
 }
