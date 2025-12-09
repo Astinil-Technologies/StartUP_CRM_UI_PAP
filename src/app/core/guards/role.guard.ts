@@ -24,7 +24,7 @@ export class RoleGuard implements CanActivate {
       console.error('RoleGuard: Access denied. User role:', userRole, 'Required roles:', requiredRoles);
     
 
-      this.router.navigate(['/layout/timesheet/homepage']); // redirect to home
+      this.router.navigate(['']); // redirect to home
       return false;
     }
     console.log('RoleGuard: Access granted');
