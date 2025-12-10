@@ -1,7 +1,7 @@
-<div class="apply-leave-container">
+   <div class="apply-leave-container">
   <div class="leave-form-container">
     <h2>Apply for Leave</h2>
-    <form (ngSubmit)="submitLeave()" class="form-content" >
+    <form [formGroup]="leaveForm" (ngSubmit)="submitLeave()" class="form-content" >
 
       <!-- Leave Type -->
       <label for="leaveType">Leave Type *</label>
@@ -10,7 +10,16 @@
         <option *ngFor="let type of leaveTypes" [value]="type">{{ type }}</option>
       </select>
 
-      <!-- Start and End Dates -->
+      <!-- Leave Duration (NEW) -->
+<label for="leaveDuration">Leave Duration *</label>
+<select id="leaveDuration" formControlName="leaveDuration">
+  <option value="">Select leave duration</option>
+  <option value="HALF_TIME">Half Time</option>
+  <option value="FULL_TIME">Full Time</option>
+</select>
+
+
+      <!-- Start    and End Dates -->
       <div class="date-container">
         <div>
           <label for="startDate">Start Date *</label>

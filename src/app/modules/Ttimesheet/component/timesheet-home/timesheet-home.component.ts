@@ -36,7 +36,7 @@ export class TimesheetHomeComponent implements OnInit {
   plans = '';
   submittedDates: Set<string> = new Set();
 
-  months = [
+  months =     [
     'January','February','March','April','May','June',
     'July','August','September','October','November','December'
   ];

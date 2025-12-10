@@ -1,24 +1,34 @@
+import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { LeaveService } from 'src/app/core/services/leave/leave.service';
+
+
 
 @Component({
   selector: 'app-apply-leave',
+  standalone: true,
   templateUrl: './apply-leave.component.html',
-  styleUrls: ['./apply-leave.component.scss']
+  styleUrls: ['./apply-leave.component.scss'],
+  imports: [CommonModule, ReactiveFormsModule, FormsModule]
 })
 export class ApplyLeaveComponent implements OnInit {
 
   leaveForm!: FormGroup;
+  // keep attachmentFile if you want the input visible but backend doesn't use it yet
   attachmentFile: File | null = null;
 
-  leaveTypes = [
-    'Sick Leave',
-    'Casual Leave',
-    'Earned Leave',
-    'Maternity Leave',
-    'Paternity Leave'
-  ];
+  // Must match backend enums
+ leaveTypes: string[] = [
+  'SICK',
+  'CASUAL',
+  'EARNED',
+  'UNPAID',
+  'MATERNITY',
+  'PATERNITY'
+];
+ leaveDurationTypes: string[] = ['HALF_TIME', 'FULL_TIME'];
 
   constructor(
     private fb: FormBuilder,
@@ -29,6 +39,7 @@ export class ApplyLeaveComponent implements OnInit {
     this.leaveForm = this.fb.group({
       leaveType: ['', Validators.required],
       startDate: ['', Validators.required],
+      leaveDuration: ['', Validators.required],
       endDate: ['', Validators.required],
       reason: ['', Validators.required],
       attachment: [null]
@@ -44,7 +55,7 @@ export class ApplyLeaveComponent implements OnInit {
   }
 
   // ------------------ SUBMIT LEAVE FORM ------------------
-submitLeave() {
+submitLeave()             {
 
   if (this.leaveForm.invalid) {
     alert("Please fill all required fields.");
