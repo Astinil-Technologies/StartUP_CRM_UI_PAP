@@ -3,50 +3,61 @@ import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TimesheetService } from 'src/app/core/services/timesheet/timesheet.service';
 import { UserService } from 'src/app/core/services/userservice/user.service';
+import { LeaveService } from 'src/app/core/services/leave/leave.service';
 import { TimesheetRequest } from 'src/app/models/timesheet-request.model';
 import { User } from 'src/app/models/user.model';
+import Holidays from 'date-holidays';
+
 
 @Component({
   selector: 'app-timesheet-home',
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './timesheet-home.component.html',
-  styleUrl: './timesheet-home.component.scss',
+  styleUrls: ['./timesheet-home.component.scss'],   // <-- FIXED
 })
+
 export class TimesheetHomeComponent implements OnInit {
+
   currentUser: User | null = null;
   userId = '';
   username = '';
+
   today: Date = new Date();
   currentTime: string = '';
 
-  displayedDate: Date = new Date(); // used for dynamic heading
+  displayedDate: Date = new Date();
 
   selectedDate: Date | null = null;
   showModal = false;
+
   workDone = '';
   blockers = '';
   plans = '';
   submittedDates: Set<string> = new Set();
 
   months = [
-    'January', 'February', 'March', 'April', 'May', 'June',
-    'July', 'August', 'September', 'October', 'November', 'December'
+    'January','February','March','April','May','June',
+    'July','August','September','October','November','December'
   ];
+
   years: number[] = [];
   selectedMonth: number = new Date().getMonth();
   selectedYear: number = new Date().getFullYear();
 
   weekDays: string[] = [
-    'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'
+    'Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'
   ];
 
-  calendarDates: any[] = [];
+  holidays: any[] = [];
+  leavesInMonth: any[] = [];
+
   calendarTable: any[][] = [];
 
   constructor(
     private timesheetService: TimesheetService,
-    private userService: UserService
+    private userService: UserService,
+    private leaveService: LeaveService
   ) {}
 
   ngOnInit(): void {
@@ -54,52 +65,101 @@ export class TimesheetHomeComponent implements OnInit {
     this.updateTime();
     setInterval(() => this.updateTime(), 1000);
 
-    this.onMonthOrYearChange(); // Initial calendar and heading
-
     this.userService.getUserProfile().subscribe({
       next: (user) => {
         if (user) {
           this.currentUser = user;
           this.userId = user.id.toString();
-          this.username = user.firstName + ' ' + user.lastName;
-        } else {
-          console.warn('No user data available.');
+          this.username = `${user.firstName} ${user.lastName}`;
+
+          this.onMonthOrYearChange();
         }
-      },
-      error: (err) => {
-        console.error('Failed to fetch user profile', err);
-      },
+      }
     });
   }
+loadIndianHolidays() {
+  const hdAP = new Holidays('IN', 'AP');  // AP state holidays
+  const hdTS = new Holidays('IN', 'TS');  // Telangana state holidays
 
+  const apHolidays = hdAP.getHolidays(this.selectedYear);
+  const tsHolidays = hdTS.getHolidays(this.selectedYear);
+
+  const merged = [...apHolidays, ...tsHolidays];
+
+  this.holidays = merged.map((h: any) => ({
+    date: h.date.substring(0, 10),
+    name: h.name
+  }));
+
+  console.table(this.holidays);
+}
+
+
+
+
+  // ---------------- TIME -------------------
   updateTime() {
     this.currentTime = new Date().toLocaleTimeString();
   }
 
+  // ---------------- YEAR RANGE -------------------
   generateYearRange() {
     const currentYear = new Date().getFullYear();
-    const range = 10;
-    for (let i = currentYear - range; i <= currentYear + range; i++) {
+    for (let i = currentYear - 10; i <= currentYear + 10; i++) {
       this.years.push(i);
     }
   }
 
+  // ---------------- LOAD DATA FROM BACKEND -------------------
+loadCalendarData() {
+  const id = Number(this.userId);
+
+  this.leaveService.getEmployeeCalendar(id).subscribe({
+    next: (response) => {
+      console.log("Calendar API Response:", response);
+
+      // Merge backend holidays + existing national holidays
+      const backendHolidays = response.holidays || [];
+
+      this.holidays = [
+        ...backendHolidays.map((h: any) => ({
+          date: h.date.substring(0, 10),
+          name: h.name
+        })),
+        ...this.holidays   // keep local AP/TS/IN holidays
+      ];
+
+      // Keep only APPROVED leaves
+      this.leavesInMonth = (response.leaves || []).filter(
+        (l: any) => l.status === 'APPROVED'
+      );
+
+      this.generateCalendar();
+    },
+    error: (err) => console.error('Calendar load error:', err)
+  });
+}
+
+
+
+
+  // ---------------- GENERATE CALENDAR -------------------
   generateCalendar() {
     const start = new Date(this.selectedYear, this.selectedMonth, 1);
     const startDay = start.getDay();
 
-    this.calendarDates = [];
     this.calendarTable = [];
-
     const currentMonth = start.getMonth();
+
     let currentDate = new Date(start);
     currentDate.setDate(currentDate.getDate() - startDay);
 
-    for (let week = 0; week < 5; week++) {
+    for (let week = 0; week < 6; week++) {
       const weekRow: any[] = [];
 
       for (let day = 0; day < 7; day++) {
         const date = new Date(currentDate);
+
         const isToday = this.isSameDate(date, this.today);
         const isWeekend = date.getDay() === 0 || date.getDay() === 6;
         const isYesterday = this.isSameDate(date, this.addDays(this.today, -1));
@@ -114,22 +174,27 @@ export class TimesheetHomeComponent implements OnInit {
           continue;
         }
 
-        if (isYesterday) {
-          disabled = true;
-          message = 'This is expired.';
-        } else if (isTomorrow) {
-          disabled = true;
-          message = 'Not allowed. This is for tomorrow’s update.';
-        } else if (isWeekend) {
-          disabled = true;
-          message = 'It’s a weekend. Enjoy your weekend!';
-        } else if (!isToday || !this.isCurrentMonthYearDisplayed()) {
-          disabled = true;
-          message = "Only today's entry is allowed.";
-        } else if (this.submittedDates.has(this.formatDate(date))) {
-          disabled = true;
-          message = 'Already submitted.';
+        if (isYesterday) { disabled = true; message = 'This is expired.'; }
+        else if (isTomorrow) { disabled = true; message = 'Not allowed for tomorrow.'; }
+        else if (isWeekend) { disabled = true; message = 'Weekend!'; }
+        else if (!isToday || !this.isCurrentMonthYearDisplayed()) {
+          disabled = true; message = "Only today's entry allowed.";
         }
+        else if (this.submittedDates.has(this.formatDate(date))) {
+          disabled = true; message = 'Already submitted.';
+        }
+
+        // BACKEND HOLIDAY / LEAVE MATCH
+        const formatted = this.formatDate(date);
+const holiday = this.holidays.find(h =>
+  this.formatDate(new Date(h.date)) === formatted
+);
+
+const leave = this.leavesInMonth.find(l =>
+  l.status === 'APPROVED' &&
+  formatted >= l.startDate &&
+  formatted <= l.endDate
+);
 
         weekRow.push({
           date,
@@ -139,32 +204,36 @@ export class TimesheetHomeComponent implements OnInit {
           isTomorrow,
           disabled,
           message,
+          holiday,
+          leave
         });
 
         currentDate.setDate(currentDate.getDate() + 1);
       }
-
       this.calendarTable.push(weekRow);
     }
   }
 
-  isSameDate(d1: Date, d2: Date): boolean {
+  isSameDate(a: Date, b: Date): boolean {
     return (
-      d1.getDate() === d2.getDate() &&
-      d1.getMonth() === d2.getMonth() &&
-      d1.getFullYear() === d2.getFullYear()
+      a.getDate() === b.getDate() &&
+      a.getMonth() === b.getMonth() &&
+      a.getFullYear() === b.getFullYear()
     );
   }
 
   addDays(date: Date, days: number): Date {
-    const result = new Date(date);
-    result.setDate(result.getDate() + days);
-    return result;
+    const d = new Date(date);
+    d.setDate(d.getDate() + days);
+    return d;
   }
 
   formatDate(date: Date): string {
-    return date.toISOString().split('T')[0];
-  }
+  const year = date.getFullYear();
+  const month = ('0' + (date.getMonth() + 1)).slice(-2);
+  const day = ('0' + date.getDate()).slice(-2);
+  return `${year}-${month}-${day}`;
+}
 
   isCurrentMonthYearDisplayed(): boolean {
     const now = new Date();
@@ -172,10 +241,14 @@ export class TimesheetHomeComponent implements OnInit {
            this.selectedYear === now.getFullYear();
   }
 
+  // ---------------- MONTH CHANGE -------------------
   onMonthOrYearChange() {
-    this.displayedDate = new Date(this.selectedYear, this.selectedMonth, 1);
-    this.generateCalendar();
-  }
+  this.displayedDate = new Date(this.selectedYear, this.selectedMonth, 1);
+
+  this.loadIndianHolidays();   // 1. load holidays first
+  this.loadCalendarData();     // 2. load leaves + generate calendar
+}
+
 
   goToPreviousMonth() {
     if (this.selectedMonth === 0) {
@@ -197,13 +270,15 @@ export class TimesheetHomeComponent implements OnInit {
     this.onMonthOrYearChange();
   }
 
-  onDateClick(dateObj: any) {
-    if (!dateObj.disabled && dateObj.isToday) {
-      this.selectedDate = dateObj.date;
+  // ---------------- DATE CLICK -------------------
+  onDateClick(dayObj: any) {
+    if (!dayObj.disabled && dayObj.isToday) {
+      this.selectedDate = dayObj.date;
       this.showModal = true;
     }
   }
 
+  // ---------------- SUBMIT TIMESHEET -------------------
   submitTimesheet() {
     const payload: TimesheetRequest = {
       userId: this.userId,
@@ -220,11 +295,7 @@ export class TimesheetHomeComponent implements OnInit {
         this.clearForm();
         this.submittedDates.add(this.formatDate(this.today));
         this.generateCalendar();
-      },
-      error: (err) => {
-        console.error(err);
-        alert('Failed to submit timesheet.');
-      },
+      }
     });
   }
 

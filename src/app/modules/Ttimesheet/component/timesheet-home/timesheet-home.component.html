@@ -37,21 +37,59 @@
           </thead>
           <tbody>
             <tr *ngFor="let week of calendarTable">
-              <td *ngFor="let day of week">
-                <button
-                  class="btn btn-lg w-100 text-black fw-bold"
-                  [ngClass]="{
-                    'btn-info': day?.isToday,
-                    'btn-outline-light': !day?.isToday && !day?.isWeekend,
-                    'btn-outline-danger': day?.isWeekend
-                  }"
-                  [disabled]="!day || day.disabled"
-                  (click)="day && onDateClick(day)"
-                  [title]="day?.message"
-                >
-                  {{ day?.date | date : 'd' }}
-                </button>
-              </td>
+              <td *ngFor="let day of week" class="position-relative">
+
+  <!-- EMPTY CELL -->
+  <ng-container *ngIf="!day">
+    <div class="empty-cell"></div>
+  </ng-container>
+
+  <!-- NORMAL DATE CELL -->
+  <ng-container *ngIf="day">
+  <button
+  class="btn btn-lg w-100 fw-bold position-relative"
+  [ngClass]="{
+    'border border-primary text-primary today-highlight': day.isToday,             
+    'border border-danger text-danger': day.isWeekend && !day.holiday && !day.leave,                
+    'border border-success text-success': day.holiday,                
+    'border border-warning text-warning': day.leave,
+    'border border-secondary text-dark': !day.holiday && !day.leave && !day.isWeekend && !day.isToday  
+  }"
+  [disabled]="day.disabled"
+  (click)="onDateClick(day)"
+  [title]="day.message"
+  style="background-color: transparent;"
+>
+
+  <!-- DATE NUMBER -->
+  <div class="date-num">{{ day.date | date : 'd' }}</div>
+
+  <!-- HOLIDAY LABEL -->
+  <div *ngIf="day.holiday"
+       class="small fw-bold mt-1"
+       style="font-size: 10px;">
+    {{ day.holiday.name }}
+  </div>
+
+  <!-- LEAVE LABEL -->
+  <div *ngIf="day.leave"
+       class="small fw-bold mt-1"
+       style="font-size: 10px;">
+    Leave
+  </div>
+
+  <!-- WEEKEND LABEL -->
+  <div *ngIf="day.isWeekend && !day.holiday"
+       class="small fw-bold mt-1"
+       style="font-size: 10px;">
+    Weekend
+  </div>
+</button>
+
+  </ng-container>
+
+</td>
+
             </tr>
           </tbody>
         </table>
