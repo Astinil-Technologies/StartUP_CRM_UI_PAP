@@ -143,6 +143,10 @@ getUserRole(): string | null {
         })
       );
   }
+getUserDetails() {
+  const user = localStorage.getItem("user");
+  return user ? JSON.parse(user) : null;
+}
 
   getAccessToken(): string | null {
     const token = this.tokenService.getAccessToken();

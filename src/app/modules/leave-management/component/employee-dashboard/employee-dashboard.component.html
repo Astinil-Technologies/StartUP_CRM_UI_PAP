@@ -1,39 +1,67 @@
 <div class="dashboard-container">
-  <!-- Page Title -->
-  <h2 class="title">Employee Dashboard</h2>
 
-  <!-- Summary Cards -->
+  <!-- Summary Cards Section -->
   <div class="cards-grid">
-    <div class="card total">
-      <span class="material-icons icon">calendar_today</span>
-      <h3>Total Requests</h3>
-      <p class="value">{{ totalRequests }}</p>
+
+    <div class="card">
+  <span class="material-icons icon">calendar_month</span>
+  <h3>Total Leave Requests</h3>
+  <p class="value">{{ totalLeaves }}</p>
+</div>
+
+    <!-- Pending Leaves -->
+    <div class="card">
+      <span class="material-icons icon">pending_actions</span>
+      <h3>Pending</h3>
+      <p class="value">{{ pendingLeaves }}</p>
     </div>
 
-    <div class="card pending">
-      <span class="material-icons icon">hourglass_empty</span>
-      <h3>Pending Requests</h3>
-      <p class="value">{{ pendingRequests }}</p>
-    </div>
-
-    <div class="card approved">
+    <!-- Approved Leaves -->
+    <div class="card">
       <span class="material-icons icon">check_circle</span>
-      <h3>Approved Requests</h3>
-      <p class="value">{{ approvedRequests }}</p>
+      <h3>Approved</h3>
+      <p class="value">{{ approvedLeaves }}</p>
     </div>
 
-    <div class="card rejected">
+    <!-- Rejected Leaves -->
+    <div class="card">
       <span class="material-icons icon">cancel</span>
-      <h3>Rejected Requests</h3>
-      <p class="value">{{ rejectedRequests }}</p>
+      <h3>Rejected</h3>
+      <p class="value">{{ rejectedLeaves }}</p>
     </div>
 
-    <div class="card total-days">
+    <!-- Upcoming Leaves -->
+    <div class="card">
       <span class="material-icons icon">event_available</span>
+      <h3>Upcoming Leave</h3>
+      <p class="value">{{ upcomingCount }}</p>
+    </div>
+
+    <!-- Recent 5 Leaves -->
+    <div class="card">
+      <span class="material-icons icon">history</span>
+      <h3>Recent Leaves</h3>
+      <p class="value">{{ recentLeaves.length }}</p>
+    </div>
+
+    <!-- Total Days Taken -->
+    <div class="card">
+      <span class="material-icons icon">timelapse</span>
       <h3>Total Days Taken</h3>
       <p class="value">{{ totalDaysTaken }}</p>
     </div>
+
+    <!-- Team Pending Approvals (Only Manager) -->
+    <div class="card" *ngIf="isManager">
+      <span class="material-icons icon">supervisor_account</span>
+      <h3>Team Pending Approvals</h3>
+      <p class="value">{{ teamPendingCount }}</p>
+    </div>
+
   </div>
+
+</div>
+
 
   <!-- Activity Panels -->
   <div class="activity-section">
@@ -51,4 +79,3 @@
       </ul>
     </div>
   </div>
-</div>
