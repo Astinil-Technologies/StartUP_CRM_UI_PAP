@@ -54,7 +54,7 @@ export class ApplyLeaveComponent implements OnInit {
     return;
   }
 
-  const payload = {
+  const payload =      {
     leaveType: this.leaveForm.value.leaveType,
     startDate: this.leaveForm.value.startDate,
     isHalfDay: this.leaveForm.value.leaveDuration === 'HALF_TIME',
