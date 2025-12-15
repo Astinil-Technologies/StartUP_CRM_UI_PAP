@@ -84,9 +84,22 @@ export class ApplyLeaveComponent implements OnInit {
   // ⭐ Main submit button (unchanged — only extended)
   submitLeave() {
 
-    if (this.leaveForm.invalid) {
-      alert('Please fill all required fields.');
-      return;
+  const payload =      {
+    leaveType: this.leaveForm.value.leaveType,
+    startDate: this.leaveForm.value.startDate,
+    isHalfDay: this.leaveForm.value.leaveDuration === 'HALF_TIME',
+    endDate: this.leaveForm.value.endDate,
+    reason: this.leaveForm.value.reason
+  };
+
+  this.leaveService.applyLeave(payload).subscribe({
+    next: (res: any) => {
+      alert('Leave applied successfully!');
+      this.leaveForm.reset();
+    },
+    error: (err: any) => {
+      console.error(err);
+      alert(err.error?.message || 'Failed to submit leave');
     }
 
     // ⭐ If edit mode → call update
