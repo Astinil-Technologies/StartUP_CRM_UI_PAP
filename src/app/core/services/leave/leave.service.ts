@@ -121,12 +121,10 @@ export class LeaveService {
     const url = `${this.baseUrl}/team-calendar`;
     return this.http.get<any>(url, this.authHeaders(token));
   }
-<<<<<<< HEAD
-=======
   
 //
 //   getPendingTeamApprovals(): Observable<any[]> {
 //    return this.http.get<any[]>(`${this.baseUrl}/api/leaves/team?status=PENDING`);
 //  }
->>>>>>> 416778f (Merge pull request #43 from Astinil-Technologies/LEAVE)
+
 }
