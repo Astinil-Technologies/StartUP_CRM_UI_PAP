@@ -1,3 +1,106 @@
+<<<<<<< Updated upstream
+=======
+<div class="page-wrapper">
+<div class="leave-availability">
+  <h2>Leave Availability</h2>
+
+  <div class="leave-cards">
+
+    <!-- Sick -->
+    <div class="leave-card sick">
+      <div class="circle-container">
+        <svg class="progress-ring" width="70" height="70">
+          <circle class="ring-bg" cx="35" cy="35" r="30"></circle>
+          <circle class="ring-progress"
+        cx="35" cy="35" r="30"
+        [attr.stroke-dasharray]="circumference"
+        [attr.stroke-dashoffset]="getOffset(remainingSick, totalSick)">
+</circle>
+
+        </svg>
+         <span class="circle-value">{{ remainingSick }}</span>
+      </div>
+      <p class="remaining-text">Remaining</p>
+      <span class="label">Sick</span>
+    </div>
+
+    <!-- Casual -->
+    <div class="leave-card casual">
+      <div class="circle-container">
+        <svg class="progress-ring" width="70" height="70">
+          <circle class="ring-bg" cx="35" cy="35" r="30"></circle>
+          <circle class="ring-progress"
+        cx="35" cy="35" r="30"
+        [attr.stroke-dasharray]="circumference"
+        [attr.stroke-dashoffset]="getOffset(remainingCasual, totalCasual)">
+</circle>
+
+        </svg>
+        <span class="circle-value">{{ remainingCasual }}</span>
+      </div>
+      <p class="remaining-text">Remaining</p>
+      <span class="label">Casual</span>
+    </div>
+
+    <!-- Earned -->
+    <div class="leave-card earned">
+      <div class="circle-container">
+        <svg class="progress-ring" width="70" height="70">
+          <circle class="ring-bg" cx="35" cy="35" r="30"></circle>
+          <circle class="ring-progress"
+        cx="35" cy="35" r="30"
+        [attr.stroke-dasharray]="circumference"
+        [attr.stroke-dashoffset]="getOffset(remainingEarned, totalEarned)">
+</circle>
+
+        </svg>
+        <span class="circle-value">{{ remainingEarned }}</span>
+      </div>
+      <p class="remaining-text">Remaining</p>
+      <span class="label">Earned</span>
+    </div>
+
+    <!-- Comp Off -->
+    <div class="leave-card compoff">
+      <div class="circle-container">
+        <svg class="progress-ring" width="70" height="70">
+          <circle class="ring-bg" cx="35" cy="35" r="30"></circle>
+          <circle class="ring-progress"
+        cx="35" cy="35" r="30"
+        [attr.stroke-dasharray]="circumference"
+        [attr.stroke-dashoffset]="getOffset(remainingCompOff, totalCompOff)">
+</circle>
+
+        </svg>
+       <span class="circle-value">{{ remainingCompOff }}</span>
+      </div>
+      <p class="remaining-text">Remaining</p>
+      <span class="label">Comp Off</span>
+    </div>
+
+    <!-- Annual -->
+    <div class="leave-card annual">
+      <div class="circle-container">
+        <svg class="progress-ring" width="70" height="70">
+          <circle class="ring-bg" cx="35" cy="35" r="30"></circle>
+          <circle class="ring-progress"
+        cx="35" cy="35" r="30"
+        [attr.stroke-dasharray]="circumference"
+        [attr.stroke-dashoffset]="getOffset(remainingLop, 15)">
+</circle>
+
+        </svg>
+       <span class="circle-value">{{ remainingLop }}</span>
+      </div>
+      <p class="remaining-text">Remaining</p>
+      <span class="label">LOP</span>
+    </div>
+
+  </div>
+</div>
+
+<!-- ⭐ TABLE (Backend Compatible) -->
+>>>>>>> Stashed changes
 <div class="leave-container">
   <h2>My Leave Requests</h2>
 
