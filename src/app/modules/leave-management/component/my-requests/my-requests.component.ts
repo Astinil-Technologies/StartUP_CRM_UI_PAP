@@ -34,13 +34,6 @@ export class MyRequestsComponent implements OnInit {
   selectedType = '';
   leaveRequests: LeaveRequest[] = [];
 
-  leaveRequests: LeaveRequest[] = [
-    { requestId: 'LR001', type: 'Sick Leave', startDate: '2024-01-15', endDate: '2024-01-16', totalDays: 2, status: 'Pending' },
-    { requestId: 'LR002', type: 'Vacation', startDate: '2024-01-20', endDate: '2024-01-25', totalDays: 5, status: 'Approved' },
-    { requestId: 'LR003', type: 'Casual Leave', startDate: '2024-01-10', endDate: '2024-01-10', totalDays: 1, status: 'Rejected' }
-  ];
-
-
   /* -------------------- LEAVE BALANCE VALUES -------------------- */
   remainingSick = 0;
   remainingCasual = 0;
@@ -53,6 +46,7 @@ totalCasual = 0;
 totalEarned = 0;
 totalCompOff = 0;
 totalLop = 0;
+  circumference: any;
 
 
   constructor(
@@ -73,6 +67,12 @@ totalLop = 0;
       { queryParams: { id: leave.id } }
     );
   }
+
+  getOffset(remaining: number, total: number) {
+  if (!total || total === 0) return this.circumference;
+  const percent = remaining / total;
+  return this.circumference * (1 - percent);
+}
 
   /* -------------------- CANCEL -------------------- */
   onCancel(id: number) {
