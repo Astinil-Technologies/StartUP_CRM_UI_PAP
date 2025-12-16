@@ -86,7 +86,7 @@ export class AuthService {
       const accessToken = data?.accessToken;
       const refreshToken = data?.refreshToken;
       const role = data?.role;
-
+      
       // ✅ Store tokens
       if (accessToken && refreshToken) {
         this.tokenService.storeTokens(accessToken, refreshToken);
@@ -95,6 +95,12 @@ export class AuthService {
       // ✅ Store role in localStorage for RoleGuard
       if (role) {
         localStorage.setItem('role', role);
+      }
+
+       // ⭐ EXTRACT USER ID FROM TOKEN
+      const userId = this.getId();
+      if (userId) {
+      localStorage.setItem('userId', userId);
       }
 
       // ✅ Optional: set current user observable
@@ -127,6 +133,10 @@ export class AuthService {
         })
       );
   }
+getUserDetails() {
+  const user = localStorage.getItem("user");
+  return user ? JSON.parse(user) : null;
+}
 
   getAccessToken(): string | null {
     const token = this.tokenService.getAccessToken();

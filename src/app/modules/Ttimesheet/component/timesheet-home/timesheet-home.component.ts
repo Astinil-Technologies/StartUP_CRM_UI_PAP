@@ -47,7 +47,7 @@ export class TimesheetHomeComponent implements OnInit {
   constructor(
     private timesheetService: TimesheetService,
     private userService: UserService
-  ) {}
+      ) {}
 
   ngOnInit(): void {
     this.generateYearRange();

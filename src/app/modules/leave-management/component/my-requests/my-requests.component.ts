@@ -1,14 +1,22 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
+import { LeaveService } from 'src/app/core/services/leave/leave.service';
+import { LeaveBalanceService } from 'src/app/core/services/leave/leave-balance.service';
 
 interface LeaveRequest {
-  requestId: string;
-  type: string;
+  id: number;
+  userId: number;
+  reason: string;
+  leaveType: string;
+  status: string;
   startDate: string;
   endDate: string;
-  totalDays: number;
-  status: 'Pending' | 'Approved' | 'Rejected';
+  attachmentUrl: string | null;
+  isHalfDay: boolean;
+  managerComment: string | null;
+  approvedBy: number | null;
 }
 
 @Component({
@@ -16,33 +24,22 @@ interface LeaveRequest {
   standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './my-requests.component.html',
-  styleUrls: ['./my-requests.component.scss']
+  styleUrls: ['./my-requests.component.scss'],
 })
-export class MyRequestsComponent {
-  searchText: string = '';
-  selectedStatus: string = '';
-  selectedType: string = '';
+export class MyRequestsComponent implements OnInit {
 
-  leaveTypes: string[] = ['Sick Leave', 'Vacation', 'Casual Leave'];
+  /* -------------------- SEARCH / FILTER -------------------- */
+  searchText = '';
+  selectedStatus = '';
+  selectedType = '';
+  leaveRequests: LeaveRequest[] = [];
 
-<<<<<<< Updated upstream
   leaveRequests: LeaveRequest[] = [
     { requestId: 'LR001', type: 'Sick Leave', startDate: '2024-01-15', endDate: '2024-01-16', totalDays: 2, status: 'Pending' },
     { requestId: 'LR002', type: 'Vacation', startDate: '2024-01-20', endDate: '2024-01-25', totalDays: 5, status: 'Approved' },
     { requestId: 'LR003', type: 'Casual Leave', startDate: '2024-01-10', endDate: '2024-01-10', totalDays: 1, status: 'Rejected' }
   ];
 
-=======
-  /* -------------------- CIRCLE PROGRESS SETTINGS -------------------- */
-  radius = 30;
-  circumference = 2 * Math.PI * this.radius;
- // maxLeaves = 12; // full circle when 12 remain
-
-getOffset(remaining: number, total: number) {
-  if (!total) return this.circumference;
-  const percent = remaining / total;
-  return this.circumference * (1 - percent);
-}
 
   /* -------------------- LEAVE BALANCE VALUES -------------------- */
   remainingSick = 0;
@@ -115,26 +112,29 @@ totalLop = 0;
   }
 
   /* -------------------- FILTER TABLE -------------------- */
->>>>>>> Stashed changes
   filteredLeaves(): LeaveRequest[] {
     return this.leaveRequests.filter(leave => {
+
+      const searchText = this.searchText.toLowerCase();
+
       const matchesSearch =
         !this.searchText ||
-        leave.requestId.toLowerCase().includes(this.searchText.toLowerCase()) ||
-        leave.type.toLowerCase().includes(this.searchText.toLowerCase());
+        leave.id.toString().includes(searchText) ||
+        (leave.leaveType || '').toLowerCase().includes(searchText);
 
-      const matchesStatus = !this.selectedStatus || leave.status === this.selectedStatus;
-      const matchesType = !this.selectedType || leave.type === this.selectedType;
+      const matchesStatus =
+        !this.selectedStatus || leave.status === this.selectedStatus;
+
+      const matchesType =
+        !this.selectedType || leave.leaveType === this.selectedType;
 
       return matchesSearch && matchesStatus && matchesType;
     });
   }
 
-  getStatusClass(status: string): string {
+  getStatusClass(status: string) {
     return status;
   }
-<<<<<<< Updated upstream
-=======
 
   /* -------------------- LOAD LEAVE BALANCE -------------------- */
   loadLeaveBalance() {
@@ -187,5 +187,4 @@ totalLop = 0;
       error: (err) => console.error("Balance Load Error:", err)
     });
   }
->>>>>>> Stashed changes
 }
