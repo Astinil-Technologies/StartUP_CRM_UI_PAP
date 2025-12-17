@@ -267,6 +267,7 @@ weekRow.push({
   }
 }
 
+  
   loadCalendarData() {
 
   // 1️⃣ Load holidays
