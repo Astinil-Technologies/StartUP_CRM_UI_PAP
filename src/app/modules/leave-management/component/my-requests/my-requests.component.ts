@@ -34,22 +34,20 @@ export class MyRequestsComponent implements OnInit {
   selectedType = '';
   leaveRequests: LeaveRequest[] = [];
 
-  /* -------------------- CIRCLE PROGRESS SETTINGS -------------------- */
-  radius = 30;
-  circumference = 2 * Math.PI * this.radius;
-  maxLeaves = 12; // full circle when 12 remain
-
-  getOffset(remaining: number) {
-    const percent = remaining / this.maxLeaves;
-    return this.circumference * (1 - percent);
-  }
-
   /* -------------------- LEAVE BALANCE VALUES -------------------- */
   remainingSick = 0;
   remainingCasual = 0;
   remainingEarned = 0;
   remainingCompOff = 0;
-  remainingAnnual = 0;
+  remainingLop = 0;
+
+  totalSick = 0;
+totalCasual = 0;
+totalEarned = 0;
+totalCompOff = 0;
+totalLop = 0;
+  circumference: any;
+
 
   constructor(
     private leaveService: LeaveService,
@@ -69,6 +67,12 @@ export class MyRequestsComponent implements OnInit {
       { queryParams: { id: leave.id } }
     );
   }
+
+  getOffset(remaining: number, total: number) {
+  if (!total || total === 0) return this.circumference;
+  const percent = remaining / total;
+  return this.circumference * (1 - percent);
+}
 
   /* -------------------- CANCEL -------------------- */
   onCancel(id: number) {
@@ -148,31 +152,37 @@ export class MyRequestsComponent implements OnInit {
         this.remainingCasual = 0;
         this.remainingEarned = 0;
         this.remainingCompOff = 0;
-        this.remainingAnnual = 0;
+        this.remainingLop = 0;
 
         rows.forEach((row: any) => {
-          switch (row.leaveType) {
-            case 'SICK':
-              this.remainingSick = row.remaining;
-              break;
+  switch (row.leaveType) {
+    case 'SICK':
+      this.remainingSick = row.remaining;
+      this.totalSick = row.total;
+      break;
 
-            case 'CASUAL':
-              this.remainingCasual = row.remaining;
-              break;
+    case 'CASUAL':
+      this.remainingCasual = row.remaining;
+      this.totalCasual = row.total;
+      break;
 
-            case 'EARNED':
-              this.remainingEarned = row.remaining;
-              break;
+    case 'EARNED':
+      this.remainingEarned = row.remaining;
+      this.totalEarned = row.total;
+      break;
 
-            case 'COMP_OFF':
-              this.remainingCompOff = row.remaining;
-              break;
+    case 'COMP_OFF':
+      this.remainingCompOff = row.remaining;
+      this.totalCompOff = row.total;
+      break;
 
-            case 'ANNUAL':
-              this.remainingAnnual = row.remaining;
-              break;
-          }
-        });
+    case 'LOP':
+      this.remainingLop = row.remaining;
+      this.totalLop = row.total;
+      break;
+  }
+});
+
       },
       error: (err) => console.error("Balance Load Error:", err)
     });

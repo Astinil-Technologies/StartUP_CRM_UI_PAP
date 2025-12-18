@@ -5,6 +5,10 @@ import { TimesheetService } from 'src/app/core/services/timesheet/timesheet.serv
 import { UserService } from 'src/app/core/services/userservice/user.service';
 import { TimesheetRequest } from 'src/app/models/timesheet-request.model';
 import { User } from 'src/app/models/user.model';
+import { LeaveService } from 'src/app/core/services/leave/leave.service';
+import { HolidayService } from 'src/app/core/services/leave/holiday.service';
+
+
 
 @Component({
   selector: 'app-timesheet-home',
@@ -43,10 +47,15 @@ export class TimesheetHomeComponent implements OnInit {
 
   calendarDates: any[] = [];
   calendarTable: any[][] = [];
+  holidays: any[] = [];
+leaves: any[] = [];
+
 
   constructor(
     private timesheetService: TimesheetService,
-    private userService: UserService
+    private userService: UserService,
+      private leaveService: LeaveService,
+  private holidayService: HolidayService
       ) {}
 
   ngOnInit(): void {
@@ -94,8 +103,9 @@ export class TimesheetHomeComponent implements OnInit {
     const currentMonth = start.getMonth();
     let currentDate = new Date(start);
     currentDate.setDate(currentDate.getDate() - startDay);
+    
 
-    for (let week = 0; week < 5; week++) {
+    for (let week = 0; week < 6; week++) {
       const weekRow: any[] = [];
 
       for (let day = 0; day < 7; day++) {
@@ -130,16 +140,29 @@ export class TimesheetHomeComponent implements OnInit {
           disabled = true;
           message = 'Already submitted.';
         }
+const formattedDate = this.formatDate(date);
 
-        weekRow.push({
-          date,
-          isToday,
-          isWeekend,
-          isYesterday,
-          isTomorrow,
-          disabled,
-          message,
-        });
+const holiday = this.holidays?.find(
+  (h: any) => h.date === formattedDate
+);
+
+const leave = this.leaves?.find(
+  (l: any) =>
+    l.status === 'APPROVED' &&
+    formattedDate >= l.startDate &&
+    formattedDate <= l.endDate
+);
+
+weekRow.push({
+  date,
+  isToday,
+  isWeekend,
+  disabled,
+  message,
+  holiday,
+  leave
+});
+
 
         currentDate.setDate(currentDate.getDate() + 1);
       }
@@ -162,9 +185,13 @@ export class TimesheetHomeComponent implements OnInit {
     return result;
   }
 
-  formatDate(date: Date): string {
-    return date.toISOString().split('T')[0];
-  }
+ formatDate(date: Date): string {
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, '0');
+  const d = String(date.getDate()).padStart(2, '0');
+  return `${y}-${m}-${d}`;
+}
+
 
   isCurrentMonthYearDisplayed(): boolean {
     const now = new Date();
@@ -173,9 +200,10 @@ export class TimesheetHomeComponent implements OnInit {
   }
 
   onMonthOrYearChange() {
-    this.displayedDate = new Date(this.selectedYear, this.selectedMonth, 1);
-    this.generateCalendar();
-  }
+  this.displayedDate = new Date(this.selectedYear, this.selectedMonth, 1);
+  this.loadCalendarData();   // 🔥 backend call
+}
+
 
   goToPreviousMonth() {
     if (this.selectedMonth === 0) {
@@ -233,4 +261,33 @@ export class TimesheetHomeComponent implements OnInit {
     this.blockers = '';
     this.plans = '';
   }
+  tryGenerateCalendar() {
+  if (this.holidays && this.leaves) {
+    this.generateCalendar();
+  }
 }
+
+  
+  loadCalendarData() {
+
+  // 1️⃣ Load holidays
+  this.holidayService.getAllHolidays().subscribe({
+    next: (holidays) => {
+      this.holidays = holidays;
+      this.tryGenerateCalendar();
+    }
+  });
+
+  // 2️⃣ Load leaves
+  this.leaveService
+    .getMonthlyCalendar(this.selectedYear, this.selectedMonth + 1)
+    .subscribe({
+      next: (res) => {
+        this.leaves = res.leaves || [];
+        this.tryGenerateCalendar();
+      }
+    });
+}
+
+}
+
