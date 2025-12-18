@@ -4,8 +4,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { ApplyLeaveComponent } from './apply-leave.component';
 
 @NgModule({
-  declarations: [ApplyLeaveComponent],
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule,ApplyLeaveComponent],
   exports: [ApplyLeaveComponent]
 })
 export class ApplyLeaveModule {}
