@@ -219,4 +219,9 @@ getUserDetails() {
       catchError(this.handleError)
     );
   }
+    isAdmin(): boolean {
+    const role = localStorage.getItem('role');
+    return role === 'ROLE_ADMIN';
+  }
+
 }

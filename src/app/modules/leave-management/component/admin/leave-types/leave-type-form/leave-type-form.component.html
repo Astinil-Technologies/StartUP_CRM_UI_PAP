@@ -1,0 +1,58 @@
+<div class="page-wrapper">
+  <div class="form-card">
+
+    <h2 class="form-title">
+      {{ isEditMode ? 'Edit Leave Type' : 'Create Leave Type' }}
+    </h2>
+
+    <form [formGroup]="leaveTypeForm" (ngSubmit)="onSubmit()">
+
+      <!-- Leave Type -->
+      <div class="form-group">
+        <label>Leave Type <span class="required">*</span></label>
+        <select formControlName="name" [disabled]="isEditMode">
+          <option value="">Select Leave Type</option>
+          <option *ngFor="let type of leaveTypeOptions" [value]="type">
+            {{ type }}
+          </option>
+        </select>
+      </div>
+
+      <!-- Description -->
+      <div class="form-group">
+        <label>Description</label>
+        <input type="text" formControlName="description" />
+      </div>
+
+      <!-- Yearly Quota -->
+      <div class="form-group">
+        <label>Yearly Quota <span class="required">*</span></label>
+        <input type="number" formControlName="yearlyQuota" />
+      </div>
+
+      <!-- Carry Forward -->
+      <div class="form-checkbox">
+        <input type="checkbox" formControlName="carryForward" />
+        <label>Carry Forward</label>
+      </div>
+
+      <!-- Max Per Month -->
+      <div class="form-group">
+        <label>Max Per Month</label>
+        <input type="number" formControlName="maxPerMonth" />
+      </div>
+
+      <!-- Buttons -->
+      <div class="form-actions">
+        <button type="submit" [disabled]="leaveTypeForm.invalid">
+          {{ isEditMode ? 'Update' : 'Save' }}
+        </button>
+
+        <button type="button" class="cancel-btn" (click)="onCancel()">
+          Cancel
+        </button>
+      </div>
+
+    </form>
+  </div>
+</div>

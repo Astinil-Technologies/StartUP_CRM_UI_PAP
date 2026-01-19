@@ -10,7 +10,7 @@ export const appConfig: ApplicationConfig = {
     provideRouter(routes, withComponentInputBinding()),
     provideClientHydration(),
     importProvidersFrom(FullCalendarModule),
-    provideAnimations(), // ✅ Angular Material compatible animations
+    provideAnimations(), 
     provideHttpClient(withFetch())
   ]
-};
+}; 

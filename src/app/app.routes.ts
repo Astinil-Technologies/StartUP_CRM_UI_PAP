@@ -82,7 +82,15 @@ import { ApplyLeaveComponent } from './modules/leave-management/component/apply-
 import {MyRequestsComponent} from './modules/leave-management/component/my-requests/my-requests.component';
 import { ReportsComponent } from './modules/leave-management/component/reports/reports.component';
 import { ManagerDashboardComponent } from './modules/leave-management/component/manager-dashboard/manager-dashboard.component';
+import { LeaveTypeListComponent } from './modules/leave-management/component/admin/leave-types/leave-type-list/leave-type-list.component';
+import { LeaveTypeFormComponent } from './modules/leave-management/component/admin/leave-types/leave-type-form/leave-type-form.component';
+import { adminGuard } from './core/guards/admin.guard';
+
 export const routes: Routes = [
+
+  // { path: 'leave-management/admin/leave-types',component: LeaveTypeListComponent },
+  //{ path: 'leave-management/admin/leave-types/create',component: LeaveTypeFormComponent },
+  //{ path: 'leave-management/admin/leave-types/edit/:id',component: LeaveTypeFormComponent },
   { path: '', redirectTo: '/login-main', pathMatch: 'full' },
 
   // Auth Routes
@@ -102,8 +110,6 @@ export const routes: Routes = [
     canActivate: [authGuard, RoleGuard],
     data: { roles: ['ROLE_USER', 'ROLE_MGR', 'ROLE_ADMIN'] },
     children: [
-      //{ path: 'reminders',component: ReminderLayoutComponent},
-      //{ path: 'reminders',component: ReminderSidebarComponent },
       { path: 'dashboard', component: DashboardComponent },
       { path: 'dashboard', component: HomeSectionComponent },
       { path: 'navbar', component: NavbarComponent },
@@ -131,9 +137,6 @@ export const routes: Routes = [
             './modules/meeting/components/schedule-meeting/schedule-meeting.component'
           ).then((m) => m.ScheduleMeetingComponent),
       },
-
-      
-
       {
         path: 'timesheet',
         component: TimesheetNavbarComponent,
@@ -220,16 +223,38 @@ export const routes: Routes = [
 
       { path: 'messages', component: MessagesComponent },
 
-      {path: 'leave-management', component: NavbarComponentLeaveManagement,
-      children: [
-            {path: 'employee-dashboard', component: EmployeeDashboardComponent },
-            {path: 'apply-leave', component: ApplyLeaveComponent },
-            {path: 'my-requests', component: MyRequestsComponent },
-            {path: 'reports', component: ReportsComponent },
-            {path: 'manager-dashboard', component: ManagerDashboardComponent },
-            { path: '', redirectTo: 'employee-dashboard', pathMatch: 'full' }
-          ]
-      },
+  {
+  path: 'leave-management',
+  component: NavbarComponentLeaveManagement,
+  children: [
+
+    // Employee routes
+    { path: 'employee-dashboard', component: EmployeeDashboardComponent },
+    { path: 'apply-leave', component: ApplyLeaveComponent },
+    { path: 'my-requests', component: MyRequestsComponent },
+    { path: 'reports', component: ReportsComponent },
+    { path: 'manager-dashboard', component: ManagerDashboardComponent },
+
+    // ✅ ADMIN ROUTES (THIS IS THE FIX)
+    {
+      path: 'admin/leave-types',
+      component: LeaveTypeListComponent,
+      canActivate: [adminGuard]
+    },
+    {
+      path: 'admin/leave-types/create',
+      component: LeaveTypeFormComponent,
+      canActivate: [adminGuard]
+    },
+    {
+      path: 'admin/leave-types/edit/:id',
+      component: LeaveTypeFormComponent,
+      canActivate: [adminGuard]
+    },
+
+    { path: '', redirectTo: 'employee-dashboard', pathMatch: 'full' }
+  ]
+},
 
  {
   path: 'reminders',
@@ -264,7 +289,13 @@ export const routes: Routes = [
       },
       { path: 'account-side', component: AdminSidebarComponent },
     ],
-  },
+  }, 
+
+//   {
+//   path: 'leave-management/admin/leave-types',
+//   component: LeaveTypeListComponent,
+//   canActivate: [adminGuard]
+// },
 
   // Instructor Layout
   {
