@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { LeaveService } from 'src/app/core/services/leave/leave.service';
 import { LeaveBalanceService } from 'src/app/core/services/leave/leave-balance.service';
 import { HolidayService } from 'src/app/core/services/leave/holiday.service';
@@ -6,6 +7,8 @@ import { AuthService } from 'src/app/core/services/authservice/auth.service';
 
 @Component({
   selector: 'app-employee-dashboard',
+  standalone: true,
+  imports: [CommonModule],
   templateUrl: './employee-dashboard.component.html',
   styleUrls: ['./employee-dashboard.component.scss']
 })
@@ -24,12 +27,25 @@ export class EmployeeDashboardComponent implements OnInit {
   upcomingCount: number = 0;
 
   recentLeaves: any[] = [];
-  leaveBalance: any[] = [];
   totalDaysTaken: number = 0;
 
   teamPendingCount: number = 0;
   holidays: any[] = [];
-totalRequests: any;
+
+  showModal: boolean = false;
+  modalTitle: string = '';
+  modalData: any[] = [];
+  paginatedData: any[] = [];
+  loading: boolean = false;
+
+  page: number = 1;
+  pageSize: number = 5;
+  startIndex: number = 0;
+  endIndex: number = 5;
+
+pendingApprovals: any[] = [];
+recentActivity: string[] = [];
+
 
   constructor(
     private leaveService: LeaveService,
@@ -50,150 +66,212 @@ totalRequests: any;
     this.loadTotalDaysTaken();
     this.loadTeamPendingApprovals();
     this.loadHolidays();
+    this.buildRecentActivity();
   }
 
-  // --------------------------------------------------------------------
-  // ✅ 1) Load counts (total/pending/approved/rejected) from /my-leaves
-  // --------------------------------------------------------------------
   loadLeaveCountsFromMyLeaves() {
     this.leaveService.getMyLeaves().subscribe({
       next: (res: any[]) => {
-        // IMPORTANT: MAP snake_case → camelCase
-        const leaves = res.map(l => ({
-          ...l,
-          status: l.status,
-          startDate: l.start_date,
-          endDate: l.end_date,
-          leaveType: l.leave_type
-        }));
-
-        // Counts
-        this.totalLeaves = leaves.length;
-        this.pendingLeaves = leaves.filter(x => x.status === 'PENDING').length;
-        this.approvedLeaves = leaves.filter(x => x.status === 'APPROVED').length;
-        this.rejectedLeaves = leaves.filter(x => x.status === 'REJECTED').length;
+        this.totalLeaves = res.length;
+        this.pendingLeaves = res.filter(x => x.status === 'PENDING').length;
+        this.approvedLeaves = res.filter(x => x.status === 'APPROVED').length;
+        this.rejectedLeaves = res.filter(x => x.status === 'REJECTED').length;
       },
-      error: () => console.error("Failed loading my leaves")
+      error: () => console.error('Error loading leave counts')
     });
   }
 
-  // --------------------------------------------------------------------
-  // 2) Upcoming leaves
-  // --------------------------------------------------------------------
   loadUpcomingLeaves() {
-  this.leaveService.getMyLeaves().subscribe({
-    next: (res: any[]) => {
+    this.leaveService.getMyLeaves().subscribe({
+      next: (res: any[]) => {
+        const today = new Date();
+        this.upcomingLeaves = res.filter(l =>
+          new Date(l.start_date) > today && l.status === 'APPROVED'
+        );
+        this.upcomingCount = this.upcomingLeaves.length;
+      },
+      error: () => console.error('Error loading upcoming leaves')
+    });
+  }
 
-      const today = new Date();
-
-      const leaves = res.map(l => {
-        const start = new Date(l.start_date || l.startDate);
-        const end = new Date(l.end_date || l.endDate);
-
-        return {
-          ...l,
-          startDate: isNaN(start.getTime()) ? null : start,
-          endDate: isNaN(end.getTime()) ? null : end,
-          status: l.status
-        };
-      });
-
-      // filter only those leaves which have a valid date
-      this.upcomingLeaves = leaves.filter(l =>
-        l.startDate &&
-        l.startDate > today &&
-        (l.status === 'APPROVED')
-      );
-
-      this.upcomingCount = this.upcomingLeaves.length;
-    },
-    error: () => console.error("Error loading upcoming leaves")
-  });
-}
-
-  // --------------------------------------------------------------------
-  // 3) Recent leaves (last 5)
-  // --------------------------------------------------------------------
   loadRecentLeaves() {
     this.leaveService.getMyLeaves().subscribe({
       next: (res: any[]) => {
-        const leaves = res.map(l => ({
-          ...l,
-          startDate: l.start_date,
-          endDate: l.end_date
-        }));
-
-        this.recentLeaves = [...leaves]
+        this.recentLeaves = [...res]
           .sort((a, b) =>
-            new Date(b.startDate).getTime() - new Date(a.startDate).getTime())
+            new Date(b.start_date).getTime() -
+            new Date(a.start_date).getTime()
+          )
           .slice(0, 5);
       },
-      error: () => console.error("Failed loading recent leaves")
-    });   
+      error: () => console.error('Error loading recent leaves')
+    });
   }
 
-  // --------------------------------------------------------------------
-  // 4) Leave balance (used/available)
-  // --------------------------------------------------------------------
- loadTotalDaysTaken() {
+  loadTotalDaysTaken() {
+    this.leaveService.getMyLeaves().subscribe({
+      next: (res: any[]) => {
+        const today = new Date();
+        const approvedPastLeaves = res.filter(l =>
+          l.status === 'APPROVED' &&
+          new Date(l.end_date) <= today
+        );
+
+        this.totalDaysTaken = approvedPastLeaves.reduce((sum, l) => {
+          const start = new Date(l.start_date);
+          const end = new Date(l.end_date);
+          const diff =
+            Math.floor((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)) + 1;
+          return sum + diff;
+        }, 0);
+      },
+      error: () => console.error('Error loading total days taken')
+    });
+  }
+
+loadTeamPendingApprovals() {
   this.leaveService.getMyLeaves().subscribe({
     next: (res: any[]) => {
+      this.pendingApprovals = res
+        .filter(l => l.status === 'PENDING')
+        .slice(0, 5)
+        .map(l => ({
+          leaveType: l.leave_type || l.leaveType,
+          start: l.start_date || l.startDate,
+          end: l.end_date || l.endDate
+        }));
 
-      const today = new Date();
-
-      const leaves = res.map(l => {
-        const sd = new Date(l.start_date || l.startDate);
-        const ed = new Date(l.end_date || l.endDate);
-
-        return {
-          ...l,
-          startDate: isNaN(sd.getTime()) ? null : sd,
-          endDate: isNaN(ed.getTime()) ? null : ed,
-          status: l.status
-        };
-      });
-
-      // ✅ Count only APPROVED leaves that are already completed
-      const pastApproved = leaves.filter(l =>
-        l.status === "APPROVED" &&
-        l.startDate !== null &&
-        l.endDate !== null &&
-        l.endDate <= today        // ← IMPORTANT: do not count future leaves
-      );
-
-      this.totalDaysTaken = pastApproved.reduce((sum, l) => {
-        const diffDays =
-          Math.floor((l.endDate.getTime() - l.startDate.getTime()) /
-          (1000 * 60 * 60 * 24)) + 1;
-
-        return sum + diffDays;
-      }, 0);
+      this.teamPendingCount = this.pendingApprovals.length;
     },
-    error: () => console.error("Error loading total days taken")
+    error: () => console.error('Error loading pending approvals')
   });
 }
 
-  // --------------------------------------------------------------------
-  // 5) Team pending approvals (only for manager)
-  // --------------------------------------------------------------------
-  loadTeamPendingApprovals() {
-    if (!this.isManager) return;
+loadHolidays() {
+  this.holidayService.getAllHolidays().subscribe({
+    next: (res: any[]) => {
+      this.holidays = res;
+    },
+    error: () => console.error('Error loading holidays')
+  });
+}
 
-    this.leaveService.getTeamLeaves('PENDING').subscribe({
+buildRecentActivity() {
+  this.leaveService.getMyLeaves().subscribe((res: any[]) => {
+    this.recentActivity = res
+  .sort((a: any, b: any) =>
+    new Date(b.start_date || b.startDate).getTime() -
+    new Date(a.start_date || a.startDate).getTime()
+  )
+  .slice(0, 5)
+  .map((l: any) => {
+    const start = l.start_date || l.startDate;
+    const end = l.end_date || l.endDate;
+
+    if (l.status === 'APPROVED') {
+      return `Leave approved (${start} → ${end})`;
+    }
+    if (l.status === 'PENDING') {
+      return `Leave request submitted (${start})`;
+    }
+    return `Leave rejected (${start})`;
+  });
+  });
+}
+  openCard(type: string) {
+    this.showModal = true;
+    this.loading = true;
+    this.page = 1;
+
+    if (type === 'TEAM_PENDING') {
+      this.modalTitle = 'Team Pending Approvals';
+      this.leaveService.getTeamLeaves('PENDING').subscribe({
+        next: (res: any[]) => {
+          this.modalData = res;
+          this.updatePagination();
+          this.loading = false;
+        },
+        error: () => (this.loading = false)
+      });
+      return;
+    }
+
+    this.leaveService.getMyLeaves().subscribe({
       next: (res: any[]) => {
-        this.teamPendingCount = res.length;
+        let data = [...res];
+        const today = new Date();
+
+        switch (type) {
+          case 'TOTAL':
+            this.modalTitle = 'All Leave Requests';
+            break;
+
+          case 'PENDING':
+            this.modalTitle = 'Pending Leaves';
+            data = data.filter(l => l.status === 'PENDING');
+            break;
+
+          case 'APPROVED':
+            this.modalTitle = 'Approved Leaves';
+            data = data.filter(l => l.status === 'APPROVED');
+            break;
+
+          case 'REJECTED':
+            this.modalTitle = 'Rejected Leaves';
+            data = data.filter(l => l.status === 'REJECTED');
+            break;
+
+          case 'UPCOMING':
+            this.modalTitle = 'Upcoming Leaves';
+            data = data.filter(l =>
+              new Date(l.start_date) > today && l.status === 'APPROVED'
+            );
+            break;
+
+          case 'RECENT':
+            this.modalTitle = 'Recent Leaves';
+            data = data
+              .sort((a, b) =>
+                new Date(b.start_date).getTime() -
+                new Date(a.start_date).getTime()
+              )
+              .slice(0, 10);
+            break;
+
+          case 'DAYS':
+            this.modalTitle = 'Approved Past Leaves';
+            data = data.filter(l =>
+              l.status === 'APPROVED' &&
+              new Date(l.end_date) <= today
+            );
+            break;
+        }
+
+        this.modalData = data;
+        this.updatePagination();
+        this.loading = false;
       },
-      error: () => console.error("Error loading team pending")
+      error: () => (this.loading = false)
     });
   }
 
-  // --------------------------------------------------------------------
-  // 6) Holidays
-  // --------------------------------------------------------------------
-  loadHolidays() {
-    this.holidayService.getAllHolidays().subscribe({
-      next: (res: any[]) => (this.holidays = res),
-      error: () => console.error("Error loading holidays")
-    });
+  updatePagination() {
+    this.startIndex = (this.page - 1) * this.pageSize;
+    this.endIndex = this.startIndex + this.pageSize;
+    this.paginatedData = this.modalData.slice(this.startIndex, this.endIndex);
+  }
+
+  nextPage() {
+    this.page++;
+    this.updatePagination();
+  }
+
+  prevPage() {
+    this.page--;
+    this.updatePagination();
+  }
+
+  closeModal() {
+    this.showModal = false;
   }
 }

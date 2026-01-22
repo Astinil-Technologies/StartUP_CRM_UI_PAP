@@ -38,19 +38,39 @@
           <tbody>
             <tr *ngFor="let week of calendarTable">
               <td *ngFor="let day of week">
-                <button
-                  class="btn btn-lg w-100 text-black fw-bold"
-                  [ngClass]="{
-                    'btn-info': day?.isToday,
-                    'btn-outline-light': !day?.isToday && !day?.isWeekend,
-                    'btn-outline-danger': day?.isWeekend
-                  }"
-                  [disabled]="!day || day.disabled"
-                  (click)="day && onDateClick(day)"
-                  [title]="day?.message"
-                >
-                  {{ day?.date | date : 'd' }}
-                </button>
+
+  <!-- ONLY          render button if day exists -->
+<button
+  *ngIf="day"
+  class="btn btn-lg w-100 fw-bold calendar-btn"
+  [ngClass]="{
+    'border-leave': day.leave,
+    'border-weekend': day.isWeekend && !day.leave,
+    'border-holiday': day.holiday && !day.isWeekend && !day.leave,
+    'border-today': day.isToday && !day.isWeekend && !day.leave && !day.holiday,
+    'border-normal': !day.isToday && !day.isWeekend && !day.holiday && !day.leave
+  }"
+  [disabled]="day.disabled"
+>
+  <div class="d-flex flex-column align-items-center">
+
+    <div class="fw-bold">
+      {{ day.date | date:'d' }}
+    </div>
+
+    <div *ngIf="day.holiday" class="small fw-bold">
+      {{ day.holiday.name }}
+    </div>
+
+    <div *ngIf="day.isWeekend" class="small fw-bold">
+      Weekend
+    </div>
+
+    <div *ngIf="day.leave" class="small fw-bold">
+      {{ day.leave.leaveType }}
+    </div>
+  </div>
+</button>
               </td>
             </tr>
           </tbody>
@@ -60,7 +80,7 @@
   </div>
 </div>
 
-<!-- Modal Section (unchanged) -->
+<!-- Modal Section              (unchanged) -->
 <div class="modal fade" tabindex="-1" [class.show]="showModal" [style.display]="showModal ? 'block' : 'none'">
   <div class="modal-dialog" style="background-color: #e7f0f5">
     <div class="modal-content" style="background-color: transparent">

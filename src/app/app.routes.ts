@@ -81,6 +81,7 @@ import { EmployeeDashboardComponent } from './modules/leave-management/component
 import { ApplyLeaveComponent } from './modules/leave-management/component/apply-leave/apply-leave.component';
 import {MyRequestsComponent} from './modules/leave-management/component/my-requests/my-requests.component';
 import { ReportsComponent } from './modules/leave-management/component/reports/reports.component';
+import { ManagerDashboardComponent } from './modules/leave-management/component/manager-dashboard/manager-dashboard.component';
 export const routes: Routes = [
   { path: '', redirectTo: '/login-main', pathMatch: 'full' },
 
@@ -225,6 +226,7 @@ export const routes: Routes = [
             {path: 'apply-leave', component: ApplyLeaveComponent },
             {path: 'my-requests', component: MyRequestsComponent },
             {path: 'reports', component: ReportsComponent },
+            {path: 'manager-dashboard', component: ManagerDashboardComponent },
             { path: '', redirectTo: 'employee-dashboard', pathMatch: 'full' }
           ]
       },
