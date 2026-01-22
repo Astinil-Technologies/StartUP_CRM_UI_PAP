@@ -100,7 +100,7 @@ export const routes: Routes = [
     path: 'layout',
     component: LayoutComponent,
     canActivate: [authGuard, RoleGuard],
-    data: { roles: ['ROLE_USER', 'ROLE_MGR', 'ROLE_ADMIN'] },
+    data: { roles: ['ROLE_USER', 'ROLE_MGR', 'ROLE_ADMIN','ROLE_ORG'] },
     children: [
       //{ path: 'reminders',component: ReminderLayoutComponent},
       //{ path: 'reminders',component: ReminderSidebarComponent },
@@ -138,7 +138,7 @@ export const routes: Routes = [
         path: 'timesheet',
         component: TimesheetNavbarComponent,
         canActivate: [authGuard, RoleGuard],
-         data: { roles: ['ROLE_USER', 'ROLE_MGR', 'ROLE_ADMIN'] },
+         data: { roles: ['ROLE_USER', 'ROLE_MGR', 'ROLE_ADMIN','ROLE_ORG'] },
         
         children: [
           { path: '', redirectTo: 'homepage', pathMatch: 'full' },
@@ -146,7 +146,7 @@ export const routes: Routes = [
           { path: 'myticket', component: MyticketComponent },
           { path: 'homepage', component: HomepageComponent },
           {path: 'approve-timesheet', component: ApproveTimesheetComponent,
-            canActivate: [RoleGuard], data: { roles: ['ROLE_ADMIN'] }
+            canActivate: [authGuard, RoleGuard], data: { roles: ['ROLE_ADMIN','ROLE_MGR','ROLE_ORG'] }
            },
           {
             path: 'time',
