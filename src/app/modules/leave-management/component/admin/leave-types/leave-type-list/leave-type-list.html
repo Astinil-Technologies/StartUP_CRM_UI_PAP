@@ -1,0 +1,69 @@
+<div class="leave-type-container">
+
+  <!-- Header -->
+  <div class="header-row">
+    <h2>Leave Types</h2>
+
+    <div class="header-actions">
+      <input
+        type="text"
+        class="search-input"
+        placeholder="Search leave types..."
+        [(ngModel)]="searchText" />
+
+      <button class="add-btn" (click)="onAddLeaveType()">
+        + Add Leave Type
+      </button>
+    </div>
+  </div>
+
+  <!-- Table -->
+  <div class="table-wrapper" *ngIf="!loading && sortedLeaveTypes.length > 0">
+    <table class="leave-table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Name</th>
+          <th>Description</th>
+          <th>Yearly</th>
+          <th>Max/Month</th>
+          <th>Carry</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr *ngFor="let lt of sortedLeaveTypes; let i = index">
+          <td>{{ i + 1 }}</td>
+          <td>{{ lt.name }}</td>
+          <td>{{ lt.description }}</td>
+          <td>{{ lt.yearlyQuota }}</td>
+          <td>{{ lt.maxPerMonth }}</td>
+          <td>
+            <span
+              class="badge"
+              [class.yes]="lt.carryForward"
+              [class.no]="!lt.carryForward">
+              {{ lt.carryForward ? 'Yes' : 'No' }}
+            </span>
+          </td>
+          <td>
+            <span
+              class="status"
+              [class.active]="lt.active"
+              [class.inactive]="!lt.active">
+              {{ lt.active ? 'Active' : 'Inactive' }}
+            </span>
+          </td>
+          <td class="actions">
+            <button class="edit-btn" (click)="onEditLeaveType(lt)">Edit</button>
+            <button class="generate-btn" (click)="onGenerateLeaveBalance()">Generate</button>
+          </td>
+          
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+</div>

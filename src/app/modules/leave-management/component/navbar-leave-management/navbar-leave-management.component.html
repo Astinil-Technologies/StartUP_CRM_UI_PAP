@@ -21,7 +21,12 @@
 
       <button class="nav-btn" routerLink="manager-dashboard"routerLinkActive="active">
         <span class="material-icons">manage_accounts</span>Manager Dashboard
+      </button> 
+       
+      <button class="nav-btn" *ngIf="isAdmin()" routerLink="leave-types" routerLinkActive="active">
+        <span class="material-icons">settings</span>Leave Types
       </button>
+
     </div>
   </div>
 

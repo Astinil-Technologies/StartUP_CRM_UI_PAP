@@ -82,6 +82,8 @@ import { ApplyLeaveComponent } from './modules/leave-management/component/apply-
 import {MyRequestsComponent} from './modules/leave-management/component/my-requests/my-requests.component';
 import { ReportsComponent } from './modules/leave-management/component/reports/reports.component';
 import { ManagerDashboardComponent } from './modules/leave-management/component/manager-dashboard/manager-dashboard.component';
+import { LeaveTypeListComponent } from './modules/leave-management/component/admin/leave-types/leave-type-list/leave-type-list';
+import { LeaveTypeFormComponent } from './modules/leave-management/component/admin/leave-types/leave-type-form/leave-type-form';
 export const routes: Routes = [
   { path: '', redirectTo: '/login-main', pathMatch: 'full' },
 
@@ -221,16 +223,23 @@ export const routes: Routes = [
       { path: 'messages', component: MessagesComponent },
 
       {path: 'leave-management', component: NavbarComponentLeaveManagement,
+         canActivate: [authGuard, RoleGuard],
+         data: { roles: ['ROLE_USER', 'ROLE_MGR', 'ROLE_ADMIN','ROLE_ORG'] },       
       children: [
             {path: 'employee-dashboard', component: EmployeeDashboardComponent },
             {path: 'apply-leave', component: ApplyLeaveComponent },
             {path: 'my-requests', component: MyRequestsComponent },
             {path: 'reports', component: ReportsComponent },
             {path: 'manager-dashboard', component: ManagerDashboardComponent },
-            { path: '', redirectTo: 'employee-dashboard', pathMatch: 'full' }
+            {path: 'leave-types',component: LeaveTypeListComponent,
+             canActivate: [authGuard, RoleGuard], data: { roles: ['ROLE_ADMIN'] } },
+            {path: 'leave-types/create',component: LeaveTypeFormComponent,
+             canActivate: [authGuard, RoleGuard], data: { roles: ['ROLE_ADMIN'] } },
+            {path: 'leave-types/edit/:id',component: LeaveTypeFormComponent,
+              canActivate: [authGuard, RoleGuard], data: { roles: ['ROLE_ADMIN'] } },
+            { path: '', redirectTo: 'employee-dashboard', pathMatch: 'full' },            
           ]
       },
-
  {
   path: 'reminders',
   component: ReminderSidebarComponent, // Layout with sidebar

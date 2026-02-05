@@ -20,11 +20,15 @@ export class LeaveBalanceService {
     return this.http.get<any>(url, this.authHeaders(token));
   }
 
-  /** POST /api/leaves/balance/generate-yearly */
-  generateYearly(token?: string | null): Observable<any> {
-    const url = `${this.baseUrl}/generate-yearly`;
-    return this.http.post<any>(url, {}, this.authHeaders(token));
-  }
+  generateYearly(token?: string | null): Observable<string> {
+  const url = `${this.baseUrl}/generate-yearly`;
+  return this.http.post(url,{},
+    {
+      headers: this.authHeaders(token)?.headers,
+      responseType: 'text'
+    }
+  ) as Observable<string>;
+}
 
   /** PUT /api/leaves/balance/update/{employeeId} */
   updateBalance(employeeId: number, payload: any, token?: string | null): Observable<any> {
